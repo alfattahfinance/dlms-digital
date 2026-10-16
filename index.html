@@ -1,500 +1,715 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ALMS Digital 2 IN 4 OUT</title>
-<style>
-:root {
-  --bg:#292c2f; --panel:#383c40; --dark:#1e2022;
-  --line:#555b60; --text:#f0f1f2; --muted:#aeb5ba;
-  --green:#79c58a; --blue:#76a8d6; --red:#d56b62;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
-font:14px Arial,Helvetica,sans-serif}
-button,input,select{font:inherit}
-button,select{cursor:pointer}
-header{background:var(--dark);padding:14px 16px;
-display:flex;justify-content:space-between;align-items:center;
-gap:10px;border-bottom:1px solid var(--line)}
-.brand{font-weight:bold;font-size:20px}
-.brand small{display:block;font-size:10px;color:var(--muted);
-font-weight:normal;margin-top:4px;letter-spacing:1px}
-.status{display:flex;align-items:center;gap:8px;font-size:11px}
-.lamp{width:9px;height:9px;background:var(--green);border-radius:50%}
-button{border:1px solid #646b70;background:#303438;color:white;
-padding:8px 11px;border-radius:3px}
-button.active{background:#c7d9ca;color:#17231a}
-nav{display:flex;gap:5px;padding:9px;overflow:auto;
-background:#242729;border-bottom:1px solid var(--line)}
-nav button{white-space:nowrap}
-nav button.active{background:#d4d8da;color:#202326}
-main{max-width:1400px;margin:auto;padding:12px}
-.page{display:none}
-.page.active{display:block}
-.toolbar{display:flex;justify-content:space-between;align-items:center;
-flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.small{font-size:11px;color:var(--muted);line-height:1.5}
-.mixer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.strip{background:var(--panel);border:1px solid var(--line);border-radius:3px}
-.striphead{padding:10px;background:var(--dark);
-display:flex;justify-content:space-between;gap:8px}
-.striphead strong{color:var(--blue)}
-.stripbody{padding:10px}
-.inputbar{display:flex;align-items:center;justify-content:space-between;
-gap:8px;margin-bottom:7px;font-size:11px;color:var(--muted)}
-.meter{height:8px;background:#151718;border:1px solid #50565a;
-overflow:hidden;border-radius:2px}
-.meter span{display:block;width:0;height:100%;
-background:linear-gradient(90deg,#55b36c 0 70%,#d8b451 70% 90%,#d45c53 90%)}
-.knobs{display:flex;justify-content:space-around;gap:10px;padding:13px 0}
-.knobbox{text-align:center;font-size:10px;color:var(--muted)}
-.knob{width:44px;height:44px;border:3px solid #777f84;
-border-radius:50%;background:radial-gradient(circle at 30% 25%,#686e73,#25282a 70%);
-position:relative;touch-action:none;cursor:ns-resize;margin:0 auto 6px}
-.knob:after{content:"";position:absolute;left:18px;top:1px;width:3px;height:13px;
-background:#fff;transform-origin:50% 20px;
-transform:rotate(var(--angle,-130deg))}
-.val{color:white;margin-top:3px}
-.faderrow{display:flex;justify-content:center;align-items:stretch;
-height:185px;gap:16px;padding:4px 0}
-.scale{display:flex;flex-direction:column;justify-content:space-between;
-font-size:9px;color:var(--muted);padding:4px 0}
-.fader{writing-mode:vertical-lr;direction:rtl;
--webkit-appearance:slider-vertical;appearance:slider-vertical;
-height:100%;width:35px;touch-action:pan-y;cursor:pointer}
-.db{text-align:center;margin:7px;font-size:12px}
-.switchrow{display:flex;justify-content:center;gap:7px;margin:10px 0}
-.stripfoot{background:#292c2f;padding:8px 10px;
-display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
-.master{margin-top:12px;padding:12px;background:var(--panel);
-border:1px solid var(--line);display:grid;
-grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.masterbox{background:var(--dark);padding:12px;border:1px solid var(--line)}
-.masterbox h3{font-size:13px;margin:0 0 12px}
-.masterbox input[type=range]{width:100%;accent-color:#bfc7ca}
-.outgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.output{background:var(--panel);border:1px solid var(--line);padding:12px}
-.output h3{font-size:14px;margin:0 0 10px}
-.output label{display:flex;justify-content:space-between;gap:8px;
-font-size:11px;color:var(--muted);margin:12px 0 6px}
-.output input[type=range]{width:100%;accent-color:#bfc7ca}
-.matrix{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
-.matrix th,.matrix td{border:1px solid var(--line);padding:10px;text-align:center}
-.matrix th{background:var(--dark)}
-.matrix td:first-child{text-align:left}
-.matrix input{width:18px;height:18px;accent-color:var(--green)}
-.controlgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.control{background:var(--panel);border:1px solid var(--line);padding:12px}
-.control label{display:flex;justify-content:space-between;margin-bottom:10px}
-.control input[type=range],.control select{width:100%}
-.control input[type=range]{accent-color:#bfc7ca}
-input[type=file]{max-width:100%;font-size:11px}
-.notice{padding:10px;background:#222527;border:1px solid var(--line);
-font-size:12px;color:var(--muted);line-height:1.6;margin:10px 0}
-footer{text-align:center;color:var(--muted);font-size:10px;padding:20px}
-@media(max-width:560px){
- main{padding:7px}.mixer{grid-template-columns:1fr}
- .master,.outgrid,.controlgrid{grid-template-columns:1fr}
- header{padding:10px}.brand{font-size:17px}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLMD Professional DSP - 2In / 4Out Loudspeaker Management</title>
+    <style>
+        :root {
+            --chassis-silver: linear-gradient(135deg, #d6d6d6 0%, #adadad 50%, #737373 100%);
+            --chassis-border: #404040;
+            --panel-dark: #121212;
+            --panel-card: #1a1a1a;
+            --text-main: #e0e0e0;
+            --accent-amber: #ff9900;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0b0b0b;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Container Utama Fullscreen */
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--panel-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px;
+            position: relative;
+            border: 2px solid #222;
+        }
+
+        /* Chassis Rak Besi Silver Profesional */
+        .chassis-rack {
+            width: 100%;
+            background: var(--chassis-silver);
+            border: 2px solid var(--chassis-border);
+            padding: 6px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.4), 0 4px 8px rgba(0,0,0,0.6);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Sekrup Sudut Hardware */
+        .screw {
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #f0f0f0 20%, #666 70%, #222 100%);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+        }
+        .screw-tl { top: 4px; left: 6px; }
+        .screw-tr { top: 4px; right: 6px; }
+        .screw-bl { bottom: 4px; left: 6px; }
+        .screw-br { bottom: 4px; right: 6px; }
+
+        .chassis-title {
+            color: #1a1a1a;
+            font-weight: 800;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            margin-left: 12px;
+            text-transform: uppercase;
+        }
+
+        .chassis-status {
+            color: #1a1a1a;
+            font-size: 0.6rem;
+            font-weight: 700;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #008822;
+            border-radius: 50%;
+            box-shadow: 0 0 3px #00cc44;
+        }
+
+        /* Menu Navigasi Tab Ala DLMS Fisik */
+        .nav-tabs {
+            display: flex;
+            gap: 3px;
+            background: #0d0d0d;
+            padding: 4px 6px;
+            border-bottom: 1px solid #2a2a2a;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            background: #1c1c1c;
+            color: #888;
+            border: 1px solid #333;
+            padding: 4px 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            border-radius: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-amber);
+            color: #0b0b0b;
+            border-color: #ffaa11;
+        }
+
+        /* Workspace Area */
+        .fader-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .section-group-title {
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            align-self: flex-start;
+            margin-left: 4px;
+            margin-bottom: 2px;
+        }
+
+        .mixer-bank {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            overflow-x: auto;
+            padding: 2px 0;
+        }
+
+        /* Strip Channel Mixer */
+        .channel-strip {
+            background: var(--panel-card);
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            width: 76px;
+            padding: 6px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .ch-name {
+            background: #b5b5b5;
+            color: #111;
+            font-size: 0.6rem;
+            font-weight: 800;
+            width: 100%;
+            text-align: center;
+            padding: 1px 0;
+            border-radius: 1px;
+        }
+
+        .ch-sublabel {
+            font-size: 0.5rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .db-value {
+            font-size: 0.55rem;
+            color: var(--accent-amber);
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+
+        .fader-meter-area {
+            display: flex;
+            height: 145px;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 1px 0;
+        }
+
+        .vertical-slider-container {
+            height: 140px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ==========================================================
+           KODE FADER FISIK UTUH (POTENSIOMETER GESER KONSOL PROFESIONAL)
+           ================================================          */
+        input[type="range"].vertical-fader {
+            -webkit-appearance: none;
+            appearance: none;
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 10px;
+            height: 140px;
+            background: #050505;
+            border: 1px solid #222;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-runnable-track {
+            background: transparent;
+            border: none;
+        }
+
+        /* Desain Tombol Fader Fisik Abu-abu Konsol Audio */
+        input[type="range"].vertical-fader::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 42px !important;
+            height: 26px !important;
+            background: linear-gradient(to bottom, #d0d0d0 0%, #a0a0a0 20%, #888888 50%, #6e6e6e 100%) !important;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #333333;
+            border-left: 1px solid #999999;
+            border-right: 1px solid #999999;
+            border-radius: 2px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.6);
+            cursor: grab;
+            position: relative;
+            margin-left: -16px;
+        }
+
+        /* Garis Hitam Indikator Tengah & Tekstur Cekung Fader */
+        input[type="range"].vertical-fader::-webkit-slider-thumb::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background: #111111;
+            transform: translateX(-1.5px);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            background: linear-gradient(to bottom, #b5b5b5 0%, #7a7a7a 100%) !important;
+        }
+
+        /* VU Meter LED Vertikal */
+        .vu-meter {
+            width: 6px;
+            height: 140px;
+            background: #080808;
+            border: 1px solid #222;
+            border-radius: 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+            padding: 1px;
+        }
+
+        .vu-fill {
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(to top, #006622 0%, #00cc44 60%, #ffcc00 85%, #ff3300 95%);
+            border-radius: 1px;
+        }
+
+        /* Tombol Mute / Action */
+        .strip-btn {
+            width: 100%;
+            background-color: #222;
+            color: #ccc;
+            border: 1px solid #444;
+            padding: 4px 0;
+            font-size: 0.55rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .strip-btn.muted {
+            background-color: #991111;
+            color: #fff;
+            border-color: #cc2222;
+        }
+
+        /* Panel Fitur DSP (Crossover, EQ, Delay, Settings) */
+        .feature-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: var(--panel-card);
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-panel.active-panel {
+            display: flex;
+        }
+
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .param-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .param-card {
+            background: #111;
+            border: 1px solid #222;
+            padding: 8px;
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .param-card label {
+            font-size: 0.55rem;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            text-transform: uppercase;
+        }
+
+        .param-card span {
+            color: var(--accent-amber);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .param-card select, .param-card input[type="text"], .param-card input[type="range"] {
+            width: 100%;
+            background: #181818;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 4px;
+            font-size: 0.6rem;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .action-btn {
+            background: var(--accent-amber);
+            color: #0b0b0b;
+            font-weight: 800;
+            border: none;
+            padding: 6px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            background: #ffaa11;
+        }
+
+        .app-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 10px;
+            color: #666;
+            font-size: 0.55rem;
+            border-top: 1px solid #222;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">ALMS DIGITAL
-    <small>2 INPUT / 4 OUTPUT AUDIO MIXER</small>
-  </div>
-  <div class="status">
-    <span class="lamp" id="lamp"></span>
-    <span id="status">READY</span>
-    <button id="power">POWER OFF</button>
-  </div>
-</header>
+    <div class="app-container">
+        
+        <!-- Chassis Atas -->
+        <div class="chassis-rack">
+            <div class="screw screw-tl"></div>
+            <div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div>
+            <div class="screw screw-br"></div>
+            <div class="chassis-title">DCX2496 PRO DSP &bull; 2-IN / 4-OUT SYSTEM</div>
+            <div class="chassis-status">
+                <span class="status-dot" id="connection-dot"></span> <span id="ip-display">192.168.4.1</span>
+            </div>
+        </div>
 
-<nav id="tabs">
-  <button class="active" data-page="mixer">MIXER</button>
-  <button data-page="outputs">OUTPUTS</button>
-  <button data-page="routing">ROUTING</button>
-  <button data-page="eq">EQ</button>
-  <button data-page="fx">FX</button>
-</nav>
+        <!-- Menu Navigasi Tab -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('mixer', this)">Gain Matrix</button>
+            <button class="tab-btn" onclick="switchTab('xover', this)">Crossover</button>
+            <button class="tab-btn" onclick="switchTab('eq', this)">PEQ</button>
+            <button class="tab-btn" onclick="switchTab('delay', this)">Delay & Limiter</button>
+            <button class="tab-btn" onclick="switchTab('settings', this)" style="color: var(--accent-amber);">⚙️ Koneksi Wi-Fi</button>
+        </div>
 
-<main>
-<section class="page active" id="mixer">
-  <div class="toolbar">
-    <span class="small">INPUT CHANNELS · CH1 dan CH2</span>
-    <div>
-      <button id="startAudio">CONNECT AUDIO</button>
-      <button id="reset">RESET</button>
+        <!-- Workspace Utama -->
+        <div class="fader-workspace">
+            
+            <!-- TAB 1: MIXER MATRIX -->
+            <div id="panel-mixer" class="feature-panel active-panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
+                <div class="section-group-title">Input & Output Matrix Level</div>
+                <div class="mixer-bank">
+                    <div class="channel-strip">
+                        <div class="ch-name">In A</div>
+                        <div class="ch-sublabel">Main</div>
+                        <div class="db-value" id="val-ina">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateParam('ina', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 65%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
+                    </div>
+
+                    <div class="channel-strip">
+                        <div class="ch-name">In B</div>
+                        <div class="ch-sublabel">Aux</div>
+                        <div class="db-value" id="val-inb">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateParam('inb', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
+                    </div>
+
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 1</div>
+                        <div class="ch-sublabel">Sub</div>
+                        <div class="db-value" id="val-out1">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateParam('out1', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 75%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
+                    </div>
+
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 2</div>
+                        <div class="ch-sublabel">Low</div>
+                        <div class="db-value" id="val-out2">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateParam('out2', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
+                    </div>
+
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 3</div>
+                        <div class="ch-sublabel">Mid</div>
+                        <div class="db-value" id="val-out3">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateParam('out3', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
+                    </div>
+
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 4</div>
+                        <div class="ch-sublabel">High</div>
+                        <div class="db-value" id="val-out4">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateParam('out4', this.value)">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 45%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: CROSSOVER -->
+            <div id="panel-xover" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:6px;">Crossover Filter Management (HPF / LPF)</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Out 1 Sub HPF</label>
+                        <select>
+                            <option>Butterworth 24dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                            <option>Bessel 18dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-hpf1">35 Hz</span></label>
+                        <input type="range" min="20" max="120" value="35" oninput="document.getElementById('xover-hpf1').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 1 Sub LPF</label>
+                        <select>
+                            <option>Butterworth 24dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-lpf1">120 Hz</span></label>
+                        <input type="range" min="80" max="250" value="120" oninput="document.getElementById('xover-lpf1').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 3 Mid HPF</label>
+                        <select>
+                            <option>Linkwitz-Riley 24dB</option>
+                            <option>Butterworth 12dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-hpf3">500 Hz</span></label>
+                        <input type="range" min="200" max="2000" value="500" oninput="document.getElementById('xover-hpf3').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 4 High LPF</label>
+                        <select>
+                            <option>Butterworth 18dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-lpf4">18 kHz</span></label>
+                        <input type="range" min="5000" max="20000" value="18000" oninput="document.getElementById('xover-lpf4').innerText = (this.value/1000) + ' kHz'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: PARAMETRIC EQ -->
+            <div id="panel-eq" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:6px;">Output Parametric Equalizer (PEQ)</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Band 1 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>63 Hz</span></label>
+                        <input type="range" min="20" max="200" value="63">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 2 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>250 Hz</span></label>
+                        <input type="range" min="100" max="1000" value="250">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 3 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>2.5 kHz</span></label>
+                        <input type="range" min="1000" max="8000" value="2500">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 4 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>12 kHz</span></label>
+                        <input type="range" min="8000" max="20000" value="12000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: DELAY & LIMITER -->
+            <div id="panel-delay" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:6px;">Alignment Delay & Peak Limiter</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Out 1 Delay (ms)</label>
+                        <input type="range" min="0" max="50" step="0.1" value="0" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>0.0 ms</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Out 2 Delay (ms)</label>
+                        <input type="range" min="0" max="50" step="0.1" value="0" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>0.0 ms</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Master Limiter</label>
+                        <input type="range" min="-20" max="0" step="0.5" value="-3" oninput="this.nextElementSibling.innerText = this.value + ' dB'">
+                        <span>-3.0 dB</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Release Time</label>
+                        <input type="range" min="10" max="1000" step="10" value="200" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>200 ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: PENGATURAN KONEKSI WI-Fi / IP HARDWARE -->
+            <div id="panel-settings" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:8px;">Konfigurasi Jaringan & DLMS Fisik</div>
+                <div class="param-grid" style="grid-template-columns: repeat(1, 1fr); max-width: 350px; margin: 0 auto;">
+                    <div class="param-card">
+                        <label>Nama Perangkat / SSID ESP32</label>
+                        <input type="text" id="dlms-name" value="DCX2496-PRO" placeholder="Contoh: DLMS-Main">
+                    </div>
+                    <div class="param-card">
+                        <label>Alamat IP DLMS Fisik</label>
+                        <input type="text" id="dlms-ip" value="192.168.4.1" placeholder="Contoh: 192.168.1.100">
+                    </div>
+                    <button class="action-btn" onclick="saveConnectionSettings()">Simpan & Hubungkan</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="app-footer">
+            <span id="connection-status-text">Wi-Fi Connected &bull; Realtime Protocol Active</span>
+            <span>UI v2.4-PRO</span>
+        </div>
+
     </div>
-  </div>
 
-  <div class="controlgrid">
-    <div class="control">
-      <label>INPUT 1 <span>USB / LINE</span></label>
-      <button id="connect1">CONNECT INPUT 1</button>
-      <p class="small" id="input1status">Belum terhubung</p>
-    </div>
-    <div class="control">
-      <label>INPUT 2 <span>MP3 / USB / LINE</span></label>
-      <input id="mp3file" type="file" accept="audio/*">
-      <button id="connect2">CONNECT INPUT 2</button>
-      <p class="small" id="input2status">Pilih MP3 atau gunakan input audio</p>
-    </div>
-  </div>
+    <script>
+        let targetIP = localStorage.getItem('dlms_ip') || '192.168.4.1';
+        document.getElementById('dlms-ip').value = targetIP;
+        document.getElementById('ip-display').innerText = targetIP;
 
-  <div class="notice">
-    Input 1 dan Input 2 memiliki fader terpisah. File MP3 menggunakan jalur
-    CH2. Izin mikrofon hanya meminta akses ke perangkat input yang dipilih
-    browser, bukan otomatis ke semua perangkat USB.
-  </div>
+        function saveConnectionSettings() {
+            const ipInput = document.getElementById('dlms-ip').value;
+            const nameInput = document.getElementById('dlms-name').value;
+            if(ipInput) {
+                localStorage.setItem('dlms_ip', ipInput);
+                localStorage.setItem('dlms_name', nameInput);
+                targetIP = ipInput;
+                document.getElementById('ip-display').innerText = targetIP;
+                alert('Pengaturan koneksi disimpan! Target IP: ' + targetIP);
+                switchTab('mixer', document.querySelector('.nav-tabs button'));
+            } else {
+                alert('Alamat IP tidak boleh kosong!');
+            }
+        }
 
-  <div class="mixer" id="inputs"></div>
+        function updateParam(id, val) {
+            const label = document.getElementById('val-' + id);
+            if (label) {
+                label.innerText = parseFloat(val).toFixed(1) + ' dB';
+            }
+            
+            // Pengiriman data via HTTP Fetch ke hardware ESP32 fisik
+            fetch(`http://${targetIP}/update?ch=${id}&val=${val}`, { mode: 'no-cors' })
+                .then(() => {
+                    document.getElementById('connection-dot').style.backgroundColor = '#008822';
+                })
+                .catch(() => {
+                    document.getElementById('connection-dot').style.backgroundColor = '#cc0000';
+                });
+        }
 
-  <div class="master">
-    <div class="masterbox">
-      <h3>MASTER LEVEL</h3>
-      <label class="small">Level keseluruhan
-        <strong id="masterVal">80%</strong>
-      </label>
-      <input id="master" type="range" min="0" max="100" value="80">
-      <div style="margin-top:10px">
-        <button id="masterMute">MASTER MUTE</button>
-      </div>
-    </div>
-    <div class="masterbox">
-      <h3>OUTPUT METER</h3>
-      <div class="inputbar">OUT 1 <span id="mv1">-∞</span></div>
-      <div class="meter"><span id="mm1"></span></div>
-      <div class="inputbar" style="margin-top:10px">OUT 2 <span id="mv2">-∞</span></div>
-      <div class="meter"><span id="mm2"></span></div>
-      <div class="inputbar" style="margin-top:10px">OUT 3 <span id="mv3">-∞</span></div>
-      <div class="meter"><span id="mm3"></span></div>
-      <div class="inputbar" style="margin-top:10px">OUT 4 <span id="mv4">-∞</span></div>
-      <div class="meter"><span id="mm4"></span></div>
-    </div>
-  </div>
-</section>
+        function toggleMute(id) {
+            const btn = document.getElementById('mute-' + id);
+            btn.classList.toggle('muted');
+            const isMuted = btn.classList.contains('muted') ? 1 : 0;
+            
+            fetch(`http://${targetIP}/mute?ch=${id}&state=${isMuted}`, { mode: 'no-cors' }).catch(()=>{});
+        }
 
-<section class="page" id="outputs">
-  <h2>OUTPUT CHANNELS</h2>
-  <p class="small">Empat bus output independen. Atur level dan mute masing-masing.</p>
-  <div class="outgrid" id="outControls"></div>
-</section>
-
-<section class="page" id="routing">
-  <h2>INPUT / OUTPUT ROUTING</h2>
-  <p class="small">Centang untuk mengirim input ke bus output. Pengaturan berlaku pada jalur audio web.</p>
-  <table class="matrix">
-    <thead><tr><th>INPUT</th><th>OUT 1<br>Main L</th><th>OUT 2<br>Main R</th><th>OUT 3<br>Monitor</th><th>OUT 4<br>AUX</th></tr></thead>
-    <tbody id="matrix"></tbody>
-  </table>
-  <div class="notice">Default: CH1 dan CH2 menuju Main L/R. Output 3 dan 4 dapat diaktifkan sesuai kebutuhan.</div>
-</section>
-
-<section class="page" id="eq">
-  <h2>INPUT EQ</h2>
-  <p class="small">EQ 3-band sederhana untuk setiap input.</p>
-  <div class="control">
-    <label>Pilih Channel</label>
-    <select id="eqChannel"><option value="0">INPUT 1</option><option value="1">INPUT 2</option></select>
-  </div>
-  <div class="controlgrid" style="margin-top:10px">
-    <div class="control"><label>LOW <span id="lowVal">0 dB</span></label><input id="low" type="range" min="-12" max="12" value="0"></div>
-    <div class="control"><label>MID <span id="midVal">0 dB</span></label><input id="mid" type="range" min="-12" max="12" value="0"></div>
-    <div class="control"><label>HIGH <span id="highVal">0 dB</span></label><input id="high" type="range" min="-12" max="12" value="0"></div>
-  </div>
-</section>
-
-<section class="page" id="fx">
-  <h2>FX / MONITOR</h2>
-  <p class="small">Level monitor dan efek sederhana untuk input.</p>
-  <div class="controlgrid">
-    <div class="control"><label>FX TYPE</label><select id="fxType"><option>Reverb (simulasi)</option><option>Delay (simulasi)</option><option>Echo (simulasi)</option><option>OFF</option></select></div>
-    <div class="control"><label>FX SEND <span id="fxVal">20%</span></label><input id="fxSend" type="range" min="0" max="100" value="20"></div>
-  </div>
-  <div class="notice">Pemilihan jenis FX belum mengaktifkan algoritma reverb atau echo. Pemrosesan efek dapat ditambahkan setelah jalur audio dasar diuji.</div>
-</section>
-</main>
-<footer>ALMS Digital · 2 IN / 4 OUT</footer>
-
-<script>
-const $ = id => document.getElementById(id);
-
-const inputs = [
- {name:"INPUT 1 · USB / LINE",level:75,gain:0,pan:0,mute:false},
- {name:"INPUT 2 · MP3 / USB",level:75,gain:0,pan:0,mute:false}
-];
-
-const outputs = [
- {name:"OUTPUT 1 · MAIN LEFT",level:80,mute:false},
- {name:"OUTPUT 2 · MAIN RIGHT",level:80,mute:false},
- {name:"OUTPUT 3 · MONITOR / FX",level:60,mute:false},
- {name:"OUTPUT 4 · AUX / MONITOR 2",level:60,mute:false}
-];
-
-let audioCtx=null, micStream=null, micSource=null, mp3Source=null;
-let mp3Url=null, powered=true, masterMuted=false;
-let inputNodes=[], eqNodes=[], routeNodes=[], outNodes=[], analyserNodes=[];
-let meterTimer=null;
-let routing=[[true,true,false,false],[true,true,false,false]];
-
-function knobHTML(i,key,label,min,max,value){
- return `<div class="knobbox">
-  <div class="knob" tabindex="0" role="slider" aria-label="${label}"
-   data-input="${i}" data-key="${key}" data-min="${min}" data-max="${max}"
-   data-value="${value}" style="--angle:${-130+(value-min)/(max-min)*260}deg"></div>
-  <div>${label}</div><div class="val" id="kv${i}${key}">${value}</div>
- </div>`;
-}
-
-function renderInputs(){
- $("inputs").innerHTML=inputs.map((c,i)=>`
- <article class="strip">
-  <div class="striphead"><strong>${c.name}</strong><span>CH 0${i+1}</span></div>
-  <div class="stripbody">
-   <div class="inputbar"><span>INPUT METER</span><span id="iv${i}">-∞ dB</span></div>
-   <div class="meter"><span id="im${i}"></span></div>
-   <div class="knobs">
-    ${knobHTML(i,"gain","GAIN",-12,12,c.gain)}
-    ${knobHTML(i,"pan","PAN",-100,100,c.pan)}
-   </div>
-   <div class="faderrow">
-    <div class="scale"><span>+10</span><span>0</span><span>-10</span><span>-20</span><span>-∞</span></div>
-    <input class="fader" type="range" min="0" max="100" value="${c.level}" data-ch="${i}" aria-label="${c.name} level">
-    <div class="scale"><span>+10</span><span>0</span><span>-10</span><span>-20</span><span>-∞</span></div>
-   </div>
-   <div class="db" id="db${i}">${c.level}%</div>
-   <div class="switchrow"><button data-mute="${i}" class="${c.mute?'active':''}">MUTE</button></div>
-  </div>
-  <div class="stripfoot"><span>ROUTING</span><span id="ir${i}">MAIN L/R</span></div>
- </article>`).join("");
-
- document.querySelectorAll(".fader").forEach(el=>el.addEventListener("input",()=>{
-  const i=+el.dataset.ch; inputs[i].level=+el.value;
-  $("db"+i).textContent=el.value+"%"; updateAudio();
- }));
- document.querySelectorAll("[data-mute]").forEach(el=>el.addEventListener("click",()=>{
-  const i=+el.dataset.mute; inputs[i].mute=!inputs[i].mute;
-  el.classList.toggle("active",inputs[i].mute); updateAudio();
- }));
- document.querySelectorAll(".knob").forEach(attachKnob);
-}
-
-function attachKnob(el){
- let dragging=false,startY=0,startValue=0;
- const min=+el.dataset.min,max=+el.dataset.max;
- function setValue(v){
-  v=Math.max(min,Math.min(max,Math.round(v)));
-  el.dataset.value=v;
-  el.style.setProperty("--angle",(-130+(v-min)/(max-min)*260)+"deg");
-  $("kv"+el.dataset.input+el.dataset.key).textContent=v;
-  inputs[+el.dataset.input][el.dataset.key]=v;
-  updateAudio();
- }
- el.addEventListener("pointerdown",e=>{
-  dragging=true;startY=e.clientY;startValue=+el.dataset.value;
-  el.setPointerCapture(e.pointerId);e.preventDefault();
- });
- el.addEventListener("pointermove",e=>{
-  if(dragging)setValue(startValue+(startY-e.clientY)*0.4);
- });
- el.addEventListener("pointerup",()=>dragging=false);
- el.addEventListener("pointercancel",()=>dragging=false);
- el.addEventListener("keydown",e=>{
-  if(e.key==="ArrowUp"||e.key==="ArrowRight"){setValue(+el.dataset.value+1);e.preventDefault()}
-  if(e.key==="ArrowDown"||e.key==="ArrowLeft"){setValue(+el.dataset.value-1);e.preventDefault()}
- });
-}
-
-function renderOutputs(){
- $("outControls").innerHTML=outputs.map((o,i)=>`
- <div class="output">
-  <h3>${o.name}</h3>
-  <div class="inputbar"><span>OUTPUT METER</span><span id="ov${i}">-∞ dB</span></div>
-  <div class="meter"><span id="om${i}"></span></div>
-  <label>OUTPUT LEVEL <strong id="ol${i}">${o.level}%</strong></label>
-  <input type="range" min="0" max="100" value="${o.level}" data-out="${i}">
-  <p><button data-outmute="${i}">MUTE OUTPUT</button></p>
- </div>`).join("");
-
- document.querySelectorAll("[data-out]").forEach(el=>el.addEventListener("input",()=>{
-  const i=+el.dataset.out;outputs[i].level=+el.value;
-  $("ol"+i).textContent=el.value+"%";updateAudio();
- }));
- document.querySelectorAll("[data-outmute]").forEach(el=>el.addEventListener("click",()=>{
-  const i=+el.dataset.outmute;outputs[i].mute=!outputs[i].mute;
-  el.classList.toggle("active",outputs[i].mute);updateAudio();
- }));
-}
-
-function renderMatrix(){
- $("matrix").innerHTML=inputs.map((c,i)=>`<tr><td>${c.name}</td>${
-  outputs.map((o,j)=>`<td><input type="checkbox" data-route="${i}-${j}" ${routing[i][j]?"checked":""} aria-label="${c.name} to ${o.name}"></td>`).join("")
- }</tr>`).join("");
- document.querySelectorAll("[data-route]").forEach(el=>el.addEventListener("change",()=>{
-  const [i,j]=el.dataset.route.split("-").map(Number);
-  routing[i][j]=el.checked;updateAudio();
- }));
-}
-
-function createAudioGraph(){
- if(audioCtx)return;
- audioCtx=new (window.AudioContext||window.webkitAudioContext)({latencyHint:"interactive"});
- const merger=audioCtx.createChannelMerger(4);
- merger.channelInterpretation="discrete";
- outNodes=[];analyserNodes=[];routeNodes=[];inputNodes=[];eqNodes=[];
-
- for(let j=0;j<4;j++){
-  const bus=audioCtx.createGain();
-  bus.gain.value=outputs[j].level/100;
-  bus.channelCount=1;bus.channelCountMode="explicit";
-  const analyser=audioCtx.createAnalyser();analyser.fftSize=256;
-  bus.connect(analyser);
-  // Setiap bus masuk ke satu channel output tersendiri.
-  bus.connect(merger,0,j);
-  outNodes.push(bus);analyserNodes.push(analyser);
- }
- const master=audioCtx.createGain();master.gain.value=.8;
- merger.connect(master);
- master.connect(audioCtx.destination);
- window.almsMaster=master;
-
- for(let i=0;i<2;i++){
-  const inputGain=audioCtx.createGain();
-  inputGain.channelCount=1;
-  inputGain.channelCountMode="explicit";
-  const low=audioCtx.createBiquadFilter();low.type="lowshelf";low.frequency.value=120;
-  const mid=audioCtx.createBiquadFilter();mid.type="peaking";mid.frequency.value=1000;mid.Q.value=0.8;
-  const high=audioCtx.createBiquadFilter();high.type="highshelf";high.frequency.value=8000;
-  inputGain.connect(low);low.connect(mid);mid.connect(high);
-  inputNodes.push(inputGain);eqNodes.push({low,mid,high});
-  const routes=[];
-  for(let j=0;j<4;j++){
-   const g=audioCtx.createGain();g.gain.value=0;
-   high.connect(g);g.connect(outNodes[j]);routes.push(g);
-  }
-  routeNodes.push(routes);
- }
- updateAudio();
- startMeters();
-}
-
-async function connectMic(){
- try{
-  if(!navigator.mediaDevices?.getUserMedia)throw Error("Browser tidak mendukung akses audio.");
-  if(micStream)micStream.getTracks().forEach(t=>t.stop());
-  micStream=await navigator.mediaDevices.getUserMedia({
-   audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}
-  });
-  createAudioGraph();
-  if(micSource)micSource.disconnect();
-  micSource=audioCtx.createMediaStreamSource(micStream);
-  micSource.connect(inputNodes[0]);
-  $("input1status").textContent="Input 1 tersambung ke perangkat input browser";
-  await audioCtx.resume();
- }catch(e){$("input1status").textContent="Gagal: "+e.message}
-}
-
-async function connectMP3(){
- const file=$("mp3file").files[0];
- if(!file){$("input2status").textContent="Pilih file MP3 terlebih dahulu";return}
- try{
-  createAudioGraph();
-  if(mp3Source){try{mp3Source.stop()}catch(e){}mp3Source.disconnect()}
-  const audio=new Audio();
-  if(mp3Url)URL.revokeObjectURL(mp3Url);
-  mp3Url=URL.createObjectURL(file);audio.src=mp3Url;audio.loop=true;
-  mp3Source=audioCtx.createMediaElementSource(audio);
-  mp3Source.connect(inputNodes[1]);
-  await audioCtx.resume();await audio.play();
-  $("input2status").textContent="Memutar: "+file.name;
- }catch(e){$("input2status").textContent="Gagal: "+e.message}
-}
-
-function updateAudio(){
- if(!audioCtx)return;
- const master=window.almsMaster;
- master.gain.setTargetAtTime(powered&&!masterMuted?+$("master").value/100:0,audioCtx.currentTime,.025);
-
- inputs.forEach((c,i)=>{
-  inputNodes[i].gain.setTargetAtTime(powered&&!c.mute?c.level/100:0,audioCtx.currentTime,.025);
-  eqNodes[i].low.gain.setTargetAtTime(+$("low").value,audioCtx.currentTime,.025);
-  eqNodes[i].mid.gain.setTargetAtTime(+$("mid").value,audioCtx.currentTime,.025);
-  eqNodes[i].high.gain.setTargetAtTime(+$("high").value,audioCtx.currentTime,.025);
-  for(let j=0;j<4;j++){
-   let gain=routing[i][j]&&!c.mute&&powered&&!outputs[j].mute?outputs[j].level/100:0;
-   // Pan sederhana: mengatur distribusi ke Main L/R.
-   if(j===0&&c.pan>0)gain*=1-c.pan/100;
-   if(j===1&&c.pan<0)gain*=1+c.pan/100;
-   routeNodes[i][j].gain.setTargetAtTime(gain,audioCtx.currentTime,.025);
-  }
-  $("ir"+i).textContent=routing[i].map((v,j)=>v?"OUT"+(j+1):"").filter(Boolean).join(" / ")||"OFF";
- });
- $("masterVal").textContent=$("master").value+"%";
-}
-
-function startMeters(){
- if(meterTimer)clearInterval(meterTimer);
- meterTimer=setInterval(()=>{
-  if(!audioCtx||audioCtx.state!=="running")return;
-  analyserNodes.forEach((a,i)=>{
-   const data=new Uint8Array(a.frequencyBinCount);a.getByteTimeDomainData(data);
-   let sum=0;for(const x of data){const n=(x-128)/128;sum+=n*n}
-   const rms=Math.sqrt(sum/data.length);const pct=Math.min(100,rms*300);
-   $("om"+i).style.width=pct+"%";
-   $("ov"+i).textContent=pct>0?(20*Math.log10(pct/100)).toFixed(1)+" dB":"-∞ dB";
-   $("mm"+(i+1)).style.width=pct+"%";
-   $("mv"+(i+1)).textContent=pct>0?(20*Math.log10(pct/100)).toFixed(1)+" dB":"-∞";
-  });
-  inputs.forEach((c,i)=>{
-   const routesForInput=routeNodes[i];
-   let pct=0;
-   routesForInput.forEach((g,j)=>{if(routing[i][j])pct=Math.max(pct,Math.abs(g.gain.value)*45)});
-   $("im"+i).style.width=Math.min(100,pct)+"%";
-   $("iv"+i).textContent=pct>0?(20*Math.log10(pct/100)).toFixed(1)+" dB":"-∞ dB";
-  });
- },100);
-}
-
-$("startAudio").addEventListener("click",async()=>{
- try{createAudioGraph();await audioCtx.resume();$("status").textContent="AUDIO READY"}
- catch(e){$("status").textContent="AUDIO ERROR: "+e.message}
-});
-$("connect1").addEventListener("click",connectMic);
-$("connect2").addEventListener("click",connectMP3);
-$("master").addEventListener("input",updateAudio);
-$("masterMute").addEventListener("click",()=>{
- masterMuted=!masterMuted;$("masterMute").classList.toggle("active",masterMuted);updateAudio();
-});
-$("power").addEventListener("click",()=>{
- powered=!powered;$("status").textContent=powered?"READY":"POWER OFF";
- $("lamp").style.background=powered?"var(--green)":"var(--red)";
- $("power").textContent=powered?"POWER OFF":"POWER ON";updateAudio();
-});
-$("reset").addEventListener("click",()=>{
- inputs.forEach((c,i)=>{c.level=75;c.gain=0;c.pan=0;c.mute=false});
- outputs.forEach((o,i)=>{o.level=i<2?80:60;o.mute=false});
- routing=[[true,true,false,false],[true,true,false,false]];
- $("master").value=80;renderInputs();renderOutputs();renderMatrix();updateAudio();
-});
-document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>{
- document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x===b));
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===b.dataset.page));
-}));
-["low","mid","high"].forEach(id=>$(id).addEventListener("input",()=>{
- $(id+"Val").textContent=$(id).value+" dB";updateAudio();
-}));
-$("eqChannel").addEventListener("change",()=>{
- // EQ global controls saat ini diterapkan ke kedua channel.
-});
-$("fxSend").addEventListener("input",()=>{$("fxVal").textContent=$("fxSend").value+"%"});
-
-renderInputs();renderOutputs();renderMatrix();
-</script>
+        function switchTab(tabName, btnElement) {
+            document.querySelectorAll('.feature-panel').forEach(panel => {
+                panel.classList.remove('active-panel');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('panel-' + tabName).classList.add('active-panel');
+            if(btnElement) btnElement.classList.add('active');
+        }
+    </script>
 </body>
 </html>

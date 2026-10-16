@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DLMD Digital - Audio Processor 2In/4Out</title>
+    <title>DLMD Digital - Advanced Audio Processor 2In/4Out</title>
     <style>
         :root {
             --chassis-silver: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 50%, #8c8c8c 100%);
             --chassis-border: #595959;
             --text-dark: #111;
             --text-light: #f1f1f1;
+            --accent-orange: #ff9900;
         }
 
         * {
@@ -98,85 +99,47 @@
             box-shadow: 0 0 4px #00cc44;
         }
 
-        /* === FADER ABU-ABU VERSI BARU - FIX === */
-        input[type="range"].vertical-fader {
-            -webkit-appearance: none;
-            appearance: none;
-            writing-mode: bt-lr;
-            -webkit-appearance: slider-vertical;
-            width: 10px;
-            height: 160px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 5px;
-            outline: none;
+        /* Menu Navigasi Fitur Ala ALMS/DLMS */
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            background: #111;
+            padding: 6px 10px;
+            border-bottom: 1px solid #333;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: #262626;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 5px 12px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            border-radius: 3px;
             cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        input[type="range"].vertical-fader::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 44px !important;
-            height: 32px !important;
-            background: linear-gradient(to bottom, #C8C8C8 0%, #A0A0A0 15%, #9A9A9A 50%, #8A8A8A 100%) !important;
-            border: 1px solid #666;
-            border-top: 1px solid #E0E0E0;
-            border-radius: 4px;
-            box-shadow: 
-                0 4px 8px rgba(0,0,0,0.8),
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                inset 0 -1px 0 rgba(0,0,0,0.4),
-                inset 0 8px 0 #B8B8B8,
-                inset 0 10px 0 #666,
-                inset 0 14px 0 #B0B0B0,
-                inset 0 16px 0 #666,
-                inset 0 20px 0 #B8B8B8 !important;
-            cursor: grab;
-            position: relative;
+        .tab-btn.active {
+            background: var(--accent-orange);
+            color: #111;
+            border-color: #ffaa11;
         }
 
-        input[type="range"].vertical-fader::-webkit-slider-thumb:active {
-            cursor: grabbing;
-            background: linear-gradient(to bottom, #B8B8B8 0%, #909090 100%) !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
-        }
-
-        input[type="range"].vertical-fader::-moz-range-thumb {
-            width: 44px;
-            height: 32px;
-            background: #A0A0A0;
-            background: linear-gradient(to bottom, #C8C8C8 0%, #A0A0A0 50%, #8A8A8A 100%);
-            border: 1px solid #666;
-            border-top: 1px solid #E0E0E0;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.8);
-            cursor: pointer;
-        }
-
-        /* FIX SCROLL LANDSCAPE - biar responsif full */
+        /* Panel Konten Utama */
         .fader-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            padding-top: 20px;
-            gap: 12px;
+            padding-top: 10px;
+            gap: 8px;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
             width: 100%;
-        }
-
-        .mixer-bank {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-start;
-            flex-wrap: nowrap;
-            width: 100%;
-            overflow-x: auto;
-            overflow-y: visible;
-            padding: 10px;
-            -webkit-overflow-scrolling: touch;
         }
 
         .section-group-title {
@@ -187,6 +150,19 @@
             letter-spacing: 1.5px;
             align-self: flex-start;
             margin-left: 10px;
+        }
+
+        /* Bank Channel Fader */
+        .mixer-bank {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 5px 10px;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Strip Channel Vertikal Individual */
@@ -223,14 +199,14 @@
 
         .db-value {
             font-size: 0.6rem;
-            color: #ff9900;
+            color: var(--accent-orange);
             font-family: monospace;
         }
 
         /* Area Fader Vertikal & Meter */
         .fader-meter-area {
             display: flex;
-            height: 170px;
+            height: 155px;
             align-items: center;
             justify-content: center;
             gap: 6px;
@@ -238,17 +214,67 @@
         }
 
         .vertical-slider-container {
-            height: 160px;
+            height: 150px;
             width: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        /* FADER ABU-ABU VERSI BARU - CLEAN TRACK FIX */
+        input[type="range"].vertical-fader {
+            -webkit-appearance: none;
+            appearance: none;
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 14px;
+            height: 150px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            accent-color: #555;
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-runnable-track {
+            background: transparent;
+            border: none;
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 44px !important;
+            height: 32px !important;
+            background: linear-gradient(to bottom, #C8C8C8 0%, #A0A0A0 15%, #9A9A9A 50%, #8A8A8A 100%) !important;
+            border: 1px solid #666;
+            border-top: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,255,255,0.8),
+                inset 0 -1px 0 rgba(0,0,0,0.4),
+                inset 0 8px 0 #B8B8B8,
+                inset 0 10px 0 #666,
+                inset 0 14px 0 #B0B0B0,
+                inset 0 16px 0 #666,
+                inset 0 20px 0 #B8B8B8 !important;
+            cursor: grab;
+            position: relative;
+            margin-left: -15px;
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            background: linear-gradient(to bottom, #B8B8B8 0%, #909090 100%) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
+        }
+
         /* VU Meter */
         .vu-meter {
             width: 8px;
-            height: 160px;
+            height: 150px;
             background: #0d0d0d;
             border: 1px solid #282828;
             border-radius: 3px;
@@ -274,7 +300,7 @@
             background-size: 100% 4px;
         }
 
-        /* Tombol Mute */
+        /* Tombol Mute / Aksi */
         .strip-btn {
             width: 100%;
             background-color: #282828;
@@ -290,6 +316,66 @@
         .strip-btn.muted {
             background-color: #b51a1a;
             border-color: #e03a3a;
+        }
+
+        /* Panel Tambahan Fitur (Crossover / EQ / Delay) */
+        .feature-panel {
+            display: none;
+            width: 96%;
+            background: #1f1f1f;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 5px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .feature-panel.active-panel {
+            display: block;
+        }
+
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .param-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .param-card {
+            background: #141414;
+            border: 1px solid #282828;
+            padding: 8px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .param-card label {
+            font-size: 0.65rem;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .param-card span {
+            color: var(--accent-orange);
+            font-family: monospace;
+        }
+
+        .param-card select, .param-card input[type="range"] {
+            width: 100%;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 4px;
+            font-size: 0.7rem;
+            border-radius: 3px;
         }
 
         /* Footer Bawah */
@@ -321,103 +407,217 @@
             </div>
         </div>
 
-        <!-- Workspace Fader -->
+        <!-- Menu Navigasi Fitur Ala ALMS/DLMS -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('mixer', this)">Mixer Matrix</button>
+            <button class="tab-btn" onclick="switchTab('xover', this)">Crossover / Filter</button>
+            <button class="tab-btn" onclick="switchTab('eq', this)">Parametric EQ</button>
+            <button class="tab-btn" onclick="switchTab('delay', this)">Delay & Limiter</button>
+        </div>
+
+        <!-- Workspace Konten -->
         <div class="fader-workspace">
-            <div class="section-group-title">DSP Mixer Matrix</div>
             
-            <div class="mixer-bank">
-                
-                <!-- Channel In A -->
-                <div class="channel-strip">
-                    <div class="ch-name">In A</div>
-                    <div class="ch-sublabel">Main</div>
-                    <div class="db-value" id="val-ina">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
+            <!-- TAB 1: MIXER MATRIX (FADER UTAMA) -->
+            <div id="panel-mixer" class="feature-panel active-panel" style="background:transparent; border:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px;">
+                <div class="section-group-title">Input & Output Level Matrix</div>
+                <div class="mixer-bank">
+                    
+                    <!-- Channel In A -->
+                    <div class="channel-strip">
+                        <div class="ch-name">In A</div>
+                        <div class="ch-sublabel">Main</div>
+                        <div class="db-value" id="val-ina">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 65%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 65%;"></div></div>
+                        <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
-                </div>
 
-                <!-- Channel In B -->
-                <div class="channel-strip">
-                    <div class="ch-name">In B</div>
-                    <div class="ch-sublabel">Aux</div>
-                    <div class="db-value" id="val-inb">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
+                    <!-- Channel In B -->
+                    <div class="channel-strip">
+                        <div class="ch-name">In B</div>
+                        <div class="ch-sublabel">Aux</div>
+                        <div class="db-value" id="val-inb">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
+                        <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
-                </div>
 
-                <!-- Channel Out 1 (Sub) -->
-                <div class="channel-strip">
-                    <div class="ch-name">Out 1</div>
-                    <div class="ch-sublabel">Sub</div>
-                    <div class="db-value" id="val-out1">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
+                    <!-- Channel Out 1 (Sub) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 1</div>
+                        <div class="ch-sublabel">Sub</div>
+                        <div class="db-value" id="val-out1">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 75%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 75%;"></div></div>
+                        <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
-                </div>
 
-                <!-- Channel Out 2 (Low) -->
-                <div class="channel-strip">
-                    <div class="ch-name">Out 2</div>
-                    <div class="ch-sublabel">Low</div>
-                    <div class="db-value" id="val-out2">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
+                    <!-- Channel Out 2 (Low) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 2</div>
+                        <div class="ch-sublabel">Low</div>
+                        <div class="db-value" id="val-out2">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
+                        <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
-                </div>
 
-                <!-- Channel Out 3 (Mid) -->
-                <div class="channel-strip">
-                    <div class="ch-name">Out 3</div>
-                    <div class="ch-sublabel">Mid</div>
-                    <div class="db-value" id="val-out3">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
+                    <!-- Channel Out 3 (Mid) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 3</div>
+                        <div class="ch-sublabel">Mid</div>
+                        <div class="db-value" id="val-out3">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
+                        <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
-                </div>
 
-                <!-- Channel Out 4 (High) -->
-                <div class="channel-strip">
-                    <div class="ch-name">Out 4</div>
-                    <div class="ch-sublabel">High</div>
-                    <div class="db-value" id="val-out4">0.0 dB</div>
-                    <div class="fader-meter-area">
-                        <div class="vertical-slider-container">
-                            <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
+                    <!-- Channel Out 4 (High) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 4</div>
+                        <div class="ch-sublabel">High</div>
+                        <div class="db-value" id="val-out4">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 45%;"></div></div>
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 45%;"></div></div>
+                        <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
                     </div>
-                    <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
-                </div>
 
+                </div>
             </div>
+
+            <!-- TAB 2: CROSSOVER / FILTER -->
+            <div id="panel-xover" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:8px;">Crossover & Filter Management (HPF / LPF)</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Out 1 HPF Type</label>
+                        <select>
+                            <option>Butterworth 24dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                            <option>Bessel 18dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-hpf1">35 Hz</span></label>
+                        <input type="range" min="20" max="120" value="35" oninput="document.getElementById('xover-hpf1').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 1 LPF Type</label>
+                        <select>
+                            <option>Butterworth 24dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-lpf1">120 Hz</span></label>
+                        <input type="range" min="80" max="300" value="120" oninput="document.getElementById('xover-lpf1').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 3 Mid HPF</label>
+                        <select>
+                            <option>Linkwitz-Riley 24dB</option>
+                            <option>Butterworth 12dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-hpf3">500 Hz</span></label>
+                        <input type="range" min="200" max="2000" value="500" oninput="document.getElementById('xover-hpf3').innerText = this.value + ' Hz'">
+                    </div>
+                    <div class="param-card">
+                        <label>Out 4 High LPF</label>
+                        <select>
+                            <option>Butterworth 18dB</option>
+                            <option>Linkwitz-Riley 24dB</option>
+                        </select>
+                        <label>Freq: <span id="xover-lpf4">18 kHz</span></label>
+                        <input type="range" min="5000" max="20000" value="18000" oninput="document.getElementById('xover-lpf4').innerText = (this.value/1000) + ' kHz'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: PARAMETRIC EQ -->
+            <div id="panel-eq" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:8px;">Output Parametric Equalizer (PEQ)</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Band 1 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>63 Hz</span></label>
+                        <input type="range" min="20" max="200" value="63">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 2 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>250 Hz</span></label>
+                        <input type="range" min="100" max="1000" value="250">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 3 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>2.5 kHz</span></label>
+                        <input type="range" min="1000" max="8000" value="2500">
+                    </div>
+                    <div class="param-card">
+                        <label>Band 4 Gain</label>
+                        <input type="range" min="-12" max="12" step="0.5" value="0">
+                        <label>Freq: <span>12 kHz</span></label>
+                        <input type="range" min="8000" max="20000" value="12000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: DELAY & LIMITER -->
+            <div id="panel-delay" class="feature-panel">
+                <div class="section-group-title" style="margin-bottom:8px;">Alignment Delay & Peak Limiter</div>
+                <div class="param-grid">
+                    <div class="param-card">
+                        <label>Out 1 Delay (ms)</label>
+                        <input type="range" min="0" max="50" step="0.1" value="0" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>0.0 ms</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Out 2 Delay (ms)</label>
+                        <input type="range" min="0" max="50" step="0.1" value="0" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>0.0 ms</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Master Limiter Thresh</label>
+                        <input type="range" min="-20" max="0" step="0.5" value="-3" oninput="this.nextElementSibling.innerText = this.value + ' dB'">
+                        <span>-3.0 dB</span>
+                    </div>
+                    <div class="param-card">
+                        <label>Limiter Release</label>
+                        <input type="range" min="10" max="1000" step="10" value="200" oninput="this.nextElementSibling.innerText = this.value + ' ms'">
+                        <span>200 ms</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Footer -->
         <div class="app-footer">
-            <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.8</span>
+            <span>ESP32 UDP Protocol Active &bull; ALMS Mode</span>
+            <span>UI v2.0-PRO</span>
         </div>
 
     </div>
@@ -434,6 +634,20 @@
         function toggleMute(id) {
             const btn = document.getElementById('mute-' + id);
             btn.classList.toggle('muted');
+        }
+
+        function switchTab(tabName, btnElement) {
+            // Sembunyikan semua panel
+            document.querySelectorAll('.feature-panel').forEach(panel => {
+                panel.classList.remove('active-panel');
+            });
+            // Nonaktifkan semua tombol tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Tampilkan panel yang dipilih dan aktifkan tombolnya
+            document.getElementById('panel-' + tabName).classList.add('active-panel');
+            btnElement.classList.add('active');
         }
     </script>
 </body>

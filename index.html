@@ -15,6 +15,7 @@
         * {
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
@@ -186,8 +187,10 @@
             justify-content: center;
         }
 
-        /* Kustomisasi Slider Vertikal */
+        /* Reset & Paksa Tampilan Slider Vertikal di Mobile */
         input[type="range"].vertical-fader {
+            -webkit-appearance: none;
+            appearance: none;
             writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
             width: 24px;
@@ -201,58 +204,41 @@
             background-size: 100% 12px;
         }
 
-        /* Desain Tombol Fader (Thumb) Persis Seperti Knop Geser Abu-abu Fisik */
+        /* Kustomisasi Paksa Tombol Fader (Thumb) Knop Geser Abu-abu Fisik di Mobile */
         input[type="range"].vertical-fader::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 28px;
-            height: 18px;
-            background: linear-gradient(to bottom, #b5b5b5 0%, #8c8c8c 50%, #616161 100%);
+            appearance: none;
+            width: 30px !important;
+            height: 20px !important;
+            background: linear-gradient(to bottom, #b5b5b5 0%, #8c8c8c 50%, #616161 100%) !important;
             border-top: 1px solid #dcdcdc;
             border-bottom: 1px solid #404040;
             border-radius: 2px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.9);
             cursor: pointer;
             position: relative;
         }
 
-        /* Guratan Lekukan Cekung (Garis-garis tekstur knop) di Atas Thumb */
-        input[type="range"].vertical-fader::-webkit-slider-thumb::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            bottom: 4px;
-            left: 3px;
-            right: 3px;
-            background: repeating-linear-gradient(
-                to bottom,
-                #4e4e4e,
-                #4e4e4e 1px,
-                #828282 1px,
-                #828282 2px
-            );
-            border-radius: 1px;
-        }
-
-        /* Celah Indikator Hitam di Bagian Tengah Knop */
+        /* Celah Indikator Garis Hitam di Tengah Knop */
         input[type="range"].vertical-fader::-webkit-slider-thumb::after {
             content: '';
             position: absolute;
-            top: 0;
-            bottom: 0;
+            top: 2px;
+            bottom: 2px;
             left: 50%;
             width: 3px;
             background: #111111;
             transform: translateX(-1.5px);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            border-radius: 1px;
         }
 
         input[type="range"].vertical-fader::-moz-range-thumb {
-            width: 28px;
-            height: 18px;
+            width: 30px;
+            height: 20px;
             background: linear-gradient(to bottom, #b5b5b5 0%, #8c8c8c 50%, #616161 100%);
             border: 1px solid #404040;
             border-radius: 2px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.9);
             cursor: pointer;
         }
 
@@ -428,7 +414,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.6</span>
+            <span>UI v1.7</span>
         </div>
 
     </div>

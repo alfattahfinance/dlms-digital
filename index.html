@@ -8,15 +8,14 @@
         :root {
             --chassis-silver: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 50%, #8c8c8c 100%);
             --chassis-border: #595959;
-            --panel-black: #121212;
+            --panel-black: #161616;
             --text-dark: #111;
             --text-light: #f1f1f1;
-            --accent-orange: #ff9900;
         }
 
-        /* Fullscreen Reset */
         * {
             box-sizing: border-box;
+            user-select: none;
         }
 
         body, html {
@@ -24,7 +23,7 @@
             padding: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #1a1a1a;
+            background-color: #111;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text-light);
             display: flex;
@@ -39,144 +38,192 @@
             height: 100vh;
             background: var(--chassis-silver);
             border: 4px solid var(--chassis-border);
-            padding: 15px;
+            padding: 10px 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
         }
 
         /* Ornamen Sekrup Sudut */
         .screw {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             background: radial-gradient(circle, #ffffff 20%, #7d7d7d 70%, #333333 100%);
             border-radius: 50%;
             position: absolute;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
             z-index: 10;
         }
-        .screw-tl { top: 10px; left: 10px; }
-        .screw-tr { top: 10px; right: 10px; }
-        .screw-bl { bottom: 10px; left: 10px; }
-        .screw-br { bottom: 10px; right: 10px; }
+        .screw-tl { top: 8px; left: 8px; }
+        .screw-tr { top: 8px; right: 8px; }
+        .screw-bl { bottom: 8px; left: 8px; }
+        .screw-br { bottom: 8px; right: 8px; }
 
         /* Header Chassis */
         .chassis-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 20px;
+            padding: 4px 15px;
             color: var(--text-dark);
             font-weight: bold;
-            font-size: 0.95rem;
-            letter-spacing: 1.5px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
             border-bottom: 2px solid rgba(0,0,0,0.2);
         }
 
-        /* Area Kerja Utama */
+        /* Workspace Utama */
         .main-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            padding: 10px 20px;
-            overflow-y: auto;
+            gap: 10px;
+            padding: 5px 10px;
+            overflow: hidden;
             justify-content: center;
         }
 
-        /* Panel Hitam di Tengah (Sebagai Layar / Rack Display Utama) */
+        /* Panel Hitam di Tengah (Rack Display / Info Status) */
         .inner-faceplate {
             background-color: var(--panel-black);
             border: 2px solid #2a2a2a;
-            border-radius: 6px;
-            padding: 15px;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.9);
+            border-radius: 4px;
+            padding: 8px;
             text-align: center;
-            color: #777;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
+            color: #888;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);
         }
 
-        /* Area Kontrol Fader di Luar Panel (Menyatu di Bodi Silver) */
-        .fader-section-container {
+        /* Container Bank Channel (Berjajar Horizontal ala Mixer) */
+        .mixer-bank {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        /* Strip Channel Vertikal Individual */
+        .channel-strip {
+            background: #1f1f1f;
+            border: 1px solid #383838;
+            border-radius: 4px;
+            width: 72px;
+            padding: 6px 4px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .section-label-silver {
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: var(--text-dark);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .grid-layout-out {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        .grid-layout-out {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        /* Kartu Kontrol Fader (Nuansa Silver) */
-        .fader-card {
-            background: rgba(255, 255, 255, 0.35);
-            border: 1px solid rgba(0,0,0,0.2);
-            border-radius: 6px;
-            padding: 8px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .fader-header {
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: var(--text-dark);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: #222;
-            cursor: pointer;
-        }
-
-        .btn-row {
-            display: flex;
+            align-items: center;
             gap: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
         }
 
-        button {
-            flex: 1;
-            background-color: #222;
+        .ch-name {
+            background: #e0e0e0;
+            color: #111;
+            font-size: 0.65rem;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            padding: 2px 0;
+            border-radius: 2px;
+        }
+
+        .ch-sublabel {
+            font-size: 0.55rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .db-value {
+            font-size: 0.6rem;
+            color: #ff9900;
+            font-family: monospace;
+        }
+
+        /* Area Fader Vertikal & Meter */
+        .fader-meter-area {
+            display: flex;
+            height: 140px;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+            margin: 4px 0;
+        }
+
+        /* Custom Input Range Vertikal */
+        .vertical-slider-container {
+            height: 130px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        input[type="range"].vertical-fader {
+            writing-mode: bt-lr; /* IE/Edge legacy */
+            -webkit-appearance: slider-vertical; /* Webkit / Chrome / Safari / iOS */
+            width: 24px;
+            height: 130px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* Indikator VU Meter Sederhana */
+        .vu-meter {
+            width: 6px;
+            height: 130px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+            padding: 1px;
+        }
+
+        .vu-fill {
+            width: 100%;
+            height: 45%; /* Simulasi level aktif */
+            background: linear-gradient(to top, #00aa44 60%, #ffcc00 85%, #cc2222 100%);
+            border-radius: 1px;
+        }
+
+        /* Tombol Kontrol Strip (Mute) */
+        .strip-btn {
+            width: 100%;
+            background-color: #333;
             color: #fff;
-            border: none;
-            padding: 5px;
-            font-size: 0.7rem;
-            border-radius: 3px;
+            border: 1px solid #444;
+            padding: 4px 0;
+            font-size: 0.6rem;
+            border-radius: 2px;
             cursor: pointer;
             font-weight: bold;
         }
 
-        button.active {
+        .strip-btn.muted {
             background-color: #b51a1a;
+            border-color: #e03a3a;
+        }
+
+        /* Group Separator Label */
+        .section-group-title {
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            margin-bottom: -2px;
+            letter-spacing: 0.5px;
         }
 
         /* Footer Chassis */
@@ -184,20 +231,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 20px;
+            padding: 4px 15px;
             color: var(--text-dark);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             border-top: 2px solid rgba(0,0,0,0.2);
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background-color: #008822;
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 5px #00cc44;
+            box-shadow: 0 0 4px #00cc44;
         }
     </style>
 </head>
@@ -212,8 +259,8 @@
 
         <!-- Header Chassis -->
         <div class="chassis-header">
-            <span>DLMD DIGITAL</span>
-            <span>AUDIO PROCESSOR 2IN / 4OUT</span>
+            <span>DLMD DIGITAL PROCESSOR</span>
+            <span>2-IN / 4-OUT MATRIX</span>
         </div>
 
         <!-- Workspace Utama -->
@@ -221,68 +268,99 @@
             
             <!-- Panel Hitam di Tengah -->
             <div class="inner-faceplate">
-                DSP Core Engine Active &bull; Routing Matrix Ready
+                DSP Core Routing Active &bull; UDP Port: 10024
             </div>
 
-            <!-- FADER INPUT (Di Luar Panel / Di Bawah Bodi Silver) -->
-            <div class="fader-section-container">
-                <span class="section-label-silver">Input Section (2 Channel)</span>
-                <div class="grid-layout">
-                    <!-- In A -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>IN A (MAIN)</span><span id="val-ina">0.0 dB</span></div>
-                        <input type="range" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
-                        <div class="btn-row">
-                            <button id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
+            <!-- BANK KONTROL (INPUT & OUTPUT BERJEJER) -->
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="section-group-title">Input & Output Mixer Channels</div>
+                
+                <div class="mixer-bank">
+                    
+                    <!-- Channel In A -->
+                    <div class="channel-strip">
+                        <div class="ch-name">In A</div>
+                        <div class="ch-sublabel">Main</div>
+                        <div class="db-value" id="val-ina">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
                         </div>
+                        <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
                     </div>
-                    <!-- In B -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>IN B (AUX)</span><span id="val-inb">0.0 dB</span></div>
-                        <input type="range" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
-                        <div class="btn-row">
-                            <button id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- FADER OUTPUT (Di Luar Panel / Di Bawah Bodi Silver) -->
-            <div class="fader-section-container">
-                <span class="section-label-silver">Output Section - Crossover (4 Channel)</span>
-                <div class="grid-layout-out">
-                    <!-- Out 1 -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>OUT 1 (SUB)</span><span id="val-out1">0.0</span></div>
-                        <input type="range" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
-                        <div class="btn-row">
-                            <button id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
+                    <!-- Channel In B -->
+                    <div class="channel-strip">
+                        <div class="ch-name">In B</div>
+                        <div class="ch-sublabel">Aux</div>
+                        <div class="db-value" id="val-inb">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 50%;"></div></div>
                         </div>
+                        <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
                     </div>
-                    <!-- Out 2 -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>OUT 2 (LOW)</span><span id="val-out2">0.0</span></div>
-                        <input type="range" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
-                        <div class="btn-row">
-                            <button id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
+
+                    <!-- Channel Out 1 (Sub) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 1</div>
+                        <div class="ch-sublabel">Sub</div>
+                        <div class="db-value" id="val-out1">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 70%;"></div></div>
                         </div>
+                        <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
                     </div>
-                    <!-- Out 3 -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>OUT 3 (MID)</span><span id="val-out3">0.0</span></div>
-                        <input type="range" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
-                        <div class="btn-row">
-                            <button id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
+
+                    <!-- Channel Out 2 (Low) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 2</div>
+                        <div class="ch-sublabel">Low</div>
+                        <div class="db-value" id="val-out2">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                         </div>
+                        <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
                     </div>
-                    <!-- Out 4 -->
-                    <div class="fader-card">
-                        <div class="fader-header"><span>OUT 4 (HIGH)</span><span id="val-out4">0.0</span></div>
-                        <input type="range" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
-                        <div class="btn-row">
-                            <button id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
+
+                    <!-- Channel Out 3 (Mid) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 3</div>
+                        <div class="ch-sublabel">Mid</div>
+                        <div class="db-value" id="val-out3">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 50%;"></div></div>
                         </div>
+                        <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
                     </div>
+
+                    <!-- Channel Out 4 (High) -->
+                    <div class="channel-strip">
+                        <div class="ch-name">Out 4</div>
+                        <div class="ch-sublabel">High</div>
+                        <div class="db-value" id="val-out4">0.0 dB</div>
+                        <div class="fader-meter-area">
+                            <div class="vertical-slider-container">
+                                <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
+                            </div>
+                            <div class="vu-meter"><div class="vu-fill" style="height: 40%;"></div></div>
+                        </div>
+                        <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -290,8 +368,8 @@
 
         <!-- Footer Chassis -->
         <div class="chassis-footer">
-            <span><span class="status-dot"></span> SYSTEM: ONLINE (192.168.4.1)</span>
-            <span>HARDWARE UI V1.0</span>
+            <span><span class="status-dot"></span> LINKED: ESP32 (192.168.4.1)</span>
+            <span>STAINLESS RACK UI</span>
         </div>
     </div>
 
@@ -300,13 +378,13 @@
             const slider = document.getElementById('gain-' + id);
             const label = document.getElementById('val-' + id);
             if (label) {
-                label.innerText = slider.value + ' dB';
+                label.innerText = parseFloat(slider.value).toFixed(1) + ' dB';
             }
         }
 
         function toggleMute(id) {
             const btn = document.getElementById('mute-' + id);
-            btn.classList.toggle('active');
+            btn.classList.toggle('muted');
         }
     </script>
 </body>

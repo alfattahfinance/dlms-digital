@@ -97,14 +97,14 @@
             box-shadow: 0 0 4px #00cc44;
         }
 
-        /* Workspace Fader (Diturunkan lebih ke bawah dengan margin-top) */
+        /* Workspace Fader */
         .fader-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            padding-top: 25px; /* Menurunkan posisi fader */
+            padding-top: 25px;
             gap: 12px;
             overflow: hidden;
         }
@@ -186,16 +186,56 @@
             justify-content: center;
         }
 
+        /* Kustomisasi Slider Vertikal ala Fader Hardware Asli */
         input[type="range"].vertical-fader {
             writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
             width: 24px;
             height: 150px;
-            background: transparent;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 2px;
+            outline: none;
             cursor: pointer;
         }
 
-        /* VU Meter Diperindah (Gaya LED Profesional dengan Efek Segmen/Garis) */
+        /* Gaya Tombol Geser (Thumb) Fader Asli (Chrome/Metalik Kotak dengan Indikator Garis Tengah) */
+        input[type="range"].vertical-fader::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 14px;
+            background: linear-gradient(to bottom, #d6d6d6 0%, #8a8a8a 50%, #5e5e5e 100%);
+            border: 1px solid #222;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.7);
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Garis indikator putih di tengah tombol fader fisik */
+        input[type="range"].vertical-fader::-webkit-slider-thumb::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 2px;
+            right: 2px;
+            height: 2px;
+            background: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 0 2px rgba(0,0,0,0.9);
+        }
+
+        input[type="range"].vertical-fader::-moz-range-thumb {
+            width: 26px;
+            height: 14px;
+            background: linear-gradient(to bottom, #d6d6d6 0%, #8a8a8a 50%, #5e5e5e 100%);
+            border: 1px solid #222;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            cursor: pointer;
+        }
+
+        /* VU Meter */
         .vu-meter {
             width: 8px;
             height: 150px;
@@ -221,7 +261,7 @@
             );
             border-radius: 1px;
             background-image: linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px);
-            background-size: 100% 4px; /* Efek garis-garis lampu LED */
+            background-size: 100% 4px;
         }
 
         /* Tombol Mute */
@@ -271,7 +311,7 @@
             </div>
         </div>
 
-        <!-- Workspace Fader (Diturunkan Lebih ke Bawah) -->
+        <!-- Workspace Fader -->
         <div class="fader-workspace">
             <div class="section-group-title">DSP Mixer Matrix</div>
             
@@ -367,7 +407,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.3</span>
+            <span>UI v1.4</span>
         </div>
 
     </div>

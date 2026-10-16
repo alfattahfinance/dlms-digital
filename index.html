@@ -57,6 +57,7 @@
             position: relative;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             border-radius: 4px;
+            flex-shrink: 0;
         }
 
         /* Ornamen Sekrup Sudut pada Bodi Silver */
@@ -107,6 +108,7 @@
             padding: 6px 10px;
             border-bottom: 1px solid #333;
             overflow-x: auto;
+            flex-shrink: 0;
         }
 
         .tab-btn {
@@ -128,17 +130,15 @@
             border-color: #ffaa11;
         }
 
-        /* Panel Konten Utama */
+        /* Panel Konten Utama yang Mengisi Penuh Ruang Tersedia */
         .fader-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            padding-top: 10px;
-            gap: 8px;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
+            padding: 5px;
+            overflow: hidden;
             width: 100%;
         }
 
@@ -150,19 +150,18 @@
             letter-spacing: 1.5px;
             align-self: flex-start;
             margin-left: 10px;
+            margin-bottom: 5px;
         }
 
         /* Bank Channel Fader */
         .mixer-bank {
             display: flex;
             gap: 10px;
-            justify-content: flex-start;
+            justify-content: center;
             flex-wrap: nowrap;
             width: 100%;
             overflow-x: auto;
-            overflow-y: visible;
-            padding: 5px 10px;
-            -webkit-overflow-scrolling: touch;
+            padding: 5px 0;
         }
 
         /* Strip Channel Vertikal Individual */
@@ -318,26 +317,29 @@
             border-color: #e03a3a;
         }
 
-        /* Panel Tambahan Fitur (Crossover / EQ / Delay) */
+        /* Panel Tab Fitur (Crossover, EQ, Delay) Mengisi Penuh Ruang */
         .feature-panel {
             display: none;
-            width: 96%;
+            width: 100%;
+            height: 100%;
             background: #1f1f1f;
             border: 1px solid #333;
             border-radius: 6px;
-            padding: 12px;
-            margin: 5px auto;
+            padding: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            flex-direction: column;
+            justify-content: center;
         }
 
         .feature-panel.active-panel {
-            display: block;
+            display: flex;
         }
 
         .param-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
+            width: 100%;
         }
 
         @media (min-width: 600px) {
@@ -349,15 +351,15 @@
         .param-card {
             background: #141414;
             border: 1px solid #282828;
-            padding: 8px;
+            padding: 12px;
             border-radius: 4px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .param-card label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: #aaa;
             display: flex;
             justify-content: space-between;
@@ -373,8 +375,8 @@
             background: #222;
             color: #fff;
             border: 1px solid #444;
-            padding: 4px;
-            font-size: 0.7rem;
+            padding: 6px;
+            font-size: 0.75rem;
             border-radius: 3px;
         }
 
@@ -387,6 +389,7 @@
             color: #777;
             font-size: 0.65rem;
             border-top: 1px solid #333;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -415,11 +418,11 @@
             <button class="tab-btn" onclick="switchTab('delay', this)">Delay & Limiter</button>
         </div>
 
-        <!-- Workspace Konten -->
+        <!-- Workspace Konten (Tanpa Ruang Kosong) -->
         <div class="fader-workspace">
             
             <!-- TAB 1: MIXER MATRIX (FADER UTAMA) -->
-            <div id="panel-mixer" class="feature-panel active-panel" style="background:transparent; border:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px;">
+            <div id="panel-mixer" class="feature-panel active-panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
                 <div class="section-group-title">Input & Output Level Matrix</div>
                 <div class="mixer-bank">
                     
@@ -512,7 +515,7 @@
 
             <!-- TAB 2: CROSSOVER / FILTER -->
             <div id="panel-xover" class="feature-panel">
-                <div class="section-group-title" style="margin-bottom:8px;">Crossover & Filter Management (HPF / LPF)</div>
+                <div class="section-group-title" style="margin-bottom:12px;">Crossover & Filter Management (HPF / LPF)</div>
                 <div class="param-grid">
                     <div class="param-card">
                         <label>Out 1 HPF Type</label>
@@ -556,7 +559,7 @@
 
             <!-- TAB 3: PARAMETRIC EQ -->
             <div id="panel-eq" class="feature-panel">
-                <div class="section-group-title" style="margin-bottom:8px;">Output Parametric Equalizer (PEQ)</div>
+                <div class="section-group-title" style="margin-bottom:12px;">Output Parametric Equalizer (PEQ)</div>
                 <div class="param-grid">
                     <div class="param-card">
                         <label>Band 1 Gain</label>
@@ -587,7 +590,7 @@
 
             <!-- TAB 4: DELAY & LIMITER -->
             <div id="panel-delay" class="feature-panel">
-                <div class="section-group-title" style="margin-bottom:8px;">Alignment Delay & Peak Limiter</div>
+                <div class="section-group-title" style="margin-bottom:12px;">Alignment Delay & Peak Limiter</div>
                 <div class="param-grid">
                     <div class="param-card">
                         <label>Out 1 Delay (ms)</label>
@@ -617,7 +620,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active &bull; ALMS Mode</span>
-            <span>UI v2.0-PRO</span>
+            <span>UI v2.1-PRO</span>
         </div>
 
     </div>
@@ -637,15 +640,12 @@
         }
 
         function switchTab(tabName, btnElement) {
-            // Sembunyikan semua panel
             document.querySelectorAll('.feature-panel').forEach(panel => {
                 panel.classList.remove('active-panel');
             });
-            // Nonaktifkan semua tombol tab
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            // Tampilkan panel yang dipilih dan aktifkan tombolnya
             document.getElementById('panel-' + tabName).classList.add('active-panel');
             btnElement.classList.add('active');
         }

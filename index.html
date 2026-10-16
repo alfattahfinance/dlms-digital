@@ -3,215 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DLMS 2In - 4Out Studio Controller</title>
+    <title>DLMD Digital - Audio Processor 2In/4Out</title>
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --panel-bg: #2d2d2d;
-            --silver-card: #c0c0c0;
-            --silver-dark: #a0a0a0;
-            --silver-light: #e0e0e0;
-            --text-dark: #222222;
-            --text-light: #ffffff;
-            --accent-blue: #007acc;
-            --border-color: #777777;
+            --chassis-silver: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 50%, #8c8c8c 100%);
+            --chassis-border: #595959;
+            --panel-black: #121212;
+            --text-light: #f1f1f1;
+            --accent-silver: #cccccc;
+            --accent-orange: #ff9900;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background-color: #1a1a1a;
             color: var(--text-light);
             margin: 0;
-            padding: 10px;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
         }
 
-        h2 {
-            margin: 10px 0;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            color: var(--silver-light);
-            text-transform: uppercase;
-        }
-
-        .rack-container {
+        /* Desain Chassis Luar (Silver dengan Efek Logam & Sekrup) */
+        .chassis-rack {
             width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            max-width: 520px;
+            background: var(--chassis-silver);
+            border: 2px solid var(--chassis-border);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.7);
+            position: relative;
         }
 
-        /* Desain Bodi/Kartu Utama Silver */
-        .silver-panel {
-            background: linear-gradient(135deg, var(--silver-light) 0%, var(--silver-card) 50%, var(--silver-dark) 100%);
-            color: var(--text-dark);
-            border-radius: 6px;
-            padding: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.6);
-            border: 1px solid var(--border-color);
+        /* Ornamen Sekrup Sudut */
+        .screw {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #ffffff 20%, #7d7d7d 70%, #333333 100%);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
         }
+        .screw-tl { top: 8px; left: 8px; }
+        .screw-tr { top: 8px; right: 8px; }
+        .screw-bl { bottom: 8px; left: 8px; }
+        .screw-br { bottom: 8px; right: 8px; }
 
-        .panel-title {
-            font-size: 0.85rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--text-dark);
-            padding-bottom: 4px;
-            margin-bottom: 10px;
+        /* Header / Brand pada Chassis */
+        .chassis-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 12px 10px 12px;
+            color: #222;
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            margin-bottom: 12px;
         }
 
-        .controls-grid {
+        /* Panel Hitam di Tengah (Tempat Kontrol Utama) */
+        .inner-faceplate {
+            background-color: var(--panel-black);
+            border: 2px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 14px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-silver);
+            border-bottom: 1px solid #333;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .grid-2 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
-        .control-group {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
 
-        label {
-            font-size: 0.75rem;
+        @media (min-width: 480px) {
+            .grid-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Kartu Modul Channel */
+        .channel-card {
+            background: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .channel-label {
+            font-size: 0.7rem;
             font-weight: bold;
+            color: var(--accent-orange);
             display: flex;
             justify-content: space-between;
         }
 
+        .channel-label span {
+            color: #888;
+            font-weight: normal;
+        }
+
         input[type="range"] {
             width: 100%;
-            accent-color: var(--text-dark);
+            accent-color: var(--accent-orange);
+            cursor: pointer;
         }
 
         .btn-row {
             display: flex;
-            gap: 5px;
-            margin-top: 4px;
+            gap: 4px;
         }
 
         button {
             flex: 1;
-            background-color: var(--text-dark);
-            color: var(--text-light);
-            border: none;
-            padding: 5px;
-            font-size: 0.7rem;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 4px;
+            font-size: 0.65rem;
             border-radius: 3px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button.active {
+            background-color: #a82020;
+            border-color: #d93838;
         }
 
         button:active {
-            background-color: #444;
+            background-color: #555;
         }
 
-        .status-bar {
+        /* Footer Chassis */
+        .chassis-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px 0 12px;
+            color: #222;
             font-size: 0.7rem;
-            text-align: center;
-            color: #888;
+            font-weight: bold;
+            border-top: 1px solid rgba(0,0,0,0.2);
             margin-top: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00cc44;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 5px #00cc44;
         }
     </style>
 </head>
 <body>
 
-    <h2>DLMS 2-In / 4-Out Controller</h2>
+    <div class="chassis-rack">
+        <!-- Sekrup Bodi Sudut -->
+        <div class="screw screw-tl"></div>
+        <div class="screw screw-tr"></div>
+        <div class="screw screw-bl"></div>
+        <div class="screw screw-br"></div>
 
-    <div class="rack-container">
-
-        <!-- KARTU INPUT SECTION (In A & In B) -->
-        <div class="silver-panel">
-            <div class="panel-title">
-                <span>Input Section (2 CH)</span>
-                <span>DSP: Active</span>
-            </div>
-            <div class="controls-grid">
-                <!-- Input A -->
-                <div class="control-group">
-                    <label>In A Gain: <span id="val-inA">0.0 dB</span></label>
-                    <input type="range" id="inA-gain" min="-40" max="12" step="0.5" value="0" oninput="updateVal('inA')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('inA')">MUTE</button>
-                    </div>
-                </div>
-                <!-- Input B -->
-                <div class="control-group">
-                    <label>In B Gain: <span id="val-inB">0.0 dB</span></label>
-                    <input type="range" id="inB-gain" min="-40" max="12" step="0.5" value="0" oninput="updateVal('inB')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('inB')">MUTE</button>
-                    </div>
-                </div>
-            </div>
+        <!-- Header Chassis -->
+        <div class="chassis-header">
+            <span>DLMD DIGITAL</span>
+            <span>AUDIO PROCESSOR 2IN / 4OUT</span>
         </div>
 
-        <!-- KARTU OUTPUT SECTION (Out 1, 2, 3, 4) -->
-        <div class="silver-panel">
-            <div class="panel-title">
-                <span>Output Section (4 CH Crossover)</span>
-            </div>
-            <div class="controls-grid">
-                <!-- Out 1 -->
-                <div class="control-group">
-                    <label>Out 1 (Sub): <span id="val-out1">0.0</span></label>
-                    <input type="range" id="out1-gain" min="-40" max="6" step="0.5" value="0" oninput="updateVal('out1')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('out1')">MUTE</button>
+        <!-- Panel Hitam di Tengah (Isi Kontrol Utama) -->
+        <div class="inner-faceplate">
+            
+            <!-- SECTION INPUT (2 CH) -->
+            <div>
+                <div class="section-title">Input Section</div>
+                <div class="grid-2">
+                    <!-- In A -->
+                    <div class="channel-card">
+                        <div class="channel-label">IN A <span id="val-ina">0.0 dB</span></div>
+                        <input type="range" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
+                        <div class="btn-row">
+                            <button id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
+                        </div>
                     </div>
-                </div>
-                <!-- Out 2 -->
-                <div class="control-group">
-                    <label>Out 2 (Low): <span id="val-out2">0.0</span></label>
-                    <input type="range" id="out2-gain" min="-40" max="6" step="0.5" value="0" oninput="updateVal('out2')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('out2')">MUTE</button>
-                    </div>
-                </div>
-                <!-- Out 3 -->
-                <div class="control-group">
-                    <label>Out 3 (Mid): <span id="val-out3">0.0</span></label>
-                    <input type="range" id="out3-gain" min="-40" max="6" step="0.5" value="0" oninput="updateVal('out3')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('out3')">MUTE</button>
-                    </div>
-                </div>
-                <!-- Out 4 -->
-                <div class="control-group">
-                    <label>Out 4 (High): <span id="val-out4">0.0</span></label>
-                    <input type="range" id="out4-gain" min="-40" max="6" step="0.5" value="0" oninput="updateVal('out4')">
-                    <div class="btn-row">
-                        <button onclick="toggleMute('out4')">MUTE</button>
+                    <!-- In B -->
+                    <div class="channel-card">
+                        <div class="channel-label">IN B <span id="val-inb">0.0 dB</span></div>
+                        <input type="range" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
+                        <div class="btn-row">
+                            <button id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- SECTION OUTPUT (4 CH / XOVER) -->
+            <div>
+                <div class="section-title">Output Section (Crossover)</div>
+                <div class="grid-4">
+                    <!-- Out 1: Sub -->
+                    <div class="channel-card">
+                        <div class="channel-label">OUT 1 (SUB)</div>
+                        <input type="range" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
+                        <div class="btn-row">
+                            <button id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
+                        </div>
+                    </div>
+                    <!-- Out 2: Low -->
+                    <div class="channel-card">
+                        <div class="channel-label">OUT 2 (LOW)</div>
+                        <input type="range" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
+                        <div class="btn-row">
+                            <button id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
+                        </div>
+                    </div>
+                    <!-- Out 3: Mid -->
+                    <div class="channel-card">
+                        <div class="channel-label">OUT 3 (MID)</div>
+                        <input type="range" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
+                        <div class="btn-row">
+                    <button id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
+                        </div>
+                    </div>
+                    <!-- Out 4: High -->
+                    <div class="channel-card">
+                        <div class="channel-label">OUT 4 (HIGH)</div>
+                        <input type="range" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
+                        <div class="btn-row">
+                            <button id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+        <!-- Footer Chassis -->
+        <div class="chassis-footer">
+            <span><span class="status-dot"></span> SYSTEM: ONLINE (192.168.4.1)</span>
+            <span>DSP ACTIVE</span>
+        </div>
     </div>
 
-    <div class="status-bar">System Status: Connected (192.168.4.1)</div>
-
     <script>
-        function updateVal(id) {
-            const slider = document.getElementById(id + '-gain');
+        function updateGain(id) {
+            const slider = document.getElementById('gain-' + id);
             const label = document.getElementById('val-' + id);
-            label.innerText = slider.value + ' dB';
-            // Placeholder fungsi AJAX / fetch ke ESP32 nantinya
+            if (label) {
+                label.innerText = slider.value + ' dB';
+            }
+            // Integrasi fetch/AJAX ke ESP32 nantinya dapat diletakkan di sini
         }
 
         function toggleMute(id) {
-            // Placeholder fungsi Mute
-            console.log('Mute toggled for: ' + id);
+            const btn = document.getElementById('mute-' + id);
+            btn.classList.toggle('active');
+            const isMuted = btn.classList.contains('active');
+            console.log(id + ' muted: ' + isMuted);
         }
     </script>
 </body>

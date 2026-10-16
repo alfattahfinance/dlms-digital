@@ -186,52 +186,53 @@
             justify-content: center;
         }
 
-        /* Kustomisasi Slider Vertikal ala Fader Hardware Asli */
+        /* Kustomisasi Slider Vertikal Ala Mixing Station Digital Console */
         input[type="range"].vertical-fader {
             writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
             width: 24px;
             height: 150px;
-            background: #111;
-            border: 1px solid #333;
+            background: #121212;
+            border: 1px solid #2a2a2a;
             border-radius: 2px;
             outline: none;
             cursor: pointer;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 100% 12px;
         }
 
-        /* Gaya Tombol Geser (Thumb) Fader Asli (Chrome/Metalik Kotak dengan Indikator Garis Tengah) */
+        /* Desain Tombol Fader (Thumb) Persis Seperti Mixing Station */
         input[type="range"].vertical-fader::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 26px;
-            height: 14px;
-            background: linear-gradient(to bottom, #d6d6d6 0%, #8a8a8a 50%, #5e5e5e 100%);
-            border: 1px solid #222;
+            height: 16px;
+            background: #f0f0f0;
+            border: 1px solid #777;
             border-radius: 2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.7);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.8);
             cursor: pointer;
             position: relative;
         }
 
-        /* Garis indikator putih di tengah tombol fader fisik */
-        input[type="range"].vertical-fader::-webkit-slider-thumb::after {
+        /* Garis Hitam Vertikal di Tengah Tombol Fader */
+        input[type="range"].vertical-fader::-webkit-slider-thumb::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 2px;
-            right: 2px;
-            height: 2px;
-            background: #ffffff;
-            transform: translateY(-1px);
-            box-shadow: 0 0 2px rgba(0,0,0,0.9);
+            top: 2px;
+            bottom: 2px;
+            left: 50%;
+            width: 2px;
+            background: #222;
+            transform: translateX(-1px);
         }
 
         input[type="range"].vertical-fader::-moz-range-thumb {
             width: 26px;
-            height: 14px;
-            background: linear-gradient(to bottom, #d6d6d6 0%, #8a8a8a 50%, #5e5e5e 100%);
-            border: 1px solid #222;
+            height: 16px;
+            background: #f0f0f0;
+            border: 1px solid #777;
             border-radius: 2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.8);
             cursor: pointer;
         }
 
@@ -407,7 +408,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.4</span>
+            <span>UI v1.5</span>
         </div>
 
     </div>

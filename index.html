@@ -22,7 +22,7 @@
             padding: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #181818;
+            background-color: #141414;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text-light);
             display: flex;
@@ -35,7 +35,7 @@
         .app-container {
             width: 100vw;
             height: 100vh;
-            background-color: #222222;
+            background-color: #1a1a1a;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -97,29 +97,29 @@
             box-shadow: 0 0 4px #00cc44;
         }
 
-        /* Workspace Fader di Luar Panel Silver (Bodi Abu-abu) */
+        /* Workspace Fader (Diturunkan lebih ke bawah dengan margin-top) */
         .fader-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            padding: 10px;
-            gap: 8px;
+            padding-top: 25px; /* Menurunkan posisi fader */
+            gap: 12px;
             overflow: hidden;
         }
 
         .section-group-title {
             font-size: 0.65rem;
             font-weight: bold;
-            color: #aaa;
+            color: #888;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             align-self: flex-start;
-            margin-left: 5px;
+            margin-left: 10px;
         }
 
-        /* Bank Channel Fader (Berjajar Horizontal & Kaku/Fixed) */
+        /* Bank Channel Fader */
         .mixer-bank {
             display: flex;
             gap: 10px;
@@ -127,21 +127,22 @@
             flex-wrap: nowrap;
             width: 100%;
             overflow-x: auto;
+            padding-bottom: 5px;
         }
 
-        /* Strip Channel Vertikal Individual (Statis/Tidak Bergeser) */
+        /* Strip Channel Vertikal Individual */
         .channel-strip {
-            background: #191919;
+            background: #1f1f1f;
             border: 1px solid #333;
             border-radius: 6px;
             width: 75px;
-            padding: 8px 4px;
+            padding: 8px 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
-            flex-shrink: 0; /* Mencegah elemen ikut berubah ukuran/bergeser */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.7);
+            flex-shrink: 0;
         }
 
         .ch-name {
@@ -170,7 +171,7 @@
         /* Area Fader Vertikal & Meter */
         .fader-meter-area {
             display: flex;
-            height: 150px;
+            height: 160px;
             align-items: center;
             justify-content: center;
             gap: 6px;
@@ -178,7 +179,7 @@
         }
 
         .vertical-slider-container {
-            height: 140px;
+            height: 150px;
             width: 28px;
             display: flex;
             align-items: center;
@@ -189,36 +190,44 @@
             writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
             width: 24px;
-            height: 140px;
+            height: 150px;
             background: transparent;
             cursor: pointer;
         }
 
-        /* VU Meter */
+        /* VU Meter Diperindah (Gaya LED Profesional dengan Efek Segmen/Garis) */
         .vu-meter {
-            width: 6px;
-            height: 140px;
-            background: #111;
+            width: 8px;
+            height: 150px;
+            background: #0d0d0d;
             border: 1px solid #282828;
-            border-radius: 2px;
+            border-radius: 3px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             overflow: hidden;
             padding: 1px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .vu-fill {
             width: 100%;
-            height: 50%;
-            background: linear-gradient(to top, #00aa44 60%, #ffcc00 85%, #cc2222 100%);
+            height: 65%;
+            background: linear-gradient(to top, 
+                #006622 0%, 
+                #00cc44 50%, 
+                #ffcc00 80%, 
+                #ff3300 95%
+            );
             border-radius: 1px;
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px);
+            background-size: 100% 4px; /* Efek garis-garis lampu LED */
         }
 
         /* Tombol Mute */
         .strip-btn {
             width: 100%;
-            background-color: #2a2a2a;
+            background-color: #282828;
             color: #fff;
             border: 1px solid #444;
             padding: 5px 0;
@@ -262,7 +271,7 @@
             </div>
         </div>
 
-        <!-- Workspace Fader di Luar Panel Silver (Bodi Abu-abu Gelap) -->
+        <!-- Workspace Fader (Diturunkan Lebih ke Bawah) -->
         <div class="fader-workspace">
             <div class="section-group-title">DSP Mixer Matrix</div>
             
@@ -277,7 +286,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0" oninput="updateGain('ina')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 65%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
                 </div>
@@ -291,7 +300,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0" oninput="updateGain('inb')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 50%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
                 </div>
@@ -305,7 +314,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out1')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 70%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 75%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
                 </div>
@@ -319,7 +328,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out2')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 60%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
                 </div>
@@ -333,7 +342,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out3')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 50%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
                 </div>
@@ -347,7 +356,7 @@
                         <div class="vertical-slider-container">
                             <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0" oninput="updateGain('out4')">
                         </div>
-                        <div class="vu-meter"><div class="vu-fill" style="height: 40%;"></div></div>
+                        <div class="vu-meter"><div class="vu-fill" style="height: 45%;"></div></div>
                     </div>
                     <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
                 </div>
@@ -358,7 +367,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.2</span>
+            <span>UI v1.3</span>
         </div>
 
     </div>

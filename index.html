@@ -98,19 +98,26 @@
             box-shadow: 0 0 4px #00cc44;
         }
 
-        /* === FADER ABU-ABU VERSI BARU - FIX === */
+        /* === FADER ABU-ABU VERSI BARU - CLEAN TRACK FIX === */
         input[type="range"].vertical-fader {
             -webkit-appearance: none;
             appearance: none;
             writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
-            width: 10px;
+            width: 14px;
             height: 160px;
             background: #0a0a0a;
             border: 1px solid #333;
             border-radius: 5px;
             outline: none;
             cursor: pointer;
+            /* Menghapus garis/warna bawaan sistem yang menembus */
+            accent-color: #555; 
+        }
+
+        input[type="range"].vertical-fader::-webkit-slider-runnable-track {
+            background: transparent;
+            border: none;
         }
 
         input[type="range"].vertical-fader::-webkit-slider-thumb {
@@ -133,6 +140,8 @@
                 inset 0 20px 0 #B8B8B8 !important;
             cursor: grab;
             position: relative;
+            /* Menggeser posisi thumb agar pas di tengah track */
+            margin-left: -15px; 
         }
 
         input[type="range"].vertical-fader::-webkit-slider-thumb:active {
@@ -352,7 +361,7 @@
                         </div>
                         <div class="vu-meter"><div class="vu-fill" style="height: 55%;"></div></div>
                     </div>
-                    <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
+                    <button class="strip-btn" id="mute-inb" onclick="toggleMute('mute-inb')">MUTE</button>
                 </div>
 
                 <!-- Channel Out 1 (Sub) -->
@@ -417,7 +426,7 @@
         <!-- Footer -->
         <div class="app-footer">
             <span>ESP32 UDP Protocol Active</span>
-            <span>UI v1.8</span>
+            <span>UI v1.9</span>
         </div>
 
     </div>

@@ -225,112 +225,90 @@
       justify-content: center;
     }
 
-    
-/* Jalur fader vertikal */
-input[type="range"].vertical-fader {
-  -webkit-appearance: none;
-  appearance: none;
+    /* Fader vertikal dengan penyelarasan sentuh tablet optimal */
+    input[type="range"].vertical-fader {
+      -webkit-appearance: none;
+      appearance: none;
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 44px;
+      height: 100%;
+      min-height: 120px;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      touch-action: pan-x;
+    }
 
-  writing-mode: vertical-lr;
-  direction: rtl;
+    /* Indikator trek fader dilebarkan agar kokoh */
+    input[type="range"].vertical-fader::-webkit-slider-runnable-track {
+      width: 12px;
+      height: 100%;
+      background: linear-gradient(to right,#050505,#292929 50%,#050505);
+      border: 1px solid #414141;
+      border-radius: 3px;
+      box-shadow: inset 0 0 4px #000;
+    }
 
-  width: 38px;
-  height: 100%;
-  min-height: 200px;
+    /* Kepala fader metalik diset presisi tepat di tengah garis trek */
+    input[type="range"].vertical-fader::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 40px;
+      height: 24px;
+      margin-top: -14px; /* Menjaga posisi persis di tengah jalur rel */
+      box-sizing: border-box;
+      border: 1px solid #777;
+      border-top-color: #f5f5f5;
+      border-bottom-color: #444;
+      border-radius: 3px;
+      background:
+        linear-gradient(to right,
+          transparent 45%,#171717 46%,#090909 50%,
+          #171717 54%,transparent 55%),
+        repeating-linear-gradient(to bottom,
+          #ffffff38 0 1px,#37373738 2px 4px),
+        linear-gradient(to bottom,
+          #dedede,#c2c2c2 18%,#a5a5a5 45%,
+          #858585 72%,#bcbcbc);
+      box-shadow:
+        0 3px 5px #000d,
+        inset 0 1px 1px #ffffffd9,
+        inset 0 -2px 2px #0004;
+      cursor: grab;
+    }
 
-  margin: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  background: transparent;
+    input[type="range"].vertical-fader:active::-webkit-slider-thumb {
+      cursor: grabbing;
+    }
 
-  cursor: pointer;
-  touch-action: none;
-}
+    /* Dukungan Firefox */
+    input[type="range"].vertical-fader::-moz-range-track {
+      width: 12px;
+      height: 100%;
+      background: linear-gradient(to right,#050505,#292929 50%,#050505);
+      border: 1px solid #414141;
+      border-radius: 3px;
+    }
 
-/* Garis slider WebKit / Chrome Android */
-input[type="range"].vertical-fader::-webkit-slider-runnable-track {
-  width: 8px;
-  height: 100%;
-  border-radius: 5px;
-  background: linear-gradient(
-    to right,
-    #080808,
-    #292929 45%,
-    #050505
-  );
-  border: 1px solid #444;
-}
-
-/* Kepala fader: pusatnya sejajar dengan garis */
-input[type="range"].vertical-fader::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-
-  width: 38px;
-  height: 25px;
-
-  margin-top: 0;
-  border: 1px solid #777;
-  border-radius: 3px;
-
-  background: repeating-linear-gradient(
-    to bottom,
-    #eeeeee 0px,
-    #bdbdbd 3px,
-    #777777 4px,
-    #d7d7d7 6px
-  );
-
-  box-shadow:
-    0 1px 3px #000,
-    inset 0 1px 1px #fff8;
-
-  position: relative;
-}
-
-/* Garis hitam penanda posisi di tengah kepala */
-input[type="range"].vertical-fader::-webkit-slider-thumb {
-  background:
-    linear-gradient(
-      to right,
-      transparent 46%,
-      #222 46%,
-      #222 54%,
-      transparent 54%
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      #eeeeee 0px,
-      #bdbdbd 3px,
-      #777777 4px,
-      #d7d7d7 6px
-    );
-}
-
-/* Firefox */
-input[type="range"].vertical-fader::-moz-range-track {
-  width: 8px;
-  border-radius: 5px;
-  background: linear-gradient(to right, #080808, #292929, #050505);
-  border: 1px solid #444;
-}
-
-input[type="range"].vertical-fader::-moz-range-thumb {
-  width: 36px;
-  height: 23px;
-  border: 1px solid #777;
-  border-radius: 3px;
-  background: repeating-linear-gradient(
-    to bottom,
-    #eeeeee 0px,
-    #bdbdbd 3px,
-    #777777 4px,
-    #d7d7d7 6px
-  );
-  box-shadow: 0 1px 3px #000;
-}
-
+    input[type="range"].vertical-fader::-moz-range-thumb {
+      width: 40px;
+      height: 24px;
+      box-sizing: border-box;
+      border: 1px solid #777;
+      border-radius: 3px;
+      background:
+        linear-gradient(to right,
+          transparent 45%,#111 46%,#090909 50%,
+          #111 54%,transparent 55%),
+        repeating-linear-gradient(to bottom,
+          #ffffff38 0 1px,#37373738 2px 4px),
+        linear-gradient(to bottom,#dedede,#a5a5a5 45%,#858585 72%,#bcbcbc);
+      box-shadow: 0 3px 5px #000d;
+    }
 
     .vu-meter {
       flex-shrink: 0;

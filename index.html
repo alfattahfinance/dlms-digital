@@ -4,15 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#121212">
-  <title>DLMD Professional DSP - 2In / 4Out</title>
+  <title>DLMD Professional DSP - SQ Style Console</title>
 
   <style>
     :root {
       --silver: linear-gradient(135deg,#d6d6d6,#adadad 50%,#737373);
       --dark: #121212;
-      --card: #1a1a1a;
+      --card: #181818;
       --text: #e0e0e0;
       --amber: #ff9900;
+      --sq-green: #00bf40;
+      --sq-green-glow: #00ff55;
     }
 
     * {
@@ -26,9 +28,9 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #0b0b0b;
+      background: #090909;
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
     }
 
@@ -140,7 +142,7 @@
 
     .section-group-title {
       flex-shrink: 0;
-      margin: 4px 6px 8px;
+      margin: 2px 6px 6px;
       color: #777;
       font-size: .62rem;
       font-weight: 700;
@@ -155,85 +157,204 @@
       align-items: stretch;
       justify-content: center;
       flex-wrap: nowrap;
-      gap: 10px;
+      gap: 6px;
       width: 100%;
-      padding: 4px;
+      padding: 2px;
       overflow-x: auto;
       overflow-y: hidden;
     }
 
+    /* =========================================================
+       GAYA CHANNEL STRIP SQ MIXPAD
+       ========================================================= */
     .channel-strip {
       flex: 0 0 auto;
-      width: clamp(82px,12vw,145px);
+      width: clamp(86px, 13vw, 120px);
       min-height: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 5px;
-      background: var(--card);
-      border: 1px solid #2a2a2a;
+      align-items: stretch;
+      gap: 4px;
+      padding: 6px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 4px;
+      box-shadow: inset 0 0 5px #000, 0 4px 10px rgba(0,0,0,0.6);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .channel-strip.focused {
+      border: 1px solid var(--sq-green);
+      box-shadow: 0 0 8px rgba(0,255,85,0.4), inset 0 0 5px #000;
+    }
+
+    /* Header Blok Hijau SQ */
+    .ch-header-sq {
+      background: #0f401b;
+      border: 1px solid var(--sq-green);
       border-radius: 3px;
-      box-shadow: 0 4px 8px #0008;
+      padding: 4px 2px;
+      text-align: center;
+      cursor: pointer;
     }
 
     .ch-name {
-      flex-shrink: 0;
-      width: 100%;
-      padding: 3px 0;
-      color: #111;
-      background: #b5b5b5;
-      border-radius: 1px;
-      text-align: center;
-      font-size: .68rem;
+      color: #e5ffe8;
+      font-size: .72rem;
       font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px #000;
     }
 
     .ch-sublabel {
-      flex-shrink: 0;
-      color: #777;
-      font-size: .53rem;
-      text-transform: uppercase;
+      color: #88cfa0;
+      font-size: .52rem;
+      margin-top: 1px;
     }
 
     .db-value {
-      flex-shrink: 0;
-      color: var(--amber);
+      color: #00ffaa;
       font-family: "Courier New", monospace;
-      font-size: .63rem;
+      font-size: .62rem;
+      font-weight: bold;
+      text-align: center;
+      background: #0b0b0b;
+      padding: 2px 0;
+      border-radius: 2px;
+      border: 1px solid #222;
+    }
+
+    /* Tombol Kontrol Khas SQ Mixer */
+    .sq-btn {
+      width: 100%;
+      padding: 4px 0;
+      background: linear-gradient(to bottom, #3a3a3a, #242424);
+      color: #bbb;
+      border: 1px solid #484848;
+      border-radius: 3px;
+      font-size: .58rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 2px 3px #000;
+    }
+
+    .sq-btn.on-btn {
+      background: linear-gradient(to bottom, #11732e, #0a471c);
+      color: #fff;
+      border-color: #1ccb50;
+      text-shadow: 0 0 3px #00ff55;
+    }
+
+    .sq-btn.muted {
+      background: linear-gradient(to bottom, #bd1c1c, #730d0d) !important;
+      color: #fff !important;
+      border-color: #ff4d4d !important;
+      text-shadow: 0 0 4px #ff0000;
+    }
+
+    .pan-knob-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #141414;
+      border: 1px solid #2c2c2c;
+      border-radius: 3px;
+      padding: 2px;
+    }
+
+    .pan-label {
+      font-size: .48rem;
+      color: #777;
+      text-transform: uppercase;
       font-weight: bold;
     }
 
+    .pan-indicator {
+      width: 2px;
+      height: 8px;
+      background: #fff;
+      box-shadow: 0 0 4px #fff;
+      margin: 1px 0;
+    }
+
+    /* =========================================================
+       SQ STYLE FADER TRACK & KEPALA FADER
+       ========================================================= */
     .fader-meter-area {
       flex: 1;
-      min-height: 120px;
+      min-height: 130px;
       width: 100%;
+      position: relative;
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: center;
-      gap: 7px;
-      margin: 2px 0;
+      background: #0f0f0f;
+      border: 1px solid #262626;
+      border-radius: 3px;
+      padding: 4px 0;
+    }
+
+    /* Skala Desibel di Samping Track */
+    .fader-scale {
+      position: absolute;
+      left: 3px;
+      top: 6px;
+      bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: .45rem;
+      color: #555;
+      font-family: monospace;
+      pointer-events: none;
     }
 
     .vertical-slider-container {
-      flex: 1;
-      min-width: 30px;
-      width: 44px;
-      min-height: 120px;
+      position: relative;
+      width: 36px;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* Fader vertikal dengan penyelarasan sentuh tablet optimal */
+    /* Meteran LED Vertikal SQ Graduasi Warna di Belakang Fader */
+    .sq-led-meter {
+      position: absolute;
+      width: 6px;
+      height: calc(100% - 10px);
+      background: #000;
+      border-radius: 2px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border: 1px solid #1a1a1a;
+      pointer-events: none;
+    }
+
+    .sq-meter-fill {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, 
+        #00a82d 0%, 
+        #00ff44 65%, 
+        #ffbb00 85%, 
+        #ff1100 100%);
+      box-shadow: 0 0 6px rgba(0,255,85,0.6);
+      transition: height 0.1s ease-out;
+    }
+
+    /* Fader Range input SQ Style */
     input[type="range"].vertical-fader {
       -webkit-appearance: none;
       appearance: none;
       writing-mode: vertical-lr;
       direction: rtl;
-      width: 44px;
+      width: 36px;
       height: 100%;
-      min-height: 120px;
       padding: 0;
       margin: 0;
       background: transparent;
@@ -241,112 +362,67 @@
       outline: none;
       cursor: pointer;
       touch-action: pan-x;
+      z-index: 2;
     }
 
-    /* Indikator trek fader dilebarkan agar kokoh */
+    /* Track/Rel Fader Konsol Digital */
     input[type="range"].vertical-fader::-webkit-slider-runnable-track {
-      width: 12px;
+      width: 4px;
       height: 100%;
-      background: linear-gradient(to right,#050505,#292929 50%,#050505);
-      border: 1px solid #414141;
-      border-radius: 3px;
-      box-shadow: inset 0 0 4px #000;
+      background: #050505;
+      border-left: 1px solid #222;
+      border-right: 1px solid #222;
+      box-shadow: inset 0 0 3px #000;
     }
 
-    /* Kepala fader metalik diset presisi tepat di tengah garis trek */
+    /* Kepala Fader Transparan Berpendar SQ Style (Chrome/Acrylic + Bright Line) */
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 40px;
-      height: 24px;
-      margin-top: -14px; /* Menjaga posisi persis di tengah jalur rel */
+      width: 38px;
+      height: 22px;
+      margin-top: -17px;
       box-sizing: border-box;
-      border: 1px solid #777;
-      border-top-color: #f5f5f5;
-      border-bottom-color: #444;
-      border-radius: 3px;
-      background:
-        linear-gradient(to right,
-          transparent 45%,#171717 46%,#090909 50%,
-          #171717 54%,transparent 55%),
-        repeating-linear-gradient(to bottom,
-          #ffffff38 0 1px,#37373738 2px 4px),
-        linear-gradient(to bottom,
-          #dedede,#c2c2c2 18%,#a5a5a5 45%,
-          #858585 72%,#bcbcbc);
-      box-shadow:
-        0 3px 5px #000d,
-        inset 0 1px 1px #ffffffd9,
-        inset 0 -2px 2px #0004;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      background: 
+        /* Garis Penanda Putih Menyala di Tengah */
+        linear-gradient(to right, transparent 46%, #ffffff 47%, #ffffff 53%, transparent 54%),
+        /* Efek Kilau Transparan Glass/Acrylic */
+        linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
+        linear-gradient(135deg, #444 0%, #111 100%);
+      box-shadow: 
+        0 4px 8px rgba(0,0,0,0.9),
+        0 0 6px rgba(255,255,255,0.2),
+        inset 0 1px 1px rgba(255,255,255,0.6);
       cursor: grab;
     }
 
     input[type="range"].vertical-fader:active::-webkit-slider-thumb {
       cursor: grabbing;
+      border-color: var(--sq-green-glow);
+      box-shadow: 0 0 10px var(--sq-green-glow), inset 0 1px 2px #fff;
     }
 
-    /* Dukungan Firefox */
+    /* Support Firefox */
     input[type="range"].vertical-fader::-moz-range-track {
-      width: 12px;
+      width: 4px;
       height: 100%;
-      background: linear-gradient(to right,#050505,#292929 50%,#050505);
-      border: 1px solid #414141;
-      border-radius: 3px;
+      background: #050505;
     }
 
     input[type="range"].vertical-fader::-moz-range-thumb {
-      width: 40px;
-      height: 24px;
+      width: 38px;
+      height: 22px;
       box-sizing: border-box;
-      border: 1px solid #777;
-      border-radius: 3px;
-      background:
-        linear-gradient(to right,
-          transparent 45%,#111 46%,#090909 50%,
-          #111 54%,transparent 55%),
-        repeating-linear-gradient(to bottom,
-          #ffffff38 0 1px,#37373738 2px 4px),
-        linear-gradient(to bottom,#dedede,#a5a5a5 45%,#858585 72%,#bcbcbc);
-      box-shadow: 0 3px 5px #000d;
-    }
-
-    .vu-meter {
-      flex-shrink: 0;
-      width: 7px;
-      min-height: 120px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1px;
-      background: #080808;
-      border: 1px solid #222;
-      overflow: hidden;
-    }
-
-    .vu-fill {
-      width: 100%;
-      height: 0%;
-      background: linear-gradient(to top,#006622,#00cc44 60%,#ffcc00 85%,#ff3300 95%);
-    }
-
-    .strip-btn {
-      flex-shrink: 0;
-      width: 100%;
-      padding: 6px 0;
-      color: #ccc;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 2px;
-      font-size: .58rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .strip-btn.muted {
-      color: white;
-      background: #991111;
-      border-color: #cc2222;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      background: 
+        linear-gradient(to right, transparent 46%, #ffffff 47%, #ffffff 53%, transparent 54%),
+        linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
+        linear-gradient(135deg, #444 0%, #111 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.9);
+      cursor: grab;
     }
 
     .feature-panel {
@@ -458,17 +534,16 @@
       .nav-tabs { padding: 2px; gap: 3px; }
       .tab-btn { padding: 4px 7px; font-size: .53rem; }
       .section-group-title { margin: 2px 5px 4px; font-size: .53rem; }
-      .mixer-bank { gap: 5px; padding: 2px; }
-      .channel-strip { width: clamp(72px,12vw,105px); padding: 4px; gap: 3px; }
-      .ch-name { font-size: .58rem; padding: 2px 0; }
-      .ch-sublabel { font-size: .48rem; }
-      .db-value { font-size: .53rem; }
-      .fader-meter-area, .vu-meter { min-height: 95px; }
-      .vertical-slider-container, input[type="range"].vertical-fader { min-height: 95px; }
-      input[type="range"].vertical-fader { width: 38px; }
-      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 36px; height: 22px; }
-      input[type="range"].vertical-fader::-moz-range-thumb { width: 36px; height: 22px; }
-      .strip-btn { padding: 4px 0; font-size: .5rem; }
+      .mixer-bank { gap: 4px; padding: 2px; }
+      .channel-strip { width: clamp(75px,11vw,95px); padding: 4px; gap: 2px; }
+      .ch-name { font-size: .62rem; }
+      .ch-sublabel { font-size: .45rem; }
+      .db-value { font-size: .52rem; }
+      .fader-meter-area { min-height: 90px; }
+      .vertical-slider-container, input[type="range"].vertical-fader { min-height: 90px; }
+      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 34px; height: 18px; }
+      input[type="range"].vertical-fader::-moz-range-thumb { width: 34px; height: 18px; }
+      .sq-btn { padding: 2px 0; font-size: .48rem; }
       .app-footer { min-height: 14px; padding: 2px 5px; font-size: .45rem; }
     }
   </style>
@@ -483,7 +558,7 @@
     <div class="screw screw-br"></div>
 
     <div class="chassis-title">
-      DCX2496 PRO DSP &bull; 2-IN / 4-OUT SYSTEM
+      DCX2496 PRO DSP &bull; SQ CONSOLE STYLE
     </div>
 
     <div class="chassis-status">
@@ -502,88 +577,192 @@
 
   <div class="fader-workspace">
 
-    <!-- PANEL MIXER -->
+    <!-- PANEL MIXER (SQ CONSOLE STYLE) -->
     <div id="panel-mixer" class="feature-panel active-panel">
       <div class="section-group-title">Input &amp; Output Matrix Level</div>
 
       <div class="mixer-bank">
-        <div class="channel-strip">
-          <div class="ch-name">In A</div>
-          <div class="ch-sublabel">Main</div>
+
+        <!-- CHANNEL IN A -->
+        <div class="channel-strip" id="strip-ina" onclick="focusChannel('ina')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Ip1</div>
+            <div class="ch-sublabel">In A</div>
+          </div>
+          <button class="sq-btn" id="mute-ina" onclick="toggleMute('ina', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-ina">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-ina">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-ina"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-ina"></div></div>
           </div>
-          <button class="strip-btn" id="mute-ina" onclick="toggleMute('ina')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
 
-        <div class="channel-strip">
-          <div class="ch-name">In B</div>
-          <div class="ch-sublabel">Aux</div>
+        <!-- CHANNEL IN B -->
+        <div class="channel-strip" id="strip-inb" onclick="focusChannel('inb')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Ip2</div>
+            <div class="ch-sublabel">In B</div>
+          </div>
+          <button class="sq-btn" id="mute-inb" onclick="toggleMute('inb', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-inb">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-inb">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-inb"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-inb"></div></div>
           </div>
-          <button class="strip-btn" id="mute-inb" onclick="toggleMute('inb')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
 
-        <div class="channel-strip">
-          <div class="ch-name">Out 1</div>
-          <div class="ch-sublabel">Sub</div>
+        <!-- CHANNEL OUT 1 -->
+        <div class="channel-strip" id="strip-out1" onclick="focusChannel('out1')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Out 1</div>
+            <div class="ch-sublabel">Sub</div>
+          </div>
+          <button class="sq-btn" id="mute-out1" onclick="toggleMute('out1', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-out1">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-out1">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-out1"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-out1"></div></div>
           </div>
-          <button class="strip-btn" id="mute-out1" onclick="toggleMute('out1')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
 
-        <div class="channel-strip">
-          <div class="ch-name">Out 2</div>
-          <div class="ch-sublabel">Low</div>
+        <!-- CHANNEL OUT 2 -->
+        <div class="channel-strip" id="strip-out2" onclick="focusChannel('out2')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Out 2</div>
+            <div class="ch-sublabel">Low</div>
+          </div>
+          <button class="sq-btn" id="mute-out2" onclick="toggleMute('out2', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-out2">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-out2">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-out2"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-out2"></div></div>
           </div>
-          <button class="strip-btn" id="mute-out2" onclick="toggleMute('out2')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
 
-        <div class="channel-strip">
-          <div class="ch-name">Out 3</div>
-          <div class="ch-sublabel">Mid</div>
+        <!-- CHANNEL OUT 3 -->
+        <div class="channel-strip" id="strip-out3" onclick="focusChannel('out3')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Out 3</div>
+            <div class="ch-sublabel">Mid</div>
+          </div>
+          <button class="sq-btn" id="mute-out3" onclick="toggleMute('out3', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-out3">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-out3">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-out3"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-out3"></div></div>
           </div>
-          <button class="strip-btn" id="mute-out3" onclick="toggleMute('out3')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
 
-        <div class="channel-strip">
-          <div class="ch-name">Out 4</div>
-          <div class="ch-sublabel">High</div>
+        <!-- CHANNEL OUT 4 -->
+        <div class="channel-strip" id="strip-out4" onclick="focusChannel('out4')">
+          <div class="ch-header-sq">
+            <div class="ch-name">Out 4</div>
+            <div class="ch-sublabel">High</div>
+          </div>
+          <button class="sq-btn" id="mute-out4" onclick="toggleMute('out4', event)">Mute</button>
+          <button class="sq-btn on-btn" id="on-out4">On</button>
+          <div class="pan-knob-container">
+            <span class="pan-label">Pan</span>
+            <div class="pan-indicator"></div>
+          </div>
           <div class="db-value" id="val-out4">0.0 dB</div>
           <div class="fader-meter-area">
+            <div class="fader-scale">
+              <span>10</span>
+              <span>0</span>
+              <span>-10</span>
+              <span>-30</span>
+            </div>
             <div class="vertical-slider-container">
+              <div class="sq-led-meter">
+                <div class="sq-meter-fill" id="meter-out4"></div>
+              </div>
               <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0">
             </div>
-            <div class="vu-meter"><div class="vu-fill" id="meter-out4"></div></div>
           </div>
-          <button class="strip-btn" id="mute-out4" onclick="toggleMute('out4')">MUTE</button>
+          <button class="sq-btn">PAFL</button>
         </div>
+
       </div>
     </div>
 
@@ -748,14 +927,14 @@
   <!-- Footer -->
   <div class="app-footer">
     <span id="connection-status-text">Kontrol web siap • koneksi perangkat belum diverifikasi</span>
-    <span>UI v2.5-PRO</span>
+    <span>UI v3.0-SQ Style</span>
   </div>
 </div>
 
 
 <script>
 /* =====================================================
-   DLMD DIGITAL DSP — SCRIPT
+   DLMD DIGITAL DSP — SCRIPT (SQ MIXPAD UI)
    ===================================================== */
 
 let targetIP = "192.168.4.1";
@@ -767,7 +946,7 @@ const channelIds = [
   "out1", "out2", "out3", "out4"
 ];
 
-/* ---------- Pengaturan awal ---------- */
+/* ---------- Inisialisasi awal ---------- */
 function initDLMD() {
   try {
     targetIP = localStorage.getItem("dlmd_ip") || "192.168.4.1";
@@ -789,16 +968,45 @@ function initDLMD() {
     const fader = document.getElementById("gain-" + id);
     if (fader) {
       updateFaderLabel(id, fader.value);
+      updateSqMeter(id, fader.value);
+
       fader.addEventListener("input", () => {
         updateParam(id, fader.value);
+        updateSqMeter(id, fader.value);
       });
     }
   });
 
-  /* Pastikan tab Mixer aktif saat halaman dibuka */
+  /* Set channel In A aktif secara default */
+  focusChannel('ina');
+
+  /* Tab Mixer aktif pertama kali */
   switchTab('mixer', document.querySelector('.tab-btn.active'));
 
-  console.log("DLMD Digital DSP siap.");
+  console.log("DLMD Digital DSP SQ Console siap.");
+}
+
+/* ---------- Highlight Saluran Aktif ---------- */
+function focusChannel(id) {
+  channelIds.forEach(ch => {
+    const strip = document.getElementById("strip-" + ch);
+    if (strip) strip.classList.remove("focused");
+  });
+  const currentStrip = document.getElementById("strip-" + id);
+  if (currentStrip) currentStrip.classList.add("focused");
+}
+
+/* ---------- Update Meteran LED SQ ---------- */
+function updateSqMeter(id, val) {
+  const meter = document.getElementById("meter-" + id);
+  if (!meter) return;
+
+  const min = -40;
+  const max = id.startsWith("in") ? 12 : 6;
+  let pct = ((val - min) / (max - min)) * 100;
+  pct = Math.max(0, Math.min(100, pct));
+
+  meter.style.height = pct + "%";
 }
 
 /* ---------- Label fader ---------- */
@@ -812,7 +1020,7 @@ function updateFaderLabel(id, value) {
     : value + " dB";
 }
 
-/* ---------- Mengirim parameter universal ---------- */
+/* ---------- Parameter universal ---------- */
 function updateParam(id, value) {
   if (id === 'hpf1_freq') document.getElementById('xover-hpf1').textContent = value + ' Hz';
   else if (id === 'lpf1_freq') document.getElementById('xover-lpf1').textContent = value + ' Hz';
@@ -849,7 +1057,7 @@ function updateParam(id, value) {
   }, 70);
 }
 
-/* ---------- Mengirim perintah ke perangkat ---------- */
+/* ---------- Perintah Perangkat ---------- */
 function sendDeviceCommand(url) {
   setConnectionStatus("Mengirim perintah…", "#e5a000");
 
@@ -867,8 +1075,10 @@ function sendDeviceCommand(url) {
   });
 }
 
-/* ---------- MUTE ---------- */
-function toggleMute(id) {
+/* ---------- MUTE SQ Style ---------- */
+function toggleMute(id, evt) {
+  if (evt) evt.stopPropagation();
+
   muteStates[id] = !muteStates[id];
 
   const muted = muteStates[id];
@@ -877,7 +1087,7 @@ function toggleMute(id) {
   if (button) {
     button.classList.toggle("muted", muted);
     button.setAttribute("aria-pressed", String(muted));
-    button.textContent = muted ? "MUTED" : "MUTE";
+    button.textContent = muted ? "Muted" : "Mute";
   }
 
   const url =
@@ -922,15 +1132,13 @@ function switchTab(tabName, clickedButton) {
   }
 }
 
-/* ---------- Simpan IP dan nama perangkat ---------- */
+/* ---------- Simpan Pengaturan ---------- */
 function saveConnectionSettings() {
   const ipInput = document.getElementById("dlmd-ip");
   const nameInput = document.getElementById("dlmd-name");
 
   const newIP = ipInput ? ipInput.value.trim() : "";
-  const newName = nameInput
-    ? nameInput.value.trim()
-    : "DLMD DIGITAL DSP";
+  const newName = nameInput ? nameInput.value.trim() : "DLMD DIGITAL DSP";
 
   const ipPattern =
     /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
@@ -957,12 +1165,11 @@ function saveConnectionSettings() {
   alert(
     "Pengaturan tersimpan.\n" +
     "Nama: " + newName + "\n" +
-    "IP: " + targetIP +
-    "\n\nKoneksi ESP32 belum dipastikan."
+    "IP: " + targetIP
   );
 }
 
-/* ---------- Indikator status koneksi ---------- */
+/* ---------- Status Koneksi ---------- */
 function setConnectionStatus(message, color) {
   const statusText = document.getElementById("connection-status-text");
   const statusDot = document.getElementById("connection-dot");
@@ -974,7 +1181,7 @@ function setConnectionStatus(message, color) {
   }
 }
 
-/* ---------- Inisialisasi ---------- */
+/* ---------- Start ---------- */
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initDLMD);
 } else {

@@ -224,7 +224,7 @@
       border: 1px solid #222;
     }
 
-    /* Tombol Kontrol Khas SQ Mixer */
+    /* Tombol Kontrol Khas SQ Mixer - Tepat di Tengah Horizontal */
     .sq-btn {
       width: 100%;
       padding: 4px 0;
@@ -237,6 +237,8 @@
       cursor: pointer;
       text-align: center;
       box-shadow: 0 2px 3px #000;
+      margin: 0 auto;
+      display: block;
     }
 
     .sq-btn.on-btn {
@@ -262,6 +264,8 @@
       border: 1px solid #2c2c2c;
       border-radius: 3px;
       padding: 2px;
+      width: 100%;
+      margin: 0 auto;
     }
 
     .pan-label {
@@ -280,7 +284,7 @@
     }
 
     /* =========================================================
-       SQ STYLE FADER TRACK & KEPALA FADER (PERFECT ALIGNMENT)
+       SQ STYLE FADER TRACK & KEPALA FADER (ROTASED SLIDER SOLUTION)
        ========================================================= */
     .fader-meter-area {
       flex: 1;
@@ -315,7 +319,7 @@
 
     .vertical-slider-container {
       position: relative;
-      width: 42px;
+      width: 38px;
       height: 100%;
       display: flex;
       align-items: center;
@@ -327,11 +331,11 @@
     .sq-led-meter {
       position: absolute;
       left: 50%;
-      top: 5px;
-      bottom: 5px;
+      top: 6px;
+      bottom: 6px;
       transform: translateX(-50%);
       width: 6px;
-      height: calc(100% - 10px);
+      height: calc(100% - 12px);
       background: #000;
       border-radius: 2px;
       overflow: hidden;
@@ -355,51 +359,52 @@
       transition: height 0.1s ease-out;
     }
 
-    /* Fader Range input SQ Style */
+    /* Fader Slider dengan Rotasi -90deg untuk Menghilangkan Bug Off-center WebKit */
     input[type="range"].vertical-fader {
       -webkit-appearance: none;
       appearance: none;
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 42px;
-      height: 100%;
-      padding: 0;
-      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: calc(100% - 8px); /* Mengikuti tinggi area fader */
+      height: 38px;
+      transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
       border: none;
       outline: none;
       cursor: pointer;
       touch-action: pan-x;
       z-index: 2;
-      display: block;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Track/Rel Fader Konsol Digital */
+    /* Rel / Track Slider Horizontal yang Dirotasi */
     input[type="range"].vertical-fader::-webkit-slider-runnable-track {
-      width: 4px;
-      height: 100%;
+      width: 100%;
+      height: 4px;
       background: #050505;
-      border-left: 1px solid #222;
-      border-right: 1px solid #222;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
       box-shadow: inset 0 0 3px #000;
-      margin: 0 auto;
+      border-radius: 2px;
     }
 
-    /* Kepala Fader Transparan Berpendar SQ Style - Garis Putih Presisi di Tengah */
+    /* Kepala Fader (Thumb) yang dirotasi: Garis Putih Presisi 100% di Tengah Track */
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 38px;
-      height: 22px;
-      margin-left: -2px; /* Penyesuaian mikro agar garis putih tepat sejajar dengan garis rel */
+      width: 22px;  /* Menjadi lebar horizontal secara fisik setelah rotasi */
+      height: 38px; /* Menjadi tinggi vertical secara fisik setelah rotasi */
+      margin-top: -17px; /* Presisi terpusat vertikal relatif terhadap track 4px */
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.4);
       border-radius: 4px;
       background: 
-        /* Garis Penanda Putih Tepat di Tengah (Offset 50%) */
-        linear-gradient(to right, transparent 48%, #ffffff 48%, #ffffff 52%, transparent 52%),
-        /* Efek Kilau Transparan Glass/Acrylic */
-        linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
+        /* Garis Putih Menyala di Tengah */
+        linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
+        /* Gradien Kaca/Baja Transparan Khas SQ Mixer */
+        linear-gradient(to right, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
         linear-gradient(135deg, #444 0%, #111 100%);
       box-shadow: 
         0 4px 8px rgba(0,0,0,0.9),
@@ -414,23 +419,24 @@
       box-shadow: 0 0 10px var(--sq-green-glow), inset 0 1px 2px #fff;
     }
 
-    /* Support Firefox */
+    /* Support Firefox Rotated Track & Thumb */
     input[type="range"].vertical-fader::-moz-range-track {
-      width: 4px;
-      height: 100%;
+      width: 100%;
+      height: 4px;
       background: #050505;
-      margin: 0 auto;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
     }
 
     input[type="range"].vertical-fader::-moz-range-thumb {
-      width: 38px;
-      height: 22px;
+      width: 22px;
+      height: 38px;
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.4);
       border-radius: 4px;
       background: 
-        linear-gradient(to right, transparent 48%, #ffffff 48%, #ffffff 52%, transparent 52%),
-        linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
+        linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
+        linear-gradient(to right, rgba(255,255,255,0.3) 0%, rgba(120,120,120,0.1) 40%, rgba(0,0,0,0.5) 100%),
         linear-gradient(135deg, #444 0%, #111 100%);
       box-shadow: 0 4px 8px rgba(0,0,0,0.9);
       cursor: grab;
@@ -532,7 +538,6 @@
       font-size: .53rem;
     }
 
-
     @media (min-width: 600px) {
       .param-grid {
         grid-template-columns: repeat(4,minmax(0,1fr));
@@ -552,9 +557,9 @@
       .ch-sublabel { font-size: .45rem; }
       .db-value { font-size: .52rem; }
       .fader-meter-area { min-height: 90px; }
-      .vertical-slider-container, input[type="range"].vertical-fader { min-height: 90px; }
-      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 34px; height: 18px; }
-      input[type="range"].vertical-fader::-moz-range-thumb { width: 34px; height: 18px; }
+      .vertical-slider-container { min-height: 90px; }
+      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 18px; height: 34px; margin-top: -15px; }
+      input[type="range"].vertical-fader::-moz-range-thumb { width: 18px; height: 34px; }
       .sq-btn { padding: 2px 0; font-size: .48rem; }
       .app-footer { min-height: 14px; padding: 2px 5px; font-size: .45rem; }
     }
@@ -958,6 +963,19 @@ const channelIds = [
   "out1", "out2", "out3", "out4"
 ];
 
+/* ---------- Adjust Fader Dimensions for Rotation ---------- */
+function syncFaderDimensions() {
+  document.querySelectorAll('.vertical-fader').forEach(fader => {
+    const parentContainer = fader.closest('.vertical-slider-container');
+    if (parentContainer) {
+      const h = parentContainer.clientHeight;
+      if (h > 0) {
+        fader.style.width = h + 'px';
+      }
+    }
+  });
+}
+
 /* ---------- Inisialisasi awal ---------- */
 function initDLMD() {
   try {
@@ -994,6 +1012,10 @@ function initDLMD() {
 
   /* Tab Mixer aktif pertama kali */
   switchTab('mixer', document.querySelector('.tab-btn.active'));
+
+  /* Sesuaikan lebar fader terhadap tinggi kontainernya */
+  setTimeout(syncFaderDimensions, 50);
+  window.addEventListener('resize', syncFaderDimensions);
 
   console.log("DLMD Digital DSP SQ Console siap.");
 }
@@ -1141,6 +1163,10 @@ function switchTab(tabName, clickedButton) {
   if (clickedButton) {
     clickedButton.classList.add("active");
     clickedButton.setAttribute("aria-selected", "true");
+  }
+
+  if (tabName === 'mixer') {
+    setTimeout(syncFaderDimensions, 20);
   }
 }
 

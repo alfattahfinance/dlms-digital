@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#121212">
-  <title>DLMD Professional DSP - SQ Style Console</title>
+  <title>DLMD Professional DLMS - DSP Processor Console</title>
 
   <style>
     :root {
@@ -12,7 +12,7 @@
       --dark: #121212;
       --card: #181818;
       --text: #e0e0e0;
-      --amber: #ff9900;
+      --amber: #ffaa00;
       --sq-green: #00bf40;
       --sq-green-glow: #00ff55;
     }
@@ -45,6 +45,7 @@
       background: var(--dark);
       border: 2px solid #222;
       overflow: hidden;
+      position: relative;
     }
 
     .chassis-rack {
@@ -164,9 +165,6 @@
       overflow-y: hidden;
     }
 
-    /* =========================================================
-       GAYA CHANNEL STRIP SQ MIXPAD
-       ========================================================= */
     .channel-strip {
       flex: 0 0 auto;
       width: clamp(92px, 14vw, 126px);
@@ -209,6 +207,46 @@
       color: #88cfa0;
       font-size: .52rem;
       margin-top: 1px;
+    }
+
+    .eq-curve-box {
+      width: 100%;
+      height: 38px;
+      background: #0b0b0b;
+      border: 1px solid #282828;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.9);
+      transition: border-color 0.2s;
+    }
+
+    .eq-curve-box:hover {
+      border-color: var(--amber);
+    }
+
+    .eq-curve-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .mini-grid {
+      stroke: #1f1f1f;
+      stroke-width: 0.8;
+      stroke-dasharray: 2 2;
+    }
+
+    .mini-path {
+      fill: none;
+      stroke: #ffaa00;
+      stroke-width: 1.8;
+      filter: drop-shadow(0 0 2px #ff9900);
     }
 
     .db-value {
@@ -261,9 +299,6 @@
       text-shadow: 0 0 4px #ff0000;
     }
 
-    /* =========================================================
-       SQ STYLE FADER TRACK & LED METER REDUP (BACKGROUND)
-       ========================================================= */
     .fader-meter-area {
       flex: 1;
       min-height: 140px;
@@ -332,11 +367,7 @@
       transform: translateX(-50%);
       width: 40px;
       height: calc(100% - 8px);
-      background: linear-gradient(to top, 
-        rgba(0, 168, 45, 0.15) 0%, 
-        rgba(0, 255, 68, 0.15) 65%, 
-        rgba(255, 187, 0, 0.15) 85%, 
-        rgba(255, 17, 0, 0.15) 100%);
+      background: linear-gradient(to top, rgba(0, 168, 45, 0.15) 0%, rgba(0, 255, 68, 0.15) 65%, rgba(255, 187, 0, 0.15) 85%, rgba(255, 17, 0, 0.15) 100%);
       border-radius: 1px;
       overflow: hidden;
       display: flex;
@@ -350,11 +381,7 @@
     .sq-meter-fill {
       width: 100%;
       height: 0%;
-      background: linear-gradient(to top, 
-        #00a82d 0%, 
-        #00ff44 65%, 
-        #ffbb00 85%, 
-        #ff1100 100%);
+      background: linear-gradient(to top, #00a82d 0%, #00ff44 65%, #ffbb00 85%, #ff1100 100%);
       box-shadow: 0 0 6px rgba(0,255,85,0.7);
       transition: height 0.08s ease-out;
     }
@@ -432,14 +459,8 @@
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 4px;
-      background: 
-        linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%),
-        linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
-      box-shadow: 
-        0 4px 8px rgba(0,0,0,0.7),
-        0 0 4px rgba(255,255,255,0.1),
-        inset 0 1px 1px rgba(255,255,255,0.4);
+      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 4px rgba(255,255,255,0.1), inset 0 1px 1px rgba(255,255,255,0.4);
       cursor: grab;
     }
 
@@ -455,15 +476,251 @@
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 4px;
-      background: 
-        linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%),
-        linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
-      box-shadow: 
-        0 4px 8px rgba(0,0,0,0.7),
-        0 0 4px rgba(255,255,255,0.1),
-        inset 0 1px 1px rgba(255,255,255,0.4);
+      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 4px rgba(255,255,255,0.1), inset 0 1px 1px rgba(255,255,255,0.4);
       cursor: grab;
+    }
+
+    /* MODAL SQ MIXPAD STYLE */
+    .modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 450px;
+      background: #141414;
+      border: 2px solid #333;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+    }
+
+    .modal-header {
+      background: #1c1c1c;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .modal-title {
+      font-size: .7rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-close {
+      background: #bd1c1c;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: .6rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .sq-graph-box {
+      width: 100%;
+      height: 180px;
+      background: #0b0f14;
+      border: 1px solid #222;
+      border-radius: 3px;
+      position: relative;
+      touch-action: none;
+    }
+
+    .sq-graph-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .sq-axis-label {
+      font-size: 6px;
+      fill: #666;
+      font-family: monospace;
+    }
+
+    .sq-grid-line {
+      stroke: #1b2631;
+      stroke-width: 0.7;
+      stroke-dasharray: 2 2;
+    }
+
+    .sq-curve-fill {
+      fill: url(#sqCurveGrad);
+      opacity: 0.45;
+    }
+
+    .sq-curve-line {
+      fill: none;
+      stroke: #ffaa00;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 3px #ffaa00);
+    }
+
+    .sq-node-point {
+      fill: #141414;
+      stroke: #ffaa00;
+      stroke-width: 2.5;
+      cursor: grab;
+      filter: drop-shadow(0 0 5px #ffaa00);
+      transition: r 0.1s ease, stroke-width 0.1s ease;
+    }
+
+    .sq-node-point:active, .sq-node-point.active-drag {
+      cursor: grabbing;
+      r: 6.5;
+      stroke: #ffffff;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 8px #ffffff);
+    }
+
+    .sq-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .sq-knob-card {
+      background: #1a1a1a;
+      border: 1px solid #282828;
+      border-radius: 3px;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+      text-align: center;
+      min-height: 52px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sq-knob-card:hover {
+      border-color: var(--amber);
+      background: #222;
+    }
+
+    .sq-knob-card label {
+      font-size: .48rem;
+      color: #999;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .sq-knob-card input[type="range"] {
+      width: 100%;
+      accent-color: var(--amber);
+      height: 12px;
+      margin: 2px 0;
+      cursor: pointer;
+    }
+
+    .sq-knob-card span {
+      font-size: .56rem;
+      color: var(--amber);
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .sq-bottom-panel {
+      display: flex;
+      gap: 4px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .sq-mode-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      background: #111;
+      padding: 3px;
+      border: 1px solid #222;
+      border-radius: 3px;
+    }
+
+    .sq-mode-btn {
+      background: #222;
+      color: #888;
+      border: 1px solid #333;
+      border-radius: 2px;
+      font-size: .52rem;
+      font-weight: bold;
+      padding: 4px 0;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sq-mode-btn.active {
+      background: #11732e;
+      color: #fff;
+      border-color: #1ccb50;
+      text-shadow: 0 0 3px #00ff55;
+    }
+
+    /* SUB-HALAMAN / HALAMAN DETAIL POPUP PARAMETER KERNEL */
+    .param-detail-subpage {
+      display: none;
+      background: #111;
+      border: 1px solid var(--amber);
+      border-radius: 4px;
+      padding: 8px;
+      margin-top: 4px;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .param-detail-subpage.active {
+      display: flex;
+    }
+
+    .subpage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .65rem;
+      color: var(--amber);
+      font-weight: bold;
+      border-bottom: 1px solid #222;
+      padding-bottom: 3px;
+    }
+
+    .subpage-close {
+      background: transparent;
+      color: #aaa;
+      border: none;
+      cursor: pointer;
+      font-size: .6rem;
     }
 
     .feature-panel {
@@ -567,26 +824,6 @@
         grid-template-columns: repeat(4,minmax(0,1fr));
       }
     }
-
-    @media (max-height: 500px) and (orientation: landscape) {
-      .app-container { padding: 3px; gap: 2px; }
-      .chassis-rack { min-height: 26px; padding: 3px 10px; }
-      .chassis-title { font-size: .62rem; letter-spacing: .7px; }
-      .nav-tabs { padding: 2px; gap: 3px; }
-      .tab-btn { padding: 4px 7px; font-size: .53rem; }
-      .section-group-title { margin: 2px 5px 4px; font-size: .53rem; }
-      .mixer-bank { gap: 4px; padding: 2px; }
-      .channel-strip { width: clamp(82px,12vw,105px); padding: 4px; gap: 2px; }
-      .ch-name { font-size: .62rem; }
-      .ch-sublabel { font-size: .45rem; }
-      .db-value { font-size: .52rem; }
-      .fader-meter-area { min-height: 100px; }
-      .vertical-slider-container { min-height: 100px; }
-      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 26px; height: 16px; margin-top: -8px; }
-      input[type="range"].vertical-fader::-moz-range-thumb { width: 26px; height: 16px; }
-      .sq-btn { padding: 2px 0; font-size: .48rem; }
-      .app-footer { min-height: 14px; padding: 2px 5px; font-size: .45rem; }
-    }
   </style>
 </head>
 <body>
@@ -599,7 +836,7 @@
     <div class="screw screw-br"></div>
 
     <div class="chassis-title">
-      DCX2496 PRO DSP &bull; SQ CONSOLE STYLE
+      DLMD DLMS DSP &bull; PROCESSOR CONSOLE
     </div>
 
     <div class="chassis-status">
@@ -609,8 +846,8 @@
   </div>
 
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('mixer',this)">Gain Matrix</button>
-    <button class="tab-btn" onclick="switchTab('xover',this)">Crossover</button>
+    <button class="tab-btn active" onclick="switchTab('mixer',this)">Output Matrix &amp; Input</button>
+    <button class="tab-btn" onclick="switchTab('xover',this)">Crossover (HPF/LPF)</button>
     <button class="tab-btn" onclick="switchTab('eq',this)">PEQ</button>
     <button class="tab-btn" onclick="switchTab('delay',this)">Delay &amp; Limiter</button>
     <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ Koneksi Wi-Fi</button>
@@ -618,32 +855,30 @@
 
   <div class="fader-workspace">
 
-    <!-- PANEL MIXER (SQ CONSOLE STYLE) -->
+    <!-- PANEL MIXER / DLMS CHANNEL BANK -->
     <div id="panel-mixer" class="feature-panel active-panel">
-      <div class="section-group-title">Input &amp; Output Matrix Level</div>
+      <div class="section-group-title">Input Master &amp; Speaker Outputs (Sub, Low, Mid, High)</div>
 
       <div class="mixer-bank">
 
         <!-- CHANNEL IN A -->
         <div class="channel-strip" id="strip-ina" onclick="focusChannel('ina')">
           <div class="ch-header-sq">
-            <div class="ch-name">Ip1</div>
-            <div class="ch-sublabel">In A</div>
+            <div class="ch-name">In A</div>
+            <div class="ch-sublabel">Master In 1</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('ina', 'In A - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-ina" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-ina" onclick="toggleMute('ina', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-ina" onclick="toggleOn('ina', event)">On</button>
           <div class="db-value" id="val-ina">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -652,35 +887,30 @@
               <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
         <!-- CHANNEL IN B -->
         <div class="channel-strip" id="strip-inb" onclick="focusChannel('inb')">
           <div class="ch-header-sq">
-            <div class="ch-name">Ip2</div>
-            <div class="ch-sublabel">In B</div>
+            <div class="ch-name">In B</div>
+            <div class="ch-sublabel">Master In 2</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('inb', 'In B - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-inb" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-inb" onclick="toggleMute('inb', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-inb" onclick="toggleOn('inb', event)">On</button>
           <div class="db-value" id="val-inb">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -689,35 +919,30 @@
               <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
-        <!-- CHANNEL OUT 1 -->
+        <!-- CHANNEL OUT 1 (SUB) -->
         <div class="channel-strip" id="strip-out1" onclick="focusChannel('out1')">
           <div class="ch-header-sq">
             <div class="ch-name">Out 1</div>
-            <div class="ch-sublabel">Sub</div>
+            <div class="ch-sublabel">Subwoofer</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('out1', 'Out 1 - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-out1" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-out1" onclick="toggleMute('out1', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-out1" onclick="toggleOn('out1', event)">On</button>
           <div class="db-value" id="val-out1">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -726,35 +951,30 @@
               <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
-        <!-- CHANNEL OUT 2 -->
+        <!-- CHANNEL OUT 2 (LOW) -->
         <div class="channel-strip" id="strip-out2" onclick="focusChannel('out2')">
           <div class="ch-header-sq">
             <div class="ch-name">Out 2</div>
-            <div class="ch-sublabel">Low</div>
+            <div class="ch-sublabel">Low / Woofer</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('out2', 'Out 2 - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-out2" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-out2" onclick="toggleMute('out2', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-out2" onclick="toggleOn('out2', event)">On</button>
           <div class="db-value" id="val-out2">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -763,35 +983,30 @@
               <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
-        <!-- CHANNEL OUT 3 -->
+        <!-- CHANNEL OUT 3 (MID) -->
         <div class="channel-strip" id="strip-out3" onclick="focusChannel('out3')">
           <div class="ch-header-sq">
             <div class="ch-name">Out 3</div>
             <div class="ch-sublabel">Mid</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('out3', 'Out 3 - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-out3" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-out3" onclick="toggleMute('out3', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-out3" onclick="toggleOn('out3', event)">On</button>
           <div class="db-value" id="val-out3">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -800,35 +1015,30 @@
               <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
-        <!-- CHANNEL OUT 4 -->
+        <!-- CHANNEL OUT 4 (HIGH) -->
         <div class="channel-strip" id="strip-out4" onclick="focusChannel('out4')">
           <div class="ch-header-sq">
             <div class="ch-name">Out 4</div>
-            <div class="ch-sublabel">High</div>
+            <div class="ch-sublabel">High / Tweeter</div>
+          </div>
+          <div class="eq-curve-box" onclick="openProcessorModal('out4', 'Out 4 - Compressor')">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
+              <path id="mini-curve-out4" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
+            </svg>
           </div>
           <button class="sq-btn" id="mute-out4" onclick="toggleMute('out4', event)">Mute</button>
           <button class="sq-btn on-btn off" id="on-out4" onclick="toggleOn('out4', event)">On</button>
           <div class="db-value" id="val-out4">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span>
-              <span>5</span>
-              <span>0</span>
-              <span>5</span>
-              <span>10</span>
-              <span>20</span>
-              <span>30</span>
-              <span>40</span>
-              <span>∞</span>
+              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
@@ -837,13 +1047,10 @@
               <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
-              <span>C</span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
-              <span class="tick-right"></span>
+              <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
             </div>
           </div>
-          <button class="sq-btn">PAFL</button>
+          <button class="sq-btn">MUTE</button>
         </div>
 
       </div>
@@ -852,7 +1059,6 @@
     <!-- TAB 2: CROSSOVER -->
     <div id="panel-xover" class="feature-panel">
       <div class="section-group-title">Crossover Filter Management (HPF / LPF)</div>
-
       <div class="param-grid">
         <div class="param-card">
           <label>Out 1 Sub HPF</label>
@@ -862,8 +1068,7 @@
             <option value="Bessel 18">Bessel 18dB</option>
           </select>
           <label>Frequency: <span id="xover-hpf1">35 Hz</span></label>
-          <input id="hpf1-freq" type="range" min="20" max="120" value="35"
-            oninput="updateParam('hpf1_freq', this.value)">
+          <input id="hpf1-freq" type="range" min="20" max="120" value="35" oninput="updateParam('hpf1_freq', this.value)">
         </div>
 
         <div class="param-card">
@@ -873,8 +1078,7 @@
             <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
           </select>
           <label>Frequency: <span id="xover-lpf1">120 Hz</span></label>
-          <input id="lpf1-freq" type="range" min="80" max="250" value="120"
-            oninput="updateParam('lpf1_freq', this.value)">
+          <input id="lpf1-freq" type="range" min="80" max="250" value="120" oninput="updateParam('lpf1_freq', this.value)">
         </div>
 
         <div class="param-card">
@@ -884,8 +1088,7 @@
             <option value="Butterworth 12">Butterworth 12dB</option>
           </select>
           <label>Frequency: <span id="xover-hpf3">500 Hz</span></label>
-          <input id="hpf3-freq" type="range" min="200" max="2000" value="500"
-            oninput="updateParam('hpf3_freq', this.value)">
+          <input id="hpf3-freq" type="range" min="200" max="2000" value="500" oninput="updateParam('hpf3_freq', this.value)">
         </div>
 
         <div class="param-card">
@@ -895,8 +1098,7 @@
             <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
           </select>
           <label>Frequency: <span id="xover-lpf4">18 kHz</span></label>
-          <input id="lpf4-freq" type="range" min="5000" max="20000" step="100" value="18000"
-            oninput="updateParam('lpf4_freq', this.value)">
+          <input id="lpf4-freq" type="range" min="5000" max="20000" step="100" value="18000" oninput="updateParam('lpf4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -904,42 +1106,33 @@
     <!-- TAB 3: PARAMETRIC EQ -->
     <div id="panel-eq" class="feature-panel">
       <div class="section-group-title">Output Parametric Equalizer (PEQ)</div>
-
       <div class="param-grid">
         <div class="param-card">
           <label>Band 1 Gain <span id="eq-g1">0 dB</span></label>
-          <input id="eq1-gain" type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="updateParam('eq1_gain', this.value)">
+          <input id="eq1-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq1_gain', this.value)">
           <label>Frequency <span id="eq-f1">63 Hz</span></label>
-          <input id="eq1-freq" type="range" min="20" max="200" value="63"
-            oninput="updateParam('eq1_freq', this.value)">
+          <input id="eq1-freq" type="range" min="20" max="200" value="63" oninput="updateParam('eq1_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 2 Gain <span id="eq-g2">0 dB</span></label>
-          <input id="eq2-gain" type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="updateParam('eq2_gain', this.value)">
+          <input id="eq2-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq2_gain', this.value)">
           <label>Frequency <span id="eq-f2">250 Hz</span></label>
-          <input id="eq2-freq" type="range" min="100" max="1000" value="250"
-            oninput="updateParam('eq2_freq', this.value)">
+          <input id="eq2-freq" type="range" min="100" max="1000" value="250" oninput="updateParam('eq2_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 3 Gain <span id="eq-g3">0 dB</span></label>
-          <input id="eq3-gain" type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="updateParam('eq3_gain', this.value)">
+          <input id="eq3-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq3_gain', this.value)">
           <label>Frequency <span id="eq-f3">2.5 kHz</span></label>
-          <input id="eq3-freq" type="range" min="1000" max="8000" value="2500"
-            oninput="updateParam('eq3_freq', this.value)">
+          <input id="eq3-freq" type="range" min="1000" max="8000" value="2500" oninput="updateParam('eq3_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 4 Gain <span id="eq-g4">0 dB</span></label>
-          <input id="eq4-gain" type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="updateParam('eq4_gain', this.value)">
+          <input id="eq4-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq4_gain', this.value)">
           <label>Frequency <span id="eq-f4">12 kHz</span></label>
-          <input id="eq4-freq" type="range" min="8000" max="20000" value="12000"
-            oninput="updateParam('eq4_freq', this.value)">
+          <input id="eq4-freq" type="range" min="8000" max="20000" value="12000" oninput="updateParam('eq4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -947,33 +1140,28 @@
     <!-- TAB 4: DELAY & LIMITER -->
     <div id="panel-delay" class="feature-panel">
       <div class="section-group-title">Alignment Delay & Peak Limiter</div>
-
       <div class="param-grid">
         <div class="param-card">
           <label>Out 1 Delay</label>
-          <input id="delay1-input" type="range" min="0" max="50" step="0.1" value="0"
-            oninput="updateParam('delay1', this.value)">
+          <input id="delay1-input" type="range" min="0" max="50" step="0.1" value="0" oninput="updateParam('delay1', this.value)">
           <span id="delay1-val">0.0 ms</span>
         </div>
 
         <div class="param-card">
           <label>Out 2 Delay</label>
-          <input id="delay2-input" type="range" min="0" max="50" step="0.1" value="0"
-            oninput="updateParam('delay2', this.value)">
+          <input id="delay2-input" type="range" min="0" max="50" step="0.1" value="0" oninput="updateParam('delay2', this.value)">
           <span id="delay2-val">0.0 ms</span>
         </div>
 
         <div class="param-card">
           <label>Master Limiter Threshold</label>
-          <input id="limiter-input" type="range" min="-20" max="0" step="0.5" value="-3"
-            oninput="updateParam('limiter', this.value)">
+          <input id="limiter-input" type="range" min="-20" max="0" step="0.5" value="-3" oninput="updateParam('limiter', this.value)">
           <span id="limiter-val">-3.0 dB</span>
         </div>
 
         <div class="param-card">
           <label>Release Time</label>
-          <input id="release-input" type="range" min="10" max="1000" step="10" value="200"
-            oninput="updateParam('release', this.value)">
+          <input id="release-input" type="range" min="10" max="1000" step="10" value="200" oninput="updateParam('release', this.value)">
           <span id="release-val">200 ms</span>
         </div>
       </div>
@@ -982,7 +1170,6 @@
     <!-- TAB 5: PENGATURAN WI-FI -->
     <div id="panel-settings" class="feature-panel">
       <div class="section-group-title">Konfigurasi Jaringan DLMD Fisik</div>
-
       <div class="param-grid" style="grid-template-columns:minmax(0,350px);justify-content:center;">
         <div class="param-card">
           <label for="dlmd-name">Nama Perangkat / SSID ESP32</label>
@@ -1000,7 +1187,6 @@
 
         <p style="font-size:.65rem;color:#888;line-height:1.5;">
           Masukkan alamat IP perangkat ESP32. Perubahan IP disimpan di browser.
-          Koneksi nyata memerlukan firmware ESP32 yang mendukung perintah dari web.
         </p>
       </div>
     </div>
@@ -1010,56 +1196,436 @@
   <!-- Footer -->
   <div class="app-footer">
     <span id="connection-status-text">Kontrol web siap • koneksi perangkat belum diverifikasi</span>
-    <span>UI v3.0-SQ Style</span>
+    <span>DLMS DSP v3.0</span>
   </div>
+
+  <!-- MODAL / HALAMAN SQ MIXPAD COMPRESSOR -->
+  <div id="processor-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-channel-title">Ch 1 Compressor</div>
+        <button class="modal-close" onclick="closeProcessorModal()">✕ Tutup</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Kotak Grafik Transfer SQ MixPad -->
+        <div class="sq-graph-box" id="editor-graph-box">
+          <svg viewBox="0 0 300 180" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffaa00" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#ffaa00" stop-opacity="0.05"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Grid Sumbu dB -->
+            <line x1="50" y1="0" x2="50" y2="155" class="sq-grid-line"/>
+            <line x1="90" y1="0" x2="90" y2="155" class="sq-grid-line"/>
+            <line x1="130" y1="0" x2="130" y2="155" class="sq-grid-line"/>
+            <line x1="170" y1="0" x2="170" y2="155" class="sq-grid-line"/>
+            <line x1="210" y1="0" x2="210" y2="155" class="sq-grid-line"/>
+            <line x1="250" y1="0" x2="250" y2="155" class="sq-grid-line"/>
+
+            <line x1="10" y1="31" x2="290" y2="31" class="sq-grid-line"/>
+            <line x1="10" y1="62" x2="290" y2="62" class="sq-grid-line"/>
+            <line x1="10" y1="93" x2="290" y2="93" class="sq-grid-line"/>
+            <line x1="10" y1="124" x2="290" y2="124" class="sq-grid-line"/>
+            <line x1="10" y1="155" x2="290" y2="155" class="sq-grid-line"/>
+
+            <text x="2" y="33" class="sq-axis-label">-10</text>
+            <text x="2" y="64" class="sq-axis-label">-20</text>
+            <text x="2" y="95" class="sq-axis-label">-30</text>
+            <text x="2" y="126" class="sq-axis-label">-40</text>
+            <text x="2" y="157" class="sq-axis-label">-60</text>
+
+            <text x="45" y="167" class="sq-axis-label">-50</text>
+            <text x="85" y="167" class="sq-axis-label">-40</text>
+            <text x="125" y="167" class="sq-axis-label">-30</text>
+            <text x="165" y="167" class="sq-axis-label">-20</text>
+            <text x="205" y="167" class="sq-axis-label">-10</text>
+            <text x="248" y="167" class="sq-axis-label">0</text>
+
+            <!-- Gradient & Curve -->
+            <path id="sq-fill-path" class="sq-curve-fill" d="M 10 155 L 200 95 L 290 95 L 290 155 Z"/>
+            <path id="sq-curve-path" class="sq-curve-line" d="M 10 155 L 200 95 L 290 95"/>
+
+            <!-- Interactive Nodes -->
+            <circle id="node-thresh" cx="200" cy="95" r="5" class="sq-node-point"/>
+            <circle id="node-output" cx="290" cy="95" r="5" class="sq-node-point"/>
+          </svg>
+        </div>
+
+        <!-- BARISAN KENOP ATAS MODAL -->
+        <div class="sq-controls-grid">
+          <div class="sq-knob-card" onclick="openParamSubpage('Attack', 'comp-atk', 'ms', 0.5, 100, 0.5)">
+            <label>Attack</label>
+            <input type="range" min="0.5" max="100" step="0.5" value="60" id="comp-atk" oninput="updateCompParam()">
+            <span id="val-atk">60.0 ms</span>
+          </div>
+          <div class="sq-knob-card" onclick="openParamSubpage('Hold', 'comp-hold', 'ms', 1, 500, 1)">
+            <label>Hold</label>
+            <input type="range" min="1" max="500" step="1" value="6" id="comp-hold" oninput="updateCompParam()">
+            <span id="val-hold">6.32 ms</span>
+          </div>
+          <div class="sq-knob-card" onclick="openParamSubpage('Release', 'comp-rel', 'ms', 10, 1000, 1)">
+            <label>Release</label>
+            <input type="range" min="10" max="1000" step="1" value="141" id="comp-rel" oninput="updateCompParam()">
+            <span id="val-rel">141 ms</span>
+          </div>
+          <div class="sq-knob-card" onclick="openParamSubpage('Ratio', 'comp-ratio', ':1', 1, 20, 0.5)">
+            <label>Ratio</label>
+            <input type="range" min="1" max="20" step="0.5" value="1.5" id="comp-ratio" oninput="updateCompParam()">
+            <span id="val-ratio">1.5:1</span>
+          </div>
+          <div class="sq-knob-card" onclick="openParamSubpage('Threshold', 'comp-thr', 'dB', -60, 0, 0.5)">
+            <label>Thr</label>
+            <input type="range" min="-60" max="0" step="0.5" value="-30.5" id="comp-thr" oninput="updateCompParam()">
+            <span id="val-thr">-30.5 dB</span>
+          </div>
+          <div class="sq-knob-card" onclick="openParamSubpage('Knee', 'comp-knee', '', 0, 10, 1)">
+            <label>Knee</label>
+            <input type="range" min="0" max="10" step="1" value="0" id="comp-knee" oninput="updateCompParam()">
+            <span id="val-knee">0</span>
+          </div>
+        </div>
+
+        <!-- BARISAN GAIN, MIX, DAN TOMBOL MODE BAWAH MODAL -->
+        <div class="sq-bottom-panel">
+          <div class="sq-knob-card" style="flex:1;" onclick="openParamSubpage('Makeup Gain', 'comp-gain', 'dB', 0, 24, 0.5)">
+            <label>Gain</label>
+            <input type="range" min="0" max="24" step="0.5" value="0" id="comp-gain" oninput="updateCompParam()">
+            <span id="val-gain">0.0 dB</span>
+          </div>
+          <div class="sq-knob-card" style="flex:1;" onclick="openParamSubpage('Dry/Wet Mix', 'comp-mix', '%', 0, 100, 1)">
+            <label>Mix</label>
+            <input type="range" min="0" max="100" step="1" value="100" id="comp-mix" oninput="updateCompParam()">
+            <span id="val-mix">100 %</span>
+          </div>
+          
+          <div class="sq-mode-group" style="flex:2;">
+            <button class="sq-mode-btn active" id="btn-comp" onclick="setMode('comp')">Comp</button>
+            <button class="sq-mode-btn" id="btn-peak" onclick="setMode('peak')">Peak</button>
+            <button class="sq-mode-btn" id="btn-lin" onclick="setMode('lin')">Lin</button>
+            <button class="sq-mode-btn active" id="btn-log" onclick="setMode('log')">Log</button>
+          </div>
+        </div>
+
+        <!-- SUB-HALAMAN DETAIL / POPUP KONTROL MENDALAM -->
+        <div id="param-subpage" class="param-detail-subpage">
+          <div class="subpage-header">
+            <span id="subpage-title">Pengaturan Parameter</span>
+            <button class="subpage-close" onclick="closeParamSubpage()">✕ Tutup Halaman</button>
+          </div>
+          <div class="param-card" style="background:#090909; border:none;">
+            <label>Nilai Detail: <span id="subpage-val-display" style="color:var(--amber);">0</span></label>
+            <input type="range" id="subpage-slider" oninput="syncSubpageValue(this.value)">
+          </div>
+          <p style="font-size:.55rem;color:#777;margin:0;">Geser untuk mengubah parameter secara akurat.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
 <script>
-/* =====================================================
-   DLMD DIGITAL DSP — SCRIPT (SQ MIXPAD UI)
-   ===================================================== */
-
 let targetIP = "192.168.4.1";
 let sendTimers = {};
-let muteStates = {};
-let onStates = {}; 
+let activeModalChannel = null;
+let activeSubpageInputId = null;
 
 const channelIds = [
   "ina", "inb",
   "out1", "out2", "out3", "out4"
 ];
 
-/* ---------- Adjust Fader Dimensions for Rotation ---------- */
+let muteStates = {};
+let onStates = {};
+let channelCompressors = {};
+
+channelIds.forEach(id => {
+  muteStates[id] = false;
+  onStates[id] = false;
+  channelCompressors[id] = {
+    atk: 60, hold: 6.3, rel: 141, ratio: 1.5, thr: -30.5, knee: 0, gain: 0, mix: 100
+  };
+});
+
+/* Fungsi Membuka Sub-Halaman Kontrol Parameter */
+function openParamSubpage(paramName, inputId, unit, min, max, step) {
+  activeSubpageInputId = inputId;
+  const subpage = document.getElementById("param-subpage");
+  const titleEl = document.getElementById("subpage-title");
+  const sliderEl = document.getElementById("subpage-slider");
+  const targetInput = document.getElementById(inputId);
+
+  if (subpage && titleEl && sliderEl && targetInput) {
+    titleEl.textContent = `Halaman Parameter: ${paramName}`;
+    sliderEl.min = min;
+    sliderEl.max = max;
+    sliderEl.step = step;
+    sliderEl.value = targetInput.value;
+    document.getElementById("subpage-val-display").textContent = targetInput.value + " " + unit;
+    subpage.classList.add("active");
+  }
+}
+
+function closeParamSubpage() {
+  const subpage = document.getElementById("param-subpage");
+  if (subpage) subpage.classList.remove("active");
+  activeSubpageInputId = null;
+}
+
+function syncSubpageValue(val) {
+  if (!activeSubpageInputId) return;
+  const targetInput = document.getElementById(activeSubpageInputId);
+  if (targetInput) {
+    targetInput.value = val;
+    updateCompParam();
+  }
+}
+
+/* =========================================================
+   INTERAKSI DRAG KONTROL GRAFIK & SINKRONISASI THUMBNAIL
+   ========================================================= */
+function initSQGraphInteraction() {
+  const box = document.getElementById("editor-graph-box");
+  const nodeThresh = document.getElementById("node-thresh");
+  const nodeOutput = document.getElementById("node-output");
+  if (!box || !nodeThresh || !nodeOutput) return;
+
+  let activeDragNode = null;
+
+  const handlePointerStart = (e, nodeType) => {
+    if (!activeModalChannel) return;
+    e.preventDefault();
+    e.stopPropagation();
+    activeDragNode = nodeType;
+
+    const nodeEl = nodeType === 'thresh' ? nodeThresh : nodeOutput;
+    nodeEl.classList.add("active-drag");
+    nodeEl.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!activeDragNode || !activeModalChannel) return;
+
+    const rect = box.getBoundingClientRect();
+    let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+
+    let svgX = (x / rect.width) * 300;
+    let svgY = (y / rect.height) * 180;
+
+    let c = channelCompressors[activeModalChannel];
+
+    if (activeDragNode === 'thresh') {
+      let mappedThr = -60 + ((svgX - 10) / 280) * 60;
+      mappedThr = Math.max(-60, Math.min(0, mappedThr));
+      c.thr = Number(mappedThr.toFixed(1));
+
+      const thrInput = document.getElementById("comp-thr");
+      if (thrInput) thrInput.value = c.thr;
+    } 
+    else if (activeDragNode === 'output') {
+      let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
+      let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
+
+      let deltaX = 290 - thrX;
+      let deltaY = threshY - svgY;
+
+      if (deltaX > 5 && deltaY > 0) {
+        let calculatedRatio = deltaX / deltaY;
+        calculatedRatio = Math.max(1, Math.min(20, calculatedRatio));
+        c.ratio = Number(calculatedRatio.toFixed(1));
+
+        const ratioInput = document.getElementById("comp-ratio");
+        if (ratioInput) ratioInput.value = c.ratio;
+      }
+    }
+
+    updateCompParamUI();
+  };
+
+  const handlePointerEnd = (e) => {
+    if (!activeDragNode) return;
+
+    const nodeEl = activeDragNode === 'thresh' ? nodeThresh : nodeOutput;
+    nodeEl.classList.remove("active-drag");
+    try { nodeEl.releasePointerCapture(e.pointerId); } catch(err){}
+
+    if (activeModalChannel) {
+      updateParam("comp_" + activeModalChannel, `${channelCompressors[activeModalChannel].thr},${channelCompressors[activeModalChannel].ratio}`);
+    }
+    activeDragNode = null;
+  };
+
+  nodeThresh.addEventListener("pointerdown", (e) => handlePointerStart(e, 'thresh'));
+  nodeOutput.addEventListener("pointerdown", (e) => handlePointerStart(e, 'output'));
+
+  box.addEventListener("pointermove", handlePointerMove);
+  box.addEventListener("pointerup", handlePointerEnd);
+  box.addEventListener("pointercancel", handlePointerEnd);
+}
+
+function updateCompParam() {
+  if (!activeModalChannel) return;
+  let c = channelCompressors[activeModalChannel];
+
+  const getVal = (id) => document.getElementById(id)?.value;
+
+  if (getVal("comp-atk") !== undefined) c.atk = getVal("comp-atk");
+  if (getVal("comp-hold") !== undefined) c.hold = getVal("comp-hold");
+  if (getVal("comp-rel") !== undefined) c.rel = getVal("comp-rel");
+  if (getVal("comp-ratio") !== undefined) c.ratio = getVal("comp-ratio");
+  if (getVal("comp-thr") !== undefined) c.thr = getVal("comp-thr");
+  if (getVal("comp-knee") !== undefined) c.knee = getVal("comp-knee");
+  if (getVal("comp-gain") !== undefined) c.gain = getVal("comp-gain");
+  if (getVal("comp-mix") !== undefined) c.mix = getVal("comp-mix");
+
+  updateCompParamUI();
+
+  // Sinkonkan nilai pada sub-halaman jika sedang aktif
+  if (activeSubpageInputId) {
+    const activeVal = document.getElementById(activeSubpageInputId)?.value;
+    const subSlider = document.getElementById("subpage-slider");
+    if (subSlider && activeVal) {
+      subSlider.value = activeVal;
+      document.getElementById("subpage-val-display").textContent = activeVal;
+    }
+  }
+
+  updateParam("comp_gain_" + activeModalChannel, c.gain);
+  updateParam("comp_mix_" + activeModalChannel, c.mix);
+}
+
+function updateCompParamUI() {
+  if (!activeModalChannel) return;
+  let c = channelCompressors[activeModalChannel];
+
+  const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+
+  setTxt("val-atk", Number(c.atk).toFixed(1) + " ms");
+  setTxt("val-hold", Number(c.hold).toFixed(2) + " ms");
+  setTxt("val-rel", Math.round(c.rel) + " ms");
+  setTxt("val-ratio", Number(c.ratio).toFixed(1) + ":1");
+  setTxt("val-thr", Number(c.thr).toFixed(1) + " dB");
+  setTxt("val-knee", c.knee);
+  setTxt("val-gain", Number(c.gain).toFixed(1) + " dB");
+  setTxt("val-mix", Math.round(c.mix) + " %");
+
+  let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
+  let ratioVal = Math.max(1, Number(c.ratio));
+  
+  let startX = 10;
+  let startY = 155;
+  let threshX = thrX;
+  let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
+  let endX = 290;
+  let endY = threshY - ((endX - threshX) / ratioVal);
+
+  endY = Math.max(10, Math.min(155, endY));
+
+  let curvePath = `M ${startX} ${startY} L ${threshX} ${threshY} L ${endX} ${endY}`;
+  let fillPath = `M ${startX} ${startY} L ${threshX} ${threshY} L ${endX} ${endY} L ${endX} 155 L ${startX} 155 Z`;
+
+  const curveEl = document.getElementById("sq-curve-path");
+  const fillEl = document.getElementById("sq-fill-path");
+  const nodeEl = document.getElementById("node-thresh");
+  const nodeOutEl = document.getElementById("node-output");
+
+  if (curveEl) curveEl.setAttribute("d", curvePath);
+  if (fillEl) fillEl.setAttribute("d", fillPath);
+  if (nodeEl) {
+    nodeEl.setAttribute("cx", threshX);
+    nodeEl.setAttribute("cy", threshY);
+  }
+  if (nodeOutEl) {
+    nodeOutEl.setAttribute("cx", endX);
+    nodeOutEl.setAttribute("cy", endY);
+  }
+
+  updateThumbnailCurve(activeModalChannel, threshX, threshY, endY);
+}
+
+function updateThumbnailCurve(id, tx, ty, ey) {
+  const miniPath = document.getElementById("mini-curve-" + id);
+  if (!miniPath) return;
+
+  let pStartX = (10 / 300) * 100;
+  let pStartY = (155 / 180) * 40;
+  let pThreshX = (tx / 300) * 100;
+  let pThreshY = (ty / 180) * 40;
+  let pEndX = (290 / 300) * 100;
+  let pEndY = (ey / 180) * 40;
+
+  miniPath.setAttribute("d", `M ${pStartX} ${pStartY} L ${pThreshX} ${pThreshY} L ${pEndX} ${pEndY}`);
+}
+
+function openProcessorModal(channelId, titleText) {
+  activeModalChannel = channelId;
+  const modal = document.getElementById("processor-modal");
+  const titleElem = document.getElementById("modal-channel-title");
+  if (titleElem) titleElem.textContent = titleText;
+
+  const c = channelCompressors[channelId];
+  const setInp = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+
+  setInp("comp-atk", c.atk);
+  setInp("comp-hold", c.hold);
+  setInp("comp-rel", c.rel);
+  setInp("comp-ratio", c.ratio);
+  setInp("comp-thr", c.thr);
+  setInp("comp-knee", c.knee);
+  setInp("comp-gain", c.gain);
+  setInp("comp-mix", c.mix);
+
+  closeParamSubpage();
+  updateCompParamUI();
+  if (modal) modal.classList.add("active");
+}
+
+function closeProcessorModal() {
+  const modal = document.getElementById("processor-modal");
+  if (modal) modal.classList.remove("active");
+  activeModalChannel = null;
+  closeParamSubpage();
+}
+
+function setMode(mode) {
+  if(mode === 'comp' || mode === 'peak') {
+    document.getElementById('btn-comp')?.classList.toggle('active', mode === 'comp');
+    document.getElementById('btn-peak')?.classList.toggle('active', mode === 'peak');
+  } else {
+    document.getElementById('btn-lin')?.classList.toggle('active', mode === 'lin');
+    document.getElementById('btn-log')?.classList.toggle('active', mode === 'log');
+  }
+}
+
 function syncFaderDimensions() {
   document.querySelectorAll('.vertical-fader').forEach(fader => {
     const parentContainer = fader.closest('.vertical-slider-container');
     if (parentContainer) {
       const h = parentContainer.clientHeight;
-      if (h > 0) {
-        fader.style.width = h + 'px';
-      }
+      if (h > 0) fader.style.width = h + 'px';
     }
   });
 }
 
-/* ---------- Inisialisasi awal ---------- */
 function initDLMD() {
   try {
     targetIP = localStorage.getItem("dlmd_ip") || "192.168.4.1";
-
     const savedName = localStorage.getItem("dlmd_name") || "DLMD DIGITAL DSP";
-    const nameInput = document.getElementById("dlmd-name");
-    const ipInput = document.getElementById("dlmd-ip");
+    const nameInp = document.getElementById("dlmd-name");
+    const ipInp = document.getElementById("dlmd-ip");
+    const ipDisp = document.getElementById("ip-display");
 
-    if (nameInput) nameInput.value = savedName;
-    if (ipInput) ipInput.value = targetIP;
-
-    const ipDisplay = document.getElementById("ip-display");
-    if (ipDisplay) ipDisplay.textContent = targetIP;
-  } catch (err) {
-    console.warn("Pengaturan lokal tidak tersedia:", err);
-  }
+    if (nameInp) nameInp.value = savedName;
+    if (ipInp) ipInp.value = targetIP;
+    if (ipDisp) ipDisp.textContent = targetIP;
+  } catch (err) {}
 
   channelIds.forEach(id => {
     const fader = document.getElementById("gain-" + id);
@@ -1069,267 +1635,124 @@ function initDLMD() {
 
       let isDragging = false;
       let startValue = fader.value;
-
-      fader.addEventListener("pointerdown", (e) => {
-        isDragging = true;
-        startValue = fader.value;
-      });
-
-      fader.addEventListener("input", (e) => {
-        if (!isDragging) {
-          fader.value = startValue;
-          return;
-        }
+      fader.addEventListener("pointerdown", () => { isDragging = true; startValue = fader.value; });
+      fader.addEventListener("input", () => {
+        if (!isDragging) { fader.value = startValue; return; }
         updateParam(id, fader.value);
       });
-
-      const stopDrag = () => {
-        isDragging = false;
-      };
-
+      const stopDrag = () => { isDragging = false; };
       fader.addEventListener("pointerup", stopDrag);
       fader.addEventListener("pointercancel", stopDrag);
     }
-
-    onStates[id] = false;
+    
+    activeModalChannel = id;
+    let c = channelCompressors[id];
+    let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
+    let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
+    let endY = threshY - ((290 - thrX) / Number(c.ratio));
+    updateThumbnailCurve(id, thrX, threshY, endY);
+    activeModalChannel = null;
   });
 
-  /* Set channel In A aktif secara default */
+  initSQGraphInteraction();
   focusChannel('ina');
-
-  /* Tab Mixer aktif pertama kali */
   switchTab('mixer', document.querySelector('.tab-btn.active'));
 
-  /* Sesuaikan lebar fader terhadap tinggi kontainernya */
   setTimeout(syncFaderDimensions, 50);
   window.addEventListener('resize', syncFaderDimensions);
-
-  console.log("DLMD Digital DSP SQ Console siap.");
 }
 
-/* ---------- Highlight Saluran Aktif ---------- */
 function focusChannel(id) {
   channelIds.forEach(ch => {
-    const strip = document.getElementById("strip-" + ch);
-    if (strip) strip.classList.remove("focused");
+    document.getElementById("strip-" + ch)?.classList.remove("focused");
   });
-  const currentStrip = document.getElementById("strip-" + id);
-  if (currentStrip) currentStrip.classList.add("focused");
+  document.getElementById("strip-" + id)?.classList.add("focused");
 }
 
-/* ---------- Update Meteran LED SQ Berdasarkan Sinyal Audio Aktif ---------- */
 function updateSqMeter(id, signalLeveldB) {
   const meter = document.getElementById("meter-" + id);
   if (!meter) return;
-
   const min = -40;
   const max = id.startsWith("in") ? 12 : 6;
-  
   let pct = ((signalLeveldB - min) / (max - min)) * 100;
-  pct = Math.max(0, Math.min(100, pct));
-
-  meter.style.height = pct + "%";
+  meter.style.height = Math.max(0, Math.min(100, pct)) + "%";
 }
 
-/* ---------- Label fader ---------- */
 function updateFaderLabel(id, value) {
   const label = document.getElementById("val-" + id);
   if (!label) return;
-
   const n = Number(value);
-  label.textContent = Number.isFinite(n)
-    ? n.toFixed(1) + " dB"
-    : value + " dB";
+  label.textContent = Number.isFinite(n) ? n.toFixed(1) + " dB" : value + " dB";
 }
 
-/* ---------- Parameter universal ---------- */
 function updateParam(id, value) {
-  if (id === 'hpf1_freq') document.getElementById('xover-hpf1').textContent = value + ' Hz';
-  else if (id === 'lpf1_freq') document.getElementById('xover-lpf1').textContent = value + ' Hz';
-  else if (id === 'hpf3_freq') document.getElementById('xover-hpf3').textContent = value + ' Hz';
-  else if (id === 'lpf4_freq') document.getElementById('xover-lpf4').textContent = (value / 1000).toFixed(1) + ' kHz';
-  
-  else if (id === 'eq1_gain') document.getElementById('eq-g1').textContent = value + ' dB';
-  else if (id === 'eq1_freq') document.getElementById('eq-f1').textContent = value + ' Hz';
-  else if (id === 'eq2_gain') document.getElementById('eq-g2').textContent = value + ' dB';
-  else if (id === 'eq2_freq') document.getElementById('eq-f2').textContent = value + ' Hz';
-  else if (id === 'eq3_gain') document.getElementById('eq-g3').textContent = value + ' dB';
-  else if (id === 'eq3_freq') document.getElementById('eq-f3').textContent = (value / 1000).toFixed(2) + ' kHz';
-  else if (id === 'eq4_gain') document.getElementById('eq-g4').textContent = value + ' dB';
-  else if (id === 'eq4_freq') document.getElementById('eq-f4').textContent = (value / 1000).toFixed(1) + ' kHz';
-
-  else if (id === 'delay1') document.getElementById('delay1-val').textContent = Number(value).toFixed(1) + ' ms';
-  else if (id === 'delay2') document.getElementById('delay2-val').textContent = Number(value).toFixed(1) + ' ms';
-  else if (id === 'limiter') document.getElementById('limiter-val').textContent = Number(value).toFixed(1) + ' dB';
-  else if (id === 'release') document.getElementById('release-val').textContent = value + ' ms';
-  
-  else if (channelIds.includes(id)) {
-    updateFaderLabel(id, value);
-  }
-
-  const url =
-    "http://" + targetIP +
-    "/update?ch=" + encodeURIComponent(id) +
-    "&val=" + encodeURIComponent(value);
-
+  const url = "http://" + targetIP + "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
   clearTimeout(sendTimers[id]);
-
-  sendTimers[id] = setTimeout(() => {
-    sendDeviceCommand(url);
-  }, 70);
+  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 70);
 }
 
-/* ---------- Perintah Perangkat ---------- */
 function sendDeviceCommand(url) {
   setConnectionStatus("Mengirim perintah…", "#e5a000");
-
-  fetch(url, {
-    method: "GET",
-    mode: "no-cors",
-    cache: "no-store"
-  })
-  .then(() => {
-    setConnectionStatus("Perintah dikirim; belum terverifikasi", "#e5a000");
-  })
-  .catch(error => {
-    console.warn("Pengiriman gagal:", error);
-    setConnectionStatus("Gagal mengirim perintah", "#e04444");
-  });
+  fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" })
+    .then(() => { setConnectionStatus("Perintah dikirim; belum terverifikasi", "#e5a000"); })
+    .catch(() => { setConnectionStatus("Gagal mengirim perintah", "#e04444"); });
 }
 
-/* ---------- MUTE SQ Style ---------- */
 function toggleMute(id, evt) {
   if (evt) evt.stopPropagation();
-
   muteStates[id] = !muteStates[id];
-
   const muted = muteStates[id];
-  const button = document.getElementById("mute-" + id);
-
-  if (button) {
-    button.classList.toggle("muted", muted);
-    button.setAttribute("aria-pressed", String(muted));
-    button.textContent = muted ? "Muted" : "Mute";
+  const btn = document.getElementById("mute-" + id);
+  if (btn) {
+    btn.classList.toggle("muted", muted);
+    btn.textContent = muted ? "Muted" : "Mute";
   }
-
-  const url =
-    "http://" + targetIP +
-    "/mute?ch=" + encodeURIComponent(id) +
-    "&state=" + (muted ? "1" : "0");
-
-  sendDeviceCommand(url);
+  sendDeviceCommand("http://" + targetIP + "/mute?ch=" + encodeURIComponent(id) + "&state=" + (muted ? "1" : "0"));
 }
 
-/* ---------- ON / OFF Channel Style ---------- */
 function toggleOn(id, evt) {
   if (evt) evt.stopPropagation();
-
   onStates[id] = !onStates[id];
-
   const isOn = onStates[id];
-  const button = document.getElementById("on-" + id);
-
-  if (button) {
-    button.classList.toggle("off", !isOn);
-    button.setAttribute("aria-pressed", String(isOn));
-  }
-
-  const url =
-    "http://" + targetIP +
-    "/power?ch=" + encodeURIComponent(id) +
-    "&state=" + (isOn ? "1" : "0");
-
-  sendDeviceCommand(url);
+  const btn = document.getElementById("on-" + id);
+  if (btn) btn.classList.toggle("off", !isOn);
+  sendDeviceCommand("http://" + targetIP + "/power?ch=" + encodeURIComponent(id) + "&state=" + (isOn ? "1" : "0"));
 }
 
-/* ---------- Switch Tab ---------- */
 function switchTab(tabName, clickedButton) {
-  const panels = [
-    "mixer",
-    "xover",
-    "eq",
-    "delay",
-    "settings"
-  ];
-
-  panels.forEach(name => {
+  ["mixer", "xover", "eq", "delay", "settings"].forEach(name => {
     const panel = document.getElementById("panel-" + name);
     if (panel) {
-      if (name === tabName) {
-        panel.classList.add("active-panel");
-        panel.style.display = "flex";
-      } else {
-        panel.classList.remove("active-panel");
-        panel.style.display = "none";
-      }
+      panel.classList.toggle("active-panel", name === tabName);
+      panel.style.display = (name === tabName) ? "flex" : "none";
     }
   });
-
-  document.querySelectorAll(".tab-btn").forEach(button => {
-    button.classList.remove("active");
-    button.setAttribute("aria-selected", "false");
-  });
-
-  if (clickedButton) {
-    clickedButton.classList.add("active");
-    clickedButton.setAttribute("aria-selected", "true");
-  }
-
-  if (tabName === 'mixer') {
-    setTimeout(syncFaderDimensions, 20);
-  }
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  if (clickedButton) clickedButton.classList.add("active");
+  if (tabName === 'mixer') setTimeout(syncFaderDimensions, 20);
 }
 
-/* ---------- Simpan Pengaturan ---------- */
 function saveConnectionSettings() {
-  const ipInput = document.getElementById("dlmd-ip");
-  const nameInput = document.getElementById("dlmd-name");
-
-  const newIP = ipInput ? ipInput.value.trim() : "";
-  const newName = nameInput ? nameInput.value.trim() : "DLMD DIGITAL DSP";
-
-  const ipPattern =
-    /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
-
-  if (!ipPattern.test(newIP)) {
-    alert("Masukkan alamat IP IPv4 yang benar, contoh: 192.168.4.1");
-    return;
+  const ip = document.getElementById("dlmd-ip")?.value.trim() || "";
+  const name = document.getElementById("dlmd-name")?.value.trim() || "";
+  if (!/^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/.test(ip)) {
+    alert("Format IP salah!"); return;
   }
-
-  targetIP = newIP;
-
-  try {
-    localStorage.setItem("dlmd_ip", targetIP);
-    localStorage.setItem("dlmd_name", newName);
-  } catch (err) {
-    console.warn("Pengaturan tidak dapat disimpan:", err);
-  }
-
-  const ipDisplay = document.getElementById("ip-display");
-  if (ipDisplay) ipDisplay.textContent = targetIP;
-
-  setConnectionStatus("IP tersimpan; perangkat belum diuji", "#e5a000");
-
-  alert(
-    "Pengaturan tersimpan.\n" +
-    "Nama: " + newName + "\n" +
-    "IP: " + targetIP
-  );
+  targetIP = ip;
+  localStorage.setItem("dlmd_ip", ip);
+  localStorage.setItem("dlmd_name", name);
+  const ipDisp = document.getElementById("ip-display");
+  if (ipDisp) ipDisp.textContent = ip;
+  alert("Pengaturan disimpan!");
 }
 
-/* ---------- Status Koneksi ---------- */
-function setConnectionStatus(message, color) {
-  const statusText = document.getElementById("connection-status-text");
-  const statusDot = document.getElementById("connection-dot");
-
-  if (statusText) statusText.textContent = message;
-  if (statusDot) {
-    statusDot.style.backgroundColor = color;
-    statusDot.style.boxShadow = "0 0 7px " + color;
-  }
+function setConnectionStatus(msg, color) {
+  const statusTxt = document.getElementById("connection-status-text");
+  if (statusTxt) statusTxt.textContent = msg;
+  const dot = document.getElementById("connection-dot");
+  if (dot) { dot.style.backgroundColor = color; dot.style.boxShadow = "0 0 7px " + color; }
 }
 
-/* ---------- Start ---------- */
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initDLMD);
 } else {

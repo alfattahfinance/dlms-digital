@@ -188,7 +188,6 @@
       box-shadow: 0 0 8px rgba(0,255,85,0.4), inset 0 0 5px #000;
     }
 
-    /* Header Blok Hijau SQ */
     .ch-header-sq {
       background: #0f401b;
       border: 1px solid var(--sq-green);
@@ -224,7 +223,6 @@
       border: 1px solid #222;
     }
 
-    /* Tombol Kontrol Khas SQ Mixer - Tepat di Tengah Horizontal */
     .sq-btn {
       width: 100%;
       padding: 4px 0;
@@ -248,6 +246,14 @@
       text-shadow: 0 0 3px #00ff55;
     }
 
+    .sq-btn.on-btn.off {
+      background: linear-gradient(to bottom, #242424, #121212) !important;
+      color: #555 !important;
+      border-color: #2a2a2a !important;
+      text-shadow: none !important;
+      box-shadow: inset 0 1px 2px #000;
+    }
+
     .sq-btn.muted {
       background: linear-gradient(to bottom, #bd1c1c, #730d0d) !important;
       color: #fff !important;
@@ -255,36 +261,8 @@
       text-shadow: 0 0 4px #ff0000;
     }
 
-    .pan-knob-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #141414;
-      border: 1px solid #2c2c2c;
-      border-radius: 3px;
-      padding: 2px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .pan-label {
-      font-size: .48rem;
-      color: #777;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .pan-indicator {
-      width: 2px;
-      height: 8px;
-      background: #fff;
-      box-shadow: 0 0 4px #fff;
-      margin: 1px 0;
-    }
-
     /* =========================================================
-       SQ STYLE FADER TRACK & KEPALA FADER (ROTASED SLIDER SOLUTION)
+       SQ STYLE FADER TRACK & LED METER REDUP (BACKGROUND)
        ========================================================= */
     .fader-meter-area {
       flex: 1;
@@ -302,7 +280,6 @@
       gap: 2px;
     }
 
-    /* Skala Desibel di Samping Kiri Fader */
     .fader-scale {
       position: relative;
       width: 20px;
@@ -347,16 +324,19 @@
       margin: 0 auto;
     }
 
-    /* Meteran LED Vertikal SQ Graduasi Warna di Belakang Fader */
     .sq-led-meter {
       position: absolute;
       left: 50%;
       top: 4px;
       bottom: 4px;
       transform: translateX(-50%);
-      width: 18px;
+      width: 40px;
       height: calc(100% - 8px);
-      background: #000;
+      background: linear-gradient(to top, 
+        rgba(0, 168, 45, 0.15) 0%, 
+        rgba(0, 255, 68, 0.15) 65%, 
+        rgba(255, 187, 0, 0.15) 85%, 
+        rgba(255, 17, 0, 0.15) 100%);
       border-radius: 1px;
       overflow: hidden;
       display: flex;
@@ -375,13 +355,13 @@
         #00ff44 65%, 
         #ffbb00 85%, 
         #ff1100 100%);
-      box-shadow: 0 0 4px rgba(0,255,85,0.5);
-      transition: height 0.1s ease-out;
+      box-shadow: 0 0 6px rgba(0,255,85,0.7);
+      transition: height 0.08s ease-out;
     }
 
     .fader-right-indicator {
       position: relative;
-      width: 12px;
+      width: 30px;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -409,7 +389,6 @@
       margin: auto 0;
     }
 
-    /* Fader Slider dengan Rotasi -90deg & Anti-Jump Track Click */
     input[type="range"].vertical-fader {
       -webkit-appearance: none;
       appearance: none;
@@ -447,9 +426,9 @@
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 32px;  
-      height: 44px; 
-      margin-top: -22px; 
+      width: 55px;  
+      height: 40px; 
+      margin-top: -20px; 
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 4px;
@@ -652,11 +631,7 @@
             <div class="ch-sublabel">In A</div>
           </div>
           <button class="sq-btn" id="mute-ina" onclick="toggleMute('ina', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-ina">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-ina" onclick="toggleOn('ina', event)">On</button>
           <div class="db-value" id="val-ina">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -693,11 +668,7 @@
             <div class="ch-sublabel">In B</div>
           </div>
           <button class="sq-btn" id="mute-inb" onclick="toggleMute('inb', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-inb">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-inb" onclick="toggleOn('inb', event)">On</button>
           <div class="db-value" id="val-inb">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -734,11 +705,7 @@
             <div class="ch-sublabel">Sub</div>
           </div>
           <button class="sq-btn" id="mute-out1" onclick="toggleMute('out1', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-out1">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-out1" onclick="toggleOn('out1', event)">On</button>
           <div class="db-value" id="val-out1">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -775,11 +742,7 @@
             <div class="ch-sublabel">Low</div>
           </div>
           <button class="sq-btn" id="mute-out2" onclick="toggleMute('out2', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-out2">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-out2" onclick="toggleOn('out2', event)">On</button>
           <div class="db-value" id="val-out2">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -816,11 +779,7 @@
             <div class="ch-sublabel">Mid</div>
           </div>
           <button class="sq-btn" id="mute-out3" onclick="toggleMute('out3', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-out3">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-out3" onclick="toggleOn('out3', event)">On</button>
           <div class="db-value" id="val-out3">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -857,11 +816,7 @@
             <div class="ch-sublabel">High</div>
           </div>
           <button class="sq-btn" id="mute-out4" onclick="toggleMute('out4', event)">Mute</button>
-          <button class="sq-btn on-btn" id="on-out4">On</button>
-          <div class="pan-knob-container">
-            <span class="pan-label">Pan</span>
-            <div class="pan-indicator"></div>
-          </div>
+          <button class="sq-btn on-btn off" id="on-out4" onclick="toggleOn('out4', event)">On</button>
           <div class="db-value" id="val-out4">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
@@ -1068,6 +1023,7 @@
 let targetIP = "192.168.4.1";
 let sendTimers = {};
 let muteStates = {};
+let onStates = {}; 
 
 const channelIds = [
   "ina", "inb",
@@ -1109,25 +1065,22 @@ function initDLMD() {
     const fader = document.getElementById("gain-" + id);
     if (fader) {
       updateFaderLabel(id, fader.value);
-      updateSqMeter(id, fader.value);
+      updateSqMeter(id, -40);
 
       let isDragging = false;
       let startValue = fader.value;
 
-      // Cegah loncatan saat mulai disentuh/diklik di luar thumb
       fader.addEventListener("pointerdown", (e) => {
         isDragging = true;
         startValue = fader.value;
       });
 
-      // Pastikan fader hanya bergerak jika benar-benar digeser (drag)
       fader.addEventListener("input", (e) => {
         if (!isDragging) {
-          fader.value = startValue; // Kunci posisi jika tidak dalam status drag aktif
+          fader.value = startValue;
           return;
         }
         updateParam(id, fader.value);
-        updateSqMeter(id, fader.value);
       });
 
       const stopDrag = () => {
@@ -1137,6 +1090,8 @@ function initDLMD() {
       fader.addEventListener("pointerup", stopDrag);
       fader.addEventListener("pointercancel", stopDrag);
     }
+
+    onStates[id] = false;
   });
 
   /* Set channel In A aktif secara default */
@@ -1162,14 +1117,15 @@ function focusChannel(id) {
   if (currentStrip) currentStrip.classList.add("focused");
 }
 
-/* ---------- Update Meteran LED SQ ---------- */
-function updateSqMeter(id, val) {
+/* ---------- Update Meteran LED SQ Berdasarkan Sinyal Audio Aktif ---------- */
+function updateSqMeter(id, signalLeveldB) {
   const meter = document.getElementById("meter-" + id);
   if (!meter) return;
 
   const min = -40;
   const max = id.startsWith("in") ? 12 : 6;
-  let pct = ((val - min) / (max - min)) * 100;
+  
+  let pct = ((signalLeveldB - min) / (max - min)) * 100;
   pct = Math.max(0, Math.min(100, pct));
 
   meter.style.height = pct + "%";
@@ -1260,6 +1216,28 @@ function toggleMute(id, evt) {
     "http://" + targetIP +
     "/mute?ch=" + encodeURIComponent(id) +
     "&state=" + (muted ? "1" : "0");
+
+  sendDeviceCommand(url);
+}
+
+/* ---------- ON / OFF Channel Style ---------- */
+function toggleOn(id, evt) {
+  if (evt) evt.stopPropagation();
+
+  onStates[id] = !onStates[id];
+
+  const isOn = onStates[id];
+  const button = document.getElementById("on-" + id);
+
+  if (button) {
+    button.classList.toggle("off", !isOn);
+    button.setAttribute("aria-pressed", String(isOn));
+  }
+
+  const url =
+    "http://" + targetIP +
+    "/power?ch=" + encodeURIComponent(id) +
+    "&state=" + (isOn ? "1" : "0");
 
   sendDeviceCommand(url);
 }

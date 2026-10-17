@@ -349,11 +349,11 @@
       border-color: #cc2222;
     }
 
-    /* Panel fitur */
+    /* PERBAIKAN UTAMA PERMASALAHAN HALAMAN KOSONG */
     .feature-panel {
       display: none;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start; /* Mengganti dari 'center' ke 'flex-start' */
       width: 100%;
       height: 100%;
       min-height: 0;
@@ -757,7 +757,7 @@
 
 <script>
 /* =====================================================
-   DLMD DIGITAL DSP — KODE PERBAIKAN LENGKAP
+   DLMD DIGITAL DSP — FIX TOTAL VISIBILITAS PANELS
    ===================================================== */
 
 let targetIP = "192.168.4.1";
@@ -798,8 +798,7 @@ function initDLMD() {
   });
 
   /* Pastikan tab Mixer aktif saat halaman dibuka */
-  const firstPanel = document.getElementById("panel-mixer");
-  if (firstPanel) firstPanel.style.display = "";
+  switchTab('mixer', document.querySelector('.tab-btn.active'));
 
   console.log("DLMD Digital DSP siap.");
 }
@@ -815,9 +814,8 @@ function updateFaderLabel(id, value) {
     : value + " dB";
 }
 
-/* ---------- Mengirim parameter universal (Mixer, Xover, EQ, Delay) ---------- */
+/* ---------- Mengirim parameter universal ---------- */
 function updateParam(id, value) {
-  // Update tampilan teks label secara dinamis berdasarkan jenis parameter
   if (id === 'hpf1_freq') document.getElementById('xover-hpf1').textContent = value + ' Hz';
   else if (id === 'lpf1_freq') document.getElementById('xover-lpf1').textContent = value + ' Hz';
   else if (id === 'hpf3_freq') document.getElementById('xover-hpf3').textContent = value + ' Hz';
@@ -848,7 +846,6 @@ function updateParam(id, value) {
 
   clearTimeout(sendTimers[id]);
 
-  /* Batasi pengiriman berulang saat slider digeser */
   sendTimers[id] = setTimeout(() => {
     sendDeviceCommand(url);
   }, 70);
@@ -893,7 +890,7 @@ function toggleMute(id) {
   sendDeviceCommand(url);
 }
 
-/* ---------- Berpindah tab / halaman ---------- */
+/* ---------- Switch Tab dengan Penanganan CSS Flex ---------- */
 function switchTab(tabName, clickedButton) {
   const panels = [
     "mixer",
@@ -906,7 +903,13 @@ function switchTab(tabName, clickedButton) {
   panels.forEach(name => {
     const panel = document.getElementById("panel-" + name);
     if (panel) {
-      panel.style.display = name === tabName ? "" : "none";
+      if (name === tabName) {
+        panel.classList.add("active-panel");
+        panel.style.display = "flex";
+      } else {
+        panel.classList.remove("active-panel");
+        panel.style.display = "none";
+      }
     }
   });
 
@@ -921,7 +924,7 @@ function switchTab(tabName, clickedButton) {
   }
 }
 
-/* ---------- Simpan IP dan nama perangkat (Diperbaiki IDs) ---------- */
+/* ---------- Simpan IP dan nama perangkat ---------- */
 function saveConnectionSettings() {
   const ipInput = document.getElementById("dlmd-ip");
   const nameInput = document.getElementById("dlmd-name");
@@ -931,7 +934,6 @@ function saveConnectionSettings() {
     ? nameInput.value.trim()
     : "DLMD DIGITAL DSP";
 
-  /* Validasi alamat IPv4 sederhana */
   const ipPattern =
     /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
 

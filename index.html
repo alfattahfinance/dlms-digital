@@ -514,7 +514,6 @@
           <div class="db-value" id="val-ina">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="vertical-slider-container">
-              <!-- Atribut oninput dibiarkan diurus via JS initDLMD untuk mencegah duplikasi pengiriman -->
               <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="vu-meter"><div class="vu-fill" id="meter-ina"></div></div>
@@ -597,47 +596,47 @@
       <div class="param-grid">
         <div class="param-card">
           <label>Out 1 Sub HPF</label>
-          <select id="hpf1-type">
-            <option>Butterworth 24dB</option>
-            <option>Linkwitz-Riley 24dB</option>
-            <option>Bessel 18dB</option>
+          <select id="hpf1-type" onchange="updateParam('hpf1_type', this.value)">
+            <option value="Butterworth 24">Butterworth 24dB</option>
+            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
+            <option value="Bessel 18">Bessel 18dB</option>
           </select>
           <label>Frequency: <span id="xover-hpf1">35 Hz</span></label>
           <input id="hpf1-freq" type="range" min="20" max="120" value="35"
-            oninput="document.getElementById('xover-hpf1').textContent=this.value+' Hz'">
+            oninput="updateParam('hpf1_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Out 1 Sub LPF</label>
-          <select id="lpf1-type">
-            <option>Butterworth 24dB</option>
-            <option>Linkwitz-Riley 24dB</option>
+          <select id="lpf1-type" onchange="updateParam('lpf1_type', this.value)">
+            <option value="Butterworth 24">Butterworth 24dB</option>
+            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
           </select>
           <label>Frequency: <span id="xover-lpf1">120 Hz</span></label>
           <input id="lpf1-freq" type="range" min="80" max="250" value="120"
-            oninput="document.getElementById('xover-lpf1').textContent=this.value+' Hz'">
+            oninput="updateParam('lpf1_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Out 3 Mid HPF</label>
-          <select id="hpf3-type">
-            <option>Linkwitz-Riley 24dB</option>
-            <option>Butterworth 12dB</option>
+          <select id="hpf3-type" onchange="updateParam('hpf3_type', this.value)">
+            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
+            <option value="Butterworth 12">Butterworth 12dB</option>
           </select>
           <label>Frequency: <span id="xover-hpf3">500 Hz</span></label>
           <input id="hpf3-freq" type="range" min="200" max="2000" value="500"
-            oninput="document.getElementById('xover-hpf3').textContent=this.value+' Hz'">
+            oninput="updateParam('hpf3_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Out 4 High LPF</label>
-          <select id="lpf4-type">
-            <option>Butterworth 18dB</option>
-            <option>Linkwitz-Riley 24dB</option>
+          <select id="lpf4-type" onchange="updateParam('lpf4_type', this.value)">
+            <option value="Butterworth 18">Butterworth 18dB</option>
+            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
           </select>
           <label>Frequency: <span id="xover-lpf4">18 kHz</span></label>
           <input id="lpf4-freq" type="range" min="5000" max="20000" step="100" value="18000"
-            oninput="document.getElementById('xover-lpf4').textContent=(this.value/1000).toFixed(1)+' kHz'">
+            oninput="updateParam('lpf4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -649,38 +648,38 @@
       <div class="param-grid">
         <div class="param-card">
           <label>Band 1 Gain <span id="eq-g1">0 dB</span></label>
-          <input type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="document.getElementById('eq-g1').textContent=this.value+' dB'">
+          <input id="eq1-gain" type="range" min="-12" max="12" step="0.5" value="0"
+            oninput="updateParam('eq1_gain', this.value)">
           <label>Frequency <span id="eq-f1">63 Hz</span></label>
-          <input type="range" min="20" max="200" value="63"
-            oninput="document.getElementById('eq-f1').textContent=this.value+' Hz'">
+          <input id="eq1-freq" type="range" min="20" max="200" value="63"
+            oninput="updateParam('eq1_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 2 Gain <span id="eq-g2">0 dB</span></label>
-          <input type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="document.getElementById('eq-g2').textContent=this.value+' dB'">
+          <input id="eq2-gain" type="range" min="-12" max="12" step="0.5" value="0"
+            oninput="updateParam('eq2_gain', this.value)">
           <label>Frequency <span id="eq-f2">250 Hz</span></label>
-          <input type="range" min="100" max="1000" value="250"
-            oninput="document.getElementById('eq-f2').textContent=this.value+' Hz'">
+          <input id="eq2-freq" type="range" min="100" max="1000" value="250"
+            oninput="updateParam('eq2_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 3 Gain <span id="eq-g3">0 dB</span></label>
-          <input type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="document.getElementById('eq-g3').textContent=this.value+' dB'">
+          <input id="eq3-gain" type="range" min="-12" max="12" step="0.5" value="0"
+            oninput="updateParam('eq3_gain', this.value)">
           <label>Frequency <span id="eq-f3">2.5 kHz</span></label>
-          <input type="range" min="1000" max="8000" value="2500"
-            oninput="document.getElementById('eq-f3').textContent=(this.value/1000).toFixed(2)+' kHz'">
+          <input id="eq3-freq" type="range" min="1000" max="8000" value="2500"
+            oninput="updateParam('eq3_freq', this.value)">
         </div>
 
         <div class="param-card">
           <label>Band 4 Gain <span id="eq-g4">0 dB</span></label>
-          <input type="range" min="-12" max="12" step="0.5" value="0"
-            oninput="document.getElementById('eq-g4').textContent=this.value+' dB'">
+          <input id="eq4-gain" type="range" min="-12" max="12" step="0.5" value="0"
+            oninput="updateParam('eq4_gain', this.value)">
           <label>Frequency <span id="eq-f4">12 kHz</span></label>
-          <input type="range" min="8000" max="20000" value="12000"
-            oninput="document.getElementById('eq-f4').textContent=(this.value/1000).toFixed(1)+' kHz'">
+          <input id="eq4-freq" type="range" min="8000" max="20000" value="12000"
+            oninput="updateParam('eq4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -692,29 +691,29 @@
       <div class="param-grid">
         <div class="param-card">
           <label>Out 1 Delay</label>
-          <input type="range" min="0" max="50" step="0.1" value="0"
-            oninput="document.getElementById('delay1-val').textContent=Number(this.value).toFixed(1)+' ms'">
+          <input id="delay1-input" type="range" min="0" max="50" step="0.1" value="0"
+            oninput="updateParam('delay1', this.value)">
           <span id="delay1-val">0.0 ms</span>
         </div>
 
         <div class="param-card">
           <label>Out 2 Delay</label>
-          <input type="range" min="0" max="50" step="0.1" value="0"
-            oninput="document.getElementById('delay2-val').textContent=Number(this.value).toFixed(1)+' ms'">
+          <input id="delay2-input" type="range" min="0" max="50" step="0.1" value="0"
+            oninput="updateParam('delay2', this.value)">
           <span id="delay2-val">0.0 ms</span>
         </div>
 
         <div class="param-card">
           <label>Master Limiter Threshold</label>
-          <input type="range" min="-20" max="0" step="0.5" value="-3"
-            oninput="document.getElementById('limiter-val').textContent=Number(this.value).toFixed(1)+' dB'">
+          <input id="limiter-input" type="range" min="-20" max="0" step="0.5" value="-3"
+            oninput="updateParam('limiter', this.value)">
           <span id="limiter-val">-3.0 dB</span>
         </div>
 
         <div class="param-card">
           <label>Release Time</label>
-          <input type="range" min="10" max="1000" step="10" value="200"
-            oninput="document.getElementById('release-val').textContent=this.value+' ms'">
+          <input id="release-input" type="range" min="10" max="1000" step="10" value="200"
+            oninput="updateParam('release', this.value)">
           <span id="release-val">200 ms</span>
         </div>
       </div>
@@ -726,13 +725,13 @@
 
       <div class="param-grid" style="grid-template-columns:minmax(0,350px);justify-content:center;">
         <div class="param-card">
-          <label for="dlms-name">Nama Perangkat / SSID ESP32</label>
-          <input type="text" id="dlms-name" value="DCX2496-PRO" placeholder="Nama perangkat">
+          <label for="dlmd-name">Nama Perangkat / SSID ESP32</label>
+          <input type="text" id="dlmd-name" value="DCX2496-PRO" placeholder="Nama perangkat">
         </div>
 
         <div class="param-card">
-          <label for="dlms-ip">Alamat IP DLMD Fisik</label>
-          <input type="text" id="dlms-ip" value="192.168.4.1" placeholder="192.168.4.1">
+          <label for="dlmd-ip">Alamat IP DLMD Fisik</label>
+          <input type="text" id="dlmd-ip" value="192.168.4.1" placeholder="192.168.4.1">
         </div>
 
         <button class="action-btn" type="button" onclick="saveConnectionSettings()">
@@ -758,8 +757,7 @@
 
 <script>
 /* =====================================================
-   DLMD DIGITAL DSP — KODE 3 (DIKERJAKAN & DIPERBAIKI)
-   Kontrol UI + komunikasi dasar ke ESP32
+   DLMD DIGITAL DSP — KODE PERBAIKAN LENGKAP
    ===================================================== */
 
 let targetIP = "192.168.4.1";
@@ -817,9 +815,31 @@ function updateFaderLabel(id, value) {
     : value + " dB";
 }
 
-/* ---------- Mengirim parameter fader ---------- */
+/* ---------- Mengirim parameter universal (Mixer, Xover, EQ, Delay) ---------- */
 function updateParam(id, value) {
-  updateFaderLabel(id, value);
+  // Update tampilan teks label secara dinamis berdasarkan jenis parameter
+  if (id === 'hpf1_freq') document.getElementById('xover-hpf1').textContent = value + ' Hz';
+  else if (id === 'lpf1_freq') document.getElementById('xover-lpf1').textContent = value + ' Hz';
+  else if (id === 'hpf3_freq') document.getElementById('xover-hpf3').textContent = value + ' Hz';
+  else if (id === 'lpf4_freq') document.getElementById('xover-lpf4').textContent = (value / 1000).toFixed(1) + ' kHz';
+  
+  else if (id === 'eq1_gain') document.getElementById('eq-g1').textContent = value + ' dB';
+  else if (id === 'eq1_freq') document.getElementById('eq-f1').textContent = value + ' Hz';
+  else if (id === 'eq2_gain') document.getElementById('eq-g2').textContent = value + ' dB';
+  else if (id === 'eq2_freq') document.getElementById('eq-f2').textContent = value + ' Hz';
+  else if (id === 'eq3_gain') document.getElementById('eq-g3').textContent = value + ' dB';
+  else if (id === 'eq3_freq') document.getElementById('eq-f3').textContent = (value / 1000).toFixed(2) + ' kHz';
+  else if (id === 'eq4_gain') document.getElementById('eq-g4').textContent = value + ' dB';
+  else if (id === 'eq4_freq') document.getElementById('eq-f4').textContent = (value / 1000).toFixed(1) + ' kHz';
+
+  else if (id === 'delay1') document.getElementById('delay1-val').textContent = Number(value).toFixed(1) + ' ms';
+  else if (id === 'delay2') document.getElementById('delay2-val').textContent = Number(value).toFixed(1) + ' ms';
+  else if (id === 'limiter') document.getElementById('limiter-val').textContent = Number(value).toFixed(1) + ' dB';
+  else if (id === 'release') document.getElementById('release-val').textContent = value + ' ms';
+  
+  else if (channelIds.includes(id)) {
+    updateFaderLabel(id, value);
+  }
 
   const url =
     "http://" + targetIP +
@@ -828,7 +848,7 @@ function updateParam(id, value) {
 
   clearTimeout(sendTimers[id]);
 
-  /* Batasi pengiriman berulang saat fader digeser */
+  /* Batasi pengiriman berulang saat slider digeser */
   sendTimers[id] = setTimeout(() => {
     sendDeviceCommand(url);
   }, 70);
@@ -844,10 +864,6 @@ function sendDeviceCommand(url) {
     cache: "no-store"
   })
   .then(() => {
-    /*
-      Mode no-cors tidak dapat memastikan bahwa ESP32
-      benar-benar menerima atau menerapkan perintah.
-    */
     setConnectionStatus("Perintah dikirim; belum terverifikasi", "#e5a000");
   })
   .catch(error => {
@@ -879,7 +895,6 @@ function toggleMute(id) {
 
 /* ---------- Berpindah tab / halaman ---------- */
 function switchTab(tabName, clickedButton) {
-  // PERBAIKAN: Menghapus "matrix" yang tidak memiliki ID elemen HTML
   const panels = [
     "mixer",
     "xover",
@@ -906,10 +921,10 @@ function switchTab(tabName, clickedButton) {
   }
 }
 
-/* ---------- Simpan IP dan nama perangkat ---------- */
+/* ---------- Simpan IP dan nama perangkat (Diperbaiki IDs) ---------- */
 function saveConnectionSettings() {
-  const ipInput = document.getElementById("dlms-ip");
-  const nameInput = document.getElementById("dlms-name");
+  const ipInput = document.getElementById("dlmd-ip");
+  const nameInput = document.getElementById("dlmd-name");
 
   const newIP = ipInput ? ipInput.value.trim() : "";
   const newName = nameInput

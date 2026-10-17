@@ -218,7 +218,7 @@
     .vertical-slider-container {
       flex: 1;
       min-width: 30px;
-      width: 42px;
+      width: 44px;
       min-height: 120px;
       display: flex;
       align-items: center;
@@ -231,7 +231,7 @@
       appearance: none;
       writing-mode: vertical-lr;
       direction: rtl;
-      width: 42px;
+      width: 44px;
       height: 100%;
       min-height: 120px;
       padding: 0;
@@ -243,23 +243,23 @@
       touch-action: pan-x;
     }
 
-    /* Rel fader hitam */
+    /* Indikator trek fader diperlebar (dari 8px menjadi 12px) */
     input[type="range"].vertical-fader::-webkit-slider-runnable-track {
-      width: 8px;
+      width: 12px;
       height: 100%;
       background: linear-gradient(to right,#050505,#292929 50%,#050505);
       border: 1px solid #414141;
-      border-radius: 2px;
-      box-shadow: inset 0 0 3px #000;
+      border-radius: 3px;
+      box-shadow: inset 0 0 4px #000;
     }
 
-    /* Kepala fader fisik abu-abu */
+    /* Kepala fader diposisikan pas di tengah garis trek */
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 38px;
-      height: 25px;
-      margin-top: -9px;
+      width: 40px;
+      height: 24px;
+      margin-top: -14px; /* Disesuaikan agar pas di tengah garis rel */
       box-sizing: border-box;
       border: 1px solid #777;
       border-top-color: #f5f5f5;
@@ -285,18 +285,18 @@
       cursor: grabbing;
     }
 
-    /* Dukungan Firefox */
+    /* Dukungan Firefox dengan penyesuaian yang sama */
     input[type="range"].vertical-fader::-moz-range-track {
-      width: 8px;
+      width: 12px;
       height: 100%;
       background: linear-gradient(to right,#050505,#292929 50%,#050505);
       border: 1px solid #414141;
-      border-radius: 2px;
+      border-radius: 3px;
     }
 
     input[type="range"].vertical-fader::-moz-range-thumb {
-      width: 38px;
-      height: 25px;
+      width: 40px;
+      height: 24px;
       box-sizing: border-box;
       border: 1px solid #777;
       border-radius: 3px;
@@ -349,11 +349,10 @@
       border-color: #cc2222;
     }
 
-    /* PERBAIKAN UTAMA PERMASALAHAN HALAMAN KOSONG */
     .feature-panel {
       display: none;
       flex-direction: column;
-      justify-content: flex-start; /* Mengganti dari 'center' ke 'flex-start' */
+      justify-content: flex-start;
       width: 100%;
       height: 100%;
       min-height: 0;
@@ -466,9 +465,9 @@
       .db-value { font-size: .53rem; }
       .fader-meter-area, .vu-meter { min-height: 95px; }
       .vertical-slider-container, input[type="range"].vertical-fader { min-height: 95px; }
-      input[type="range"].vertical-fader { width: 34px; }
-      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 32px; height: 22px; }
-      input[type="range"].vertical-fader::-moz-range-thumb { width: 32px; height: 22px; }
+      input[type="range"].vertical-fader { width: 38px; }
+      input[type="range"].vertical-fader::-webkit-slider-thumb { width: 36px; height: 22px; }
+      input[type="range"].vertical-fader::-moz-range-thumb { width: 36px; height: 22px; }
       .strip-btn { padding: 4px 0; font-size: .5rem; }
       .app-footer { min-height: 14px; padding: 2px 5px; font-size: .45rem; }
     }
@@ -588,7 +587,6 @@
       </div>
     </div>
 
-    
     <!-- TAB 2: CROSSOVER -->
     <div id="panel-xover" class="feature-panel">
       <div class="section-group-title">Crossover Filter Management (HPF / LPF)</div>
@@ -757,7 +755,7 @@
 
 <script>
 /* =====================================================
-   DLMD DIGITAL DSP — FIX TOTAL VISIBILITAS PANELS
+   DLMD DIGITAL DSP — SCRIPT
    ===================================================== */
 
 let targetIP = "192.168.4.1";
@@ -890,7 +888,7 @@ function toggleMute(id) {
   sendDeviceCommand(url);
 }
 
-/* ---------- Switch Tab dengan Penanganan CSS Flex ---------- */
+/* ---------- Switch Tab ---------- */
 function switchTab(tabName, clickedButton) {
   const panels = [
     "mixer",

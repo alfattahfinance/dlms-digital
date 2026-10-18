@@ -13,8 +13,10 @@
       --card: #181818;
       --text: #e0e0e0;
       --amber: #ffaa00;
+      --amber-glow: 0 0 8px rgba(255, 170, 0, 0.6);
       --sq-green: #00bf40;
-      --sq-green-glow: #00ff55;
+      --neon-blue: #00d2ff;
+      --neon-blue-glow: 0 0 10px rgba(0, 210, 255, 0.8);
     }
 
     * {
@@ -40,8 +42,8 @@
       height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 5px;
-      gap: 4px;
+      padding: 4px;
+      gap: 3px;
       background: var(--dark);
       border: 2px solid #222;
       overflow: hidden;
@@ -49,12 +51,12 @@
     }
 
     .chassis-rack {
-      min-height: 34px;
+      min-height: 30px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 14px;
+      padding: 4px 12px;
       background: var(--silver);
       border: 2px solid #404040;
       box-shadow: inset 0 1px 3px #ffffff66, 0 4px 8px #0009;
@@ -63,24 +65,24 @@
 
     .screw {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: radial-gradient(circle,#f0f0f0 20%,#666 70%,#222);
       box-shadow: inset 0 1px 2px #000;
     }
 
-    .screw-tl { top: 4px; left: 6px; }
-    .screw-tr { top: 4px; right: 6px; }
-    .screw-bl { bottom: 4px; left: 6px; }
-    .screw-br { bottom: 4px; right: 6px; }
+    .screw-tl { top: 3px; left: 6px; }
+    .screw-tr { top: 3px; right: 6px; }
+    .screw-bl { bottom: 3px; left: 6px; }
+    .screw-br { bottom: 3px; right: 6px; }
 
     .chassis-title {
       color: #1a1a1a;
       font-weight: 800;
-      font-size: .75rem;
+      font-size: .7rem;
       letter-spacing: 1.2px;
-      margin-left: 12px;
+      margin-left: 10px;
     }
 
     .chassis-status {
@@ -88,7 +90,7 @@
       align-items: center;
       gap: 5px;
       color: #1a1a1a;
-      font-size: .6rem;
+      font-size: .55rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -103,8 +105,8 @@
     .nav-tabs {
       display: flex;
       flex-shrink: 0;
-      gap: 4px;
-      padding: 4px 5px;
+      gap: 3px;
+      padding: 3px 5px;
       background: #0d0d0d;
       border-bottom: 1px solid #2a2a2a;
       overflow-x: auto;
@@ -112,21 +114,23 @@
 
     .tab-btn {
       flex-shrink: 0;
-      padding: 6px 10px;
+      padding: 5px 8px;
       color: #888;
       background: #1c1c1c;
       border: 1px solid #333;
       border-radius: 2px;
-      font-size: .62rem;
+      font-size: .58rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
+      transition: all 0.2s;
     }
 
     .tab-btn.active {
       color: #0b0b0b;
       background: var(--amber);
       border-color: #ffaa11;
+      box-shadow: var(--amber-glow);
     }
 
     .fader-workspace {
@@ -137,15 +141,254 @@
       align-items: stretch;
       justify-content: stretch;
       width: 100%;
-      padding: 4px;
+      padding: 2px;
       overflow: hidden;
+    }
+
+    /* TOUCHSCREEN PROCESSOR CONSOLE */
+    .touchscreen-console {
+      flex-shrink: 0;
+      height: 310px;
+      background: radial-gradient(circle at center, #161f2c 0%, #0d1117 100%);
+      border: 1px solid #334155;
+      border-radius: 4px;
+      display: flex;
+      padding: 5px;
+      gap: 8px;
+      box-shadow: inset 0 0 15px rgba(0,210,255,0.15), 0 4px 12px rgba(0,0,0,0.8);
+      margin-bottom: 3px;
+    }
+
+    .tc-sidebar {
+      width: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: #0f141a;
+      border: 1px solid #222;
+      padding: 3px;
+      border-radius: 3px;
+    }
+
+    .tc-side-btn {
+      background: #1a2332;
+      color: #aaa;
+      border: 1px solid #2c3e50;
+      padding: 6px;
+      font-size: .55rem;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tc-side-btn:hover {
+      border-color: var(--neon-blue);
+      color: #fff;
+    }
+
+    .tc-side-btn.active {
+      background: linear-gradient(135deg, #7c2d12, #c2410c);
+      color: #fff;
+      border-color: #fb923c;
+    }
+
+    .tc-center-graph {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #070a0f;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      padding: 4px;
+      position: relative;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.9);
+    }
+
+    .sq-graph-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      touch-action: none;
+    }
+
+    .sq-graph-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .sq-grid-line {
+      stroke: #1e293b;
+      stroke-width: 0.8;
+      stroke-dasharray: 2 2;
+    }
+
+    .sq-curve-fill {
+      fill: url(#sqCurveGrad);
+      opacity: 0.5;
+    }
+
+    .sq-curve-line {
+      fill: none;
+      stroke: var(--amber);
+      stroke-width: 2.2;
+    }
+
+    .neon-line-blue {
+      stroke: var(--neon-blue);
+      stroke-width: 2.2;
+      fill: none;
+    }
+
+    .sq-node-point {
+      fill: #090909;
+      stroke: var(--amber);
+      stroke-width: 2.5;
+      cursor: grab;
+      transition: stroke 0.2s, r 0.2s;
+    }
+
+    .sq-node-point:hover, .sq-node-point:active {
+      stroke: #fff;
+      r: 7px;
+    }
+
+    /* PANEL KANAN TOUCHSCREEN */
+    .tc-right-knobs-panel {
+      width: 195px;
+      display: flex;
+      flex-direction: column;
+      background: #0f141a;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      padding: 5px;
+      justify-content: space-between;
+    }
+
+    .knobs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      overflow-y: auto;
+      max-height: 220px;
+      padding-right: 2px;
+      align-content: start;
+    }
+
+    .physical-knob-container {
+      background: linear-gradient(to bottom, #1e293b, #0f172a);
+      border: 1px solid #334155;
+      border-radius: 3px;
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: grab;
+      touch-action: none;
+      transition: all 0.2s;
+    }
+
+    .physical-knob-container:active {
+      cursor: grabbing;
+    }
+
+    .physical-knob-container:hover {
+      border-color: var(--amber);
+    }
+
+    .physical-knob-container label {
+      font-size: .48rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .physical-knob {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 60%, #0f172a 100%);
+      border: 2px solid #64748b;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.7), inset 0 1px 3px rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .knob-indicator {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      width: 2.5px;
+      height: 13px;
+      background: var(--amber);
+      transform: translateX(-50%);
+      transform-origin: bottom center;
+      border-radius: 1px;
+    }
+
+    .physical-knob-container span {
+      font-size: .55rem;
+      color: var(--amber);
+      font-family: monospace;
+      font-weight: bold;
+      margin-top: 3px;
+    }
+
+    .tc-master-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #070a0f;
+      border: 1px solid #1e293b;
+      padding: 4px 6px;
+      border-radius: 3px;
+      margin-top: 4px;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .tc-master-strip label {
+      font-size: .5rem;
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    .tc-master-strip span {
+      font-size: .55rem;
+      color: var(--sq-green);
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .tc-power-btn {
+      background: linear-gradient(to bottom, #16a34a, #15803d);
+      color: #fff;
+      border: 1px solid #4ade80;
+      border-radius: 3px;
+      font-size: .52rem;
+      font-weight: bold;
+      padding: 4px 0;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .tc-power-btn.off {
+      background: linear-gradient(to bottom, #334155, #1e293b);
+      color: #64748b;
+      border-color: #475569;
     }
 
     .section-group-title {
       flex-shrink: 0;
-      margin: 2px 6px 6px;
+      margin: 1px 4px 3px;
       color: #777;
-      font-size: .62rem;
+      font-size: .58rem;
       font-weight: 700;
       letter-spacing: 1.2px;
       text-transform: uppercase;
@@ -158,7 +401,7 @@
       align-items: stretch;
       justify-content: center;
       flex-wrap: nowrap;
-      gap: 6px;
+      gap: 5px;
       width: 100%;
       padding: 2px;
       overflow-x: auto;
@@ -174,59 +417,53 @@
       align-items: stretch;
       gap: 4px;
       padding: 6px;
-      background: #1e1e1e;
-      border: 1px solid #333;
+      background: #18181b;
+      border: 1px solid #3f3f46;
       border-radius: 4px;
-      box-shadow: inset 0 0 5px #000, 0 4px 10px rgba(0,0,0,0.6);
+      box-shadow: inset 0 0 6px #000, 0 4px 10px rgba(0,0,0,0.6);
       transition: border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
 
     .channel-strip.focused {
       border: 1px solid var(--sq-green);
-      box-shadow: 0 0 8px rgba(0,255,85,0.4), inset 0 0 5px #000;
+      box-shadow: inset 0 0 6px #000;
     }
 
     .ch-header-sq {
-      background: #0f401b;
+      background: linear-gradient(to bottom, #14532d, #064e3b);
       border: 1px solid var(--sq-green);
       border-radius: 3px;
-      padding: 4px 2px;
+      padding: 3px 2px;
       text-align: center;
-      cursor: pointer;
+      box-shadow: inset 0 1px 2px rgba(255,255,85,0.2);
     }
 
     .ch-name {
       color: #e5ffe8;
-      font-size: .72rem;
+      font-size: .68rem;
       font-weight: 800;
       letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px #000;
     }
 
     .ch-sublabel {
-      color: #88cfa0;
-      font-size: .52rem;
+      color: #86efac;
+      font-size: .48rem;
       margin-top: 1px;
     }
 
     .eq-curve-box {
       width: 100%;
-      height: 38px;
-      background: #0b0b0b;
-      border: 1px solid #282828;
+      height: 32px;
+      background: #09090b;
+      border: 1px solid #27272a;
       border-radius: 3px;
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       box-shadow: inset 0 0 4px rgba(0,0,0,0.9);
-      transition: border-color 0.2s;
-    }
-
-    .eq-curve-box:hover {
-      border-color: var(--amber);
     }
 
     .eq-curve-box svg {
@@ -237,93 +474,91 @@
     }
 
     .mini-grid {
-      stroke: #1f1f1f;
+      stroke: #27272a;
       stroke-width: 0.8;
       stroke-dasharray: 2 2;
     }
 
     .mini-path {
       fill: none;
-      stroke: #ffaa00;
+      stroke: var(--amber);
       stroke-width: 1.8;
-      filter: drop-shadow(0 0 2px #ff9900);
     }
 
     .db-value {
-      color: #00ffaa;
+      color: #34d399;
       font-family: "Courier New", monospace;
-      font-size: .62rem;
+      font-size: .58rem;
       font-weight: bold;
       text-align: center;
-      background: #0b0b0b;
-      padding: 2px 0;
+      background: #09090b;
+      padding: 1px 0;
       border-radius: 2px;
-      border: 1px solid #222;
+      border: 1px solid #27272a;
     }
 
     .sq-btn {
       width: 100%;
-      padding: 4px 0;
-      background: linear-gradient(to bottom, #3a3a3a, #242424);
-      color: #bbb;
-      border: 1px solid #484848;
+      padding: 3px 0;
+      background: linear-gradient(to bottom, #3f3f46, #27272a);
+      color: #d4d4d8;
+      border: 1px solid #52525b;
       border-radius: 3px;
-      font-size: .58rem;
+      font-size: .55rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
       box-shadow: 0 2px 3px #000;
       margin: 0 auto;
       display: block;
+      transition: all 0.1s;
     }
 
     .sq-btn.on-btn {
-      background: linear-gradient(to bottom, #11732e, #0a471c);
+      background: linear-gradient(to bottom, #15803d, #14532d);
       color: #fff;
-      border-color: #1ccb50;
-      text-shadow: 0 0 3px #00ff55;
+      border-color: #4ade80;
     }
 
     .sq-btn.on-btn.off {
-      background: linear-gradient(to bottom, #242424, #121212) !important;
-      color: #555 !important;
-      border-color: #2a2a2a !important;
-      text-shadow: none !important;
-      box-shadow: inset 0 1px 2px #000;
+      background: linear-gradient(to bottom, #27272a, #18181b) !important;
+      color: #71717a !important;
+      border-color: #3f3f46 !important;
+      box-shadow: none !important;
     }
 
     .sq-btn.muted {
-      background: linear-gradient(to bottom, #bd1c1c, #730d0d) !important;
+      background: linear-gradient(to bottom, #dc2626, #991b1b) !important;
       color: #fff !important;
-      border-color: #ff4d4d !important;
-      text-shadow: 0 0 4px #ff0000;
+      border-color: #f87171 !important;
+      box-shadow: none !important;
     }
 
     .fader-meter-area {
       flex: 1;
-      min-height: 140px;
+      min-height: 90px;
       width: 100%;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #0f0f0f;
-      border: 1px solid #262626;
+      background: #09090b;
+      border: 1px solid #27272a;
       border-radius: 3px;
-      padding: 4px 2px;
+      padding: 3px 2px;
       overflow: hidden;
       gap: 2px;
     }
 
     .fader-scale {
       position: relative;
-      width: 20px;
+      width: 18px;
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 5.5px;
-      color: #777;
+      font-size: 5px;
+      color: #a1a1aa;
       font-family: monospace;
       text-align: right;
       z-index: 3;
@@ -340,15 +575,6 @@
       padding-right: 2px;
     }
 
-    .fader-scale span::after {
-      content: '';
-      position: absolute;
-      right: -2px;
-      width: 3px;
-      height: 1px;
-      background: #555;
-    }
-
     .vertical-slider-container {
       position: relative;
       flex: 1;
@@ -359,21 +585,22 @@
       margin: 0 auto;
     }
 
+    /* LATAR BELAKANG INDIKATOR REDUP (FAINT BACKGROUND) */
     .sq-led-meter {
       position: absolute;
       left: 50%;
-      top: 4px;
-      bottom: 4px;
+      top: 3px;
+      bottom: 3px;
       transform: translateX(-50%);
-      width: 40px;
-      height: calc(100% - 8px);
-      background: linear-gradient(to top, rgba(0, 168, 45, 0.15) 0%, rgba(0, 255, 68, 0.15) 65%, rgba(255, 187, 0, 0.15) 85%, rgba(255, 17, 0, 0.15) 100%);
+      width: 32px;
+      height: calc(100% - 6px);
+      background: linear-gradient(to top, rgba(0, 168, 45, 0.12) 0%, rgba(0, 255, 68, 0.12) 65%, rgba(255, 187, 0, 0.12) 85%, rgba(255, 17, 0, 0.12) 100%);
       border-radius: 1px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      border: 1px solid #1a1a1a;
+      border: 1px solid #27272a;
       pointer-events: none;
       z-index: 1;
     }
@@ -382,37 +609,36 @@
       width: 100%;
       height: 0%;
       background: linear-gradient(to top, #00a82d 0%, #00ff44 65%, #ffbb00 85%, #ff1100 100%);
-      box-shadow: 0 0 6px rgba(0,255,85,0.7);
       transition: height 0.08s ease-out;
     }
 
     .fader-right-indicator {
       position: relative;
-      width: 30px;
+      width: 24px;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: space-between;
-      font-size: 6px;
-      color: #777;
+      font-size: 5.5px;
+      color: #a1a1aa;
       font-family: monospace;
       z-index: 3;
-      padding: 6px 0;
+      padding: 4px 0;
       pointer-events: none;
     }
 
     .fader-right-indicator span:first-child {
       font-weight: bold;
-      color: #aaa;
+      color: #e4e4e7;
       margin-bottom: auto;
     }
 
     .tick-right {
       position: relative;
-      width: 3px;
+      width: 2px;
       height: 1px;
-      background: #555;
+      background: #71717a;
       margin: auto 0;
     }
 
@@ -422,8 +648,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: calc(100% - 8px);
-      height: 38px;
+      width: calc(100% - 6px);
+      height: 32px;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
       border: none;
@@ -435,292 +661,19 @@
       padding: 0;
     }
 
-    input[type="range"].vertical-fader::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 4px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-    }
-
-    input[type="range"].vertical-fader::-moz-range-track {
-      width: 100%;
-      height: 4px;
-      background: transparent;
-      border: none;
-    }
-
+    /* KEPALA FADER (THUMB) DIATUR SEJAJAR DAN SEMI-TRANSPARAN PRESISI */
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 55px;  
-      height: 40px; 
-      margin-top: -20px; 
+      width: 48px;  
+      height: 32px; 
+      margin-top: -16px; 
       box-sizing: border-box;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       border-radius: 4px;
-      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 4px rgba(255,255,255,0.1), inset 0 1px 1px rgba(255,255,255,0.4);
+      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(35, 35, 35, 0.75);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.8);
       cursor: grab;
-    }
-
-    input[type="range"].vertical-fader:active::-webkit-slider-thumb {
-      cursor: grabbing;
-      border-color: var(--sq-green-glow);
-      box-shadow: 0 0 10px var(--sq-green-glow), inset 0 1px 2px #fff;
-    }
-
-    input[type="range"].vertical-fader::-moz-range-thumb {
-      width: 32px;  
-      height: 20px; 
-      box-sizing: border-box;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(135deg, rgba(60, 60, 60, 0.4) 0%, rgba(10, 10, 10, 0.5) 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 0 4px rgba(255,255,255,0.1), inset 0 1px 1px rgba(255,255,255,0.4);
-      cursor: grab;
-    }
-
-    /* MODAL SQ MIXPAD STYLE */
-    .modal-overlay {
-      display: none;
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
-      padding: 6px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      width: 100%;
-      max-width: 450px;
-      background: #141414;
-      border: 2px solid #333;
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.9);
-    }
-
-    .modal-header {
-      background: #1c1c1c;
-      padding: 6px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #2a2a2a;
-    }
-
-    .modal-title {
-      font-size: .7rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: 0.5px;
-    }
-
-    .modal-close {
-      background: #bd1c1c;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      padding: 3px 8px;
-      font-size: .6rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .modal-body {
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .sq-graph-box {
-      width: 100%;
-      height: 180px;
-      background: #0b0f14;
-      border: 1px solid #222;
-      border-radius: 3px;
-      position: relative;
-      touch-action: none;
-    }
-
-    .sq-graph-box svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .sq-axis-label {
-      font-size: 6px;
-      fill: #666;
-      font-family: monospace;
-    }
-
-    .sq-grid-line {
-      stroke: #1b2631;
-      stroke-width: 0.7;
-      stroke-dasharray: 2 2;
-    }
-
-    .sq-curve-fill {
-      fill: url(#sqCurveGrad);
-      opacity: 0.45;
-    }
-
-    .sq-curve-line {
-      fill: none;
-      stroke: #ffaa00;
-      stroke-width: 2.5;
-      filter: drop-shadow(0 0 3px #ffaa00);
-    }
-
-    .sq-node-point {
-      fill: #141414;
-      stroke: #ffaa00;
-      stroke-width: 2.5;
-      cursor: grab;
-      filter: drop-shadow(0 0 5px #ffaa00);
-      transition: r 0.1s ease, stroke-width 0.1s ease;
-    }
-
-    .sq-node-point:active, .sq-node-point.active-drag {
-      cursor: grabbing;
-      r: 6.5;
-      stroke: #ffffff;
-      stroke-width: 3;
-      filter: drop-shadow(0 0 8px #ffffff);
-    }
-
-    .sq-controls-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 4px;
-    }
-
-    .sq-knob-card {
-      background: #1a1a1a;
-      border: 1px solid #282828;
-      border-radius: 3px;
-      padding: 4px 2px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2px;
-      text-align: center;
-      min-height: 52px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .sq-knob-card:hover {
-      border-color: var(--amber);
-      background: #222;
-    }
-
-    .sq-knob-card label {
-      font-size: .48rem;
-      color: #999;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    .sq-knob-card input[type="range"] {
-      width: 100%;
-      accent-color: var(--amber);
-      height: 12px;
-      margin: 2px 0;
-      cursor: pointer;
-    }
-
-    .sq-knob-card span {
-      font-size: .56rem;
-      color: var(--amber);
-      font-family: monospace;
-      font-weight: bold;
-    }
-
-    .sq-bottom-panel {
-      display: flex;
-      gap: 4px;
-      align-items: stretch;
-      width: 100%;
-    }
-
-    .sq-mode-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 3px;
-      background: #111;
-      padding: 3px;
-      border: 1px solid #222;
-      border-radius: 3px;
-    }
-
-    .sq-mode-btn {
-      background: #222;
-      color: #888;
-      border: 1px solid #333;
-      border-radius: 2px;
-      font-size: .52rem;
-      font-weight: bold;
-      padding: 4px 0;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .sq-mode-btn.active {
-      background: #11732e;
-      color: #fff;
-      border-color: #1ccb50;
-      text-shadow: 0 0 3px #00ff55;
-    }
-
-    /* SUB-HALAMAN / HALAMAN DETAIL POPUP PARAMETER KERNEL */
-    .param-detail-subpage {
-      display: none;
-      background: #111;
-      border: 1px solid var(--amber);
-      border-radius: 4px;
-      padding: 8px;
-      margin-top: 4px;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .param-detail-subpage.active {
-      display: flex;
-    }
-
-    .subpage-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: .65rem;
-      color: var(--amber);
-      font-weight: bold;
-      border-bottom: 1px solid #222;
-      padding-bottom: 3px;
-    }
-
-    .subpage-close {
-      background: transparent;
-      color: #aaa;
-      border: none;
-      cursor: pointer;
-      font-size: .6rem;
     }
 
     .feature-panel {
@@ -730,7 +683,7 @@
       width: 100%;
       height: 100%;
       min-height: 0;
-      padding: 10px;
+      padding: 8px;
       background: var(--card);
       border: 1px solid #2a2a2a;
       border-radius: 3px;
@@ -753,7 +706,7 @@
     .param-grid {
       display: grid;
       grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 8px;
+      gap: 6px;
       width: 100%;
     }
 
@@ -761,8 +714,8 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      padding: 8px;
+      gap: 4px;
+      padding: 6px;
       background: #111;
       border: 1px solid #222;
       border-radius: 2px;
@@ -773,7 +726,7 @@
       justify-content: space-between;
       gap: 5px;
       color: #999;
-      font-size: .58rem;
+      font-size: .55rem;
       text-transform: uppercase;
     }
 
@@ -787,36 +740,36 @@
     .param-card input[type="range"] {
       width: 100%;
       min-width: 0;
-      padding: 4px;
+      padding: 3px;
       color: #fff;
       background: #181818;
       border: 1px solid #333;
       border-radius: 2px;
-      font-size: .65rem;
+      font-size: .6rem;
     }
 
     .action-btn {
-      padding: 8px;
+      padding: 6px;
       color: #0b0b0b;
       background: var(--amber);
       border: none;
       border-radius: 2px;
-      font-size: .65rem;
+      font-size: .6rem;
       font-weight: 800;
       cursor: pointer;
     }
 
     .app-footer {
       flex-shrink: 0;
-      min-height: 18px;
+      min-height: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 3px 8px;
-      color: #666;
-      border-top: 1px solid #222;
-      font-size: .53rem;
+      padding: 2px 6px;
+      color: #71717a;
+      border-top: 1px solid #27272a;
+      font-size: .5rem;
     }
 
     @media (min-width: 600px) {
@@ -856,18 +809,269 @@
   <div class="fader-workspace">
 
     <!-- PANEL MIXER / DLMS CHANNEL BANK -->
-    <div id="panel-mixer" class="feature-panel active-panel">
+    <div id="panel-mixer" class="feature-panel active-panel" style="position:relative;">
+      
+      <!-- TOUCHSCREEN PROCESSOR CONSOLE -->
+      <div class="touchscreen-console">
+        <!-- Sidebar Menu Prosesor -->
+        <div class="tc-sidebar">
+          <div class="tc-side-btn" id="side-preamp" onclick="switchProcessorPage('preamp')">Preamp</div>
+          <div class="tc-side-btn" id="side-hpf" onclick="switchProcessorPage('hpf')">HPF</div>
+          <div class="tc-side-btn" id="side-gate" onclick="switchProcessorPage('gate')">Gate</div>
+          <div class="tc-side-btn" id="side-peq" onclick="switchProcessorPage('peq')">PEQ</div>
+          <div class="tc-side-btn active" id="side-comp" onclick="switchProcessorPage('comp')">Compressor</div>
+        </div>
+
+        <!-- Area Grafik Kurva Interaktif -->
+        <div class="tc-center-graph">
+          
+          <!-- HALAMAN 1: PREAMP -->
+          <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="preamp-graph-box">
+              <svg viewBox="0 0 300 200" preserveAspectRatio="none">
+                <line x1="50" y1="0" x2="50" y2="200" class="sq-grid-line"/>
+                <line x1="150" y1="0" x2="150" y2="200" class="sq-grid-line"/>
+                <line x1="250" y1="0" x2="250" y2="200" class="sq-grid-line"/>
+                <line x1="0" y1="100" x2="300" y2="100" class="sq-grid-line"/>
+                <path id="preamp-curve-path" class="neon-line-blue" d="M 0 100 L 300 100"/>
+                <circle id="node-preamp" cx="150" cy="100" r="6" class="sq-node-point" style="stroke:var(--neon-blue);"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- HALAMAN 2: HPF -->
+          <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="hpf-graph-box">
+              <svg viewBox="0 0 300 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="hpfGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#00d2ff" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#00d2ff" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <line x1="75" y1="0" x2="75" y2="200" class="sq-grid-line"/>
+                <line x1="150" y1="0" x2="150" y2="200" class="sq-grid-line"/>
+                <line x1="225" y1="0" x2="225" y2="200" class="sq-grid-line"/>
+                <path id="hpf-fill-path" class="sq-curve-fill" style="fill:url(#hpfGrad);" d="M 0 160 L 90 160 L 220 30 L 300 30 L 300 200 L 0 200 Z"/>
+                <path id="hpf-curve-path" class="neon-line-blue" d="M 0 160 L 90 160 L 220 30 L 300 30"/>
+                <circle id="node-hpf" cx="90" cy="160" r="6" class="sq-node-point" style="stroke:var(--neon-blue);"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- HALAMAN 3: GATE -->
+          <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="gate-graph-box">
+              <svg viewBox="0 0 300 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#34d399" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#34d399" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="100" x2="300" y2="100" class="sq-grid-line"/>
+                <line x1="100" y1="0" x2="100" y2="200" class="sq-grid-line"/>
+                <line x1="200" y1="0" x2="200" y2="200" class="sq-grid-line"/>
+                <path id="gate-fill-path" class="sq-curve-fill" style="fill:url(#gateGrad);" d="M 0 180 L 120 180 L 120 30 L 300 30 L 300 200 L 0 200 Z"/>
+                <path id="gate-curve-path" class="sq-curve-line" style="stroke:#34d399;" d="M 0 180 L 120 180 L 120 30 L 300 30"/>
+                <circle id="node-gate" cx="120" cy="180" r="6" class="sq-node-point" style="stroke:#34d399;"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- HALAMAN 4: PEQ -->
+          <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="peq-graph-box">
+              <svg viewBox="0 0 300 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="100" x2="300" y2="100" class="sq-grid-line"/>
+                <line x1="75" y1="0" x2="75" y2="200" class="sq-grid-line"/>
+                <line x1="150" y1="0" x2="150" y2="200" class="sq-grid-line"/>
+                <line x1="225" y1="0" x2="225" y2="200" class="sq-grid-line"/>
+                <path id="peq-fill-path" class="sq-curve-fill" style="fill:url(#peqGrad);" d="M 0 100 Q 150 40 300 100 L 300 200 L 0 200 Z"/>
+                <path id="peq-curve-path" class="sq-curve-line" style="stroke:#f43f5e;" d="M 0 100 Q 150 40 300 100"/>
+                <circle id="node-peq" cx="150" cy="40" r="6" class="sq-node-point" style="stroke:#f43f5e;"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- HALAMAN 5: COMPRESSOR (Default) -->
+          <div id="proc-page-comp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="editor-graph-box">
+              <svg viewBox="0 0 300 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffaa00" stop-opacity="0.8"/>
+                    <stop offset="100%" stop-color="#ffaa00" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <line x1="75" y1="0" x2="75" y2="200" class="sq-grid-line"/>
+                <line x1="150" y1="0" x2="150" y2="200" class="sq-grid-line"/>
+                <line x1="225" y1="0" x2="225" y2="200" class="sq-grid-line"/>
+                <line x1="0" y1="50" x2="300" y2="50" class="sq-grid-line"/>
+                <line x1="0" y1="100" x2="300" y2="100" class="sq-grid-line"/>
+                <line x1="0" y1="150" x2="300" y2="150" class="sq-grid-line"/>
+
+                <path id="sq-fill-path" class="sq-curve-fill" d="M 0 200 L 180 110 L 300 110 L 300 200 Z"/>
+                <path id="sq-curve-path" class="sq-curve-line" d="M 0 200 L 180 110 L 300 110"/>
+
+                <circle id="node-thresh" cx="180" cy="110" r="6" class="sq-node-point"/>
+                <circle id="node-output" cx="300" cy="110" r="6" class="sq-node-point"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PANEL KANAN: KENOP PUTAR FISIK PARAMETER & MASTER VOLUME -->
+        <div class="tc-right-knobs-panel">
+          
+          <!-- PREAMP KNOBS -->
+          <div id="knobs-group-preamp" class="knobs-grid" style="display:none;">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-gain', -10, 60, 0.5)">
+              <label>Gain</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-pre-gain"></div></div>
+              <span id="tc-val-pregaining">12.0 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-pad', -20, 0, 20)">
+              <label>Pad</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-pre-pad"></div></div>
+              <span id="tc-val-prepad">0 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-phase', 0, 1, 1)">
+              <label>Polarity</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-pre-phase"></div></div>
+              <span id="tc-val-phase">Normal</span>
+            </div>
+          </div>
+
+          <!-- HPF KNOBS -->
+          <div id="knobs-group-hpf" class="knobs-grid" style="display:none;">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-freq', 20, 400, 1)">
+              <label>Freq</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-freq"></div></div>
+              <span id="tc-val-hpffreq">80 Hz</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-slope', 12, 24, 12)">
+              <label>Slope</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-slope"></div></div>
+              <span id="tc-val-hpfslope">24 dB</span>
+            </div>
+          </div>
+
+          <!-- GATE KNOBS -->
+          <div id="knobs-group-gate" class="knobs-grid" style="display:none;">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-thr', -80, 0, 1)">
+              <label>Thr</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-gate-thr"></div></div>
+              <span id="tc-val-gatethr">-45 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-rng', -60, 0, 1)">
+              <label>Range</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-gate-rng"></div></div>
+              <span id="tc-val-gaterng">-40 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-atk', 0.1, 100, 0.1)">
+              <label>Attack</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-gate-atk"></div></div>
+              <span id="tc-val-gateatk">5.0 ms</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-rel', 10, 1000, 1)">
+              <label>Release</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-gate-rel"></div></div>
+              <span id="tc-val-gaterel">200 ms</span>
+            </div>
+          </div>
+
+          <!-- PEQ KNOBS -->
+          <div id="knobs-group-peq" class="knobs-grid" style="display:none;">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-band', 1, 4, 1)">
+              <label>Band</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-peq-band"></div></div>
+              <span id="tc-val-peqband">Band 2</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-freq', 20, 20000, 10)">
+              <label>Freq</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-peq-freq"></div></div>
+              <span id="tc-val-peqfreq">1000 Hz</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-gain', -12, 12, 0.5)">
+              <label>Gain</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-peq-gain"></div></div>
+              <span id="tc-val-peqgain">0.0 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-q', 0.1, 10, 0.1)">
+              <label>Q</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-peq-q"></div></div>
+              <span id="tc-val-peqq">1.4 Q</span>
+            </div>
+          </div>
+
+          <!-- COMPRESSOR KNOBS (Default) -->
+          <div id="knobs-group-comp" class="knobs-grid" style="display:grid;">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-atk', 0.5, 100, 0.5)">
+              <label>Attack</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-atk"></div></div>
+              <span id="tc-val-atk">60.0 ms</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-rel', 10, 1000, 1)">
+              <label>Release</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-rel"></div></div>
+              <span id="tc-val-rel">141 ms</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-ratio', 1, 20, 0.5)">
+              <label>Ratio</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-ratio"></div></div>
+              <span id="tc-val-ratio">1.5:1</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-thr', -60, 0, 0.5)">
+              <label>Thr</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-thr"></div></div>
+              <span id="tc-val-thr">-30.5 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-gain', 0, 24, 0.5)">
+              <label>Gain</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-gain"></div></div>
+              <span id="tc-val-gain">0.0 dB</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-mix', 0, 100, 1)">
+              <label>Mix</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-mix"></div></div>
+              <span id="tc-val-mix">100 %</span>
+            </div>
+          </div>
+
+          <!-- Master Volume -->
+          <div>
+            <div class="tc-master-strip" onpointerdown="initKnobDrag(event, 'master-gain', -40, 20, 0.5)">
+              <label id="active-ch-label">In A</label>
+              <div style="display:flex; align-items:center; gap:5px;">
+                <div class="physical-knob" style="width:28px; height:28px;"><div class="knob-indicator" id="ind-master-gain" style="height:8px;"></div></div>
+                <span id="tc-val-mastergain">0.0 dB</span>
+              </div>
+            </div>
+            <button class="tc-power-btn" id="tc-power-btn" onclick="toggleActivePower()">IN (ACTIVE)</button>
+          </div>
+
+        </div>
+      </div>
+
       <div class="section-group-title">Input Master &amp; Speaker Outputs (Sub, Low, Mid, High)</div>
 
       <div class="mixer-bank">
 
         <!-- CHANNEL IN A -->
-        <div class="channel-strip" id="strip-ina" onclick="focusChannel('ina')">
+        <div class="channel-strip focused" id="strip-ina" onclick="focusChannel('ina')">
           <div class="ch-header-sq">
             <div class="ch-name">In A</div>
             <div class="ch-sublabel">Master In 1</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('ina', 'In A - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-ina" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -878,13 +1082,13 @@
           <div class="db-value" id="val-ina">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>20</span><span>10</span><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-ina"></div>
+                <div class="sq-meter-fill" id="meter-ina" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="12" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-ina" min="-40" max="20" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -899,7 +1103,7 @@
             <div class="ch-name">In B</div>
             <div class="ch-sublabel">Master In 2</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('inb', 'In B - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-inb" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -910,13 +1114,13 @@
           <div class="db-value" id="val-inb">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>20</span><span>10</span><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-inb"></div>
+                <div class="sq-meter-fill" id="meter-inb" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="12" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-inb" min="-40" max="20" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -931,7 +1135,7 @@
             <div class="ch-name">Out 1</div>
             <div class="ch-sublabel">Subwoofer</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('out1', 'Out 1 - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-out1" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -942,13 +1146,13 @@
           <div class="db-value" id="val-out1">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>12</span><span>6</span><span>0</span><span>6</span><span>12</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-out1"></div>
+                <div class="sq-meter-fill" id="meter-out1" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="6" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-out1" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -963,7 +1167,7 @@
             <div class="ch-name">Out 2</div>
             <div class="ch-sublabel">Low / Woofer</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('out2', 'Out 2 - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-out2" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -974,13 +1178,13 @@
           <div class="db-value" id="val-out2">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>12</span><span>6</span><span>0</span><span>6</span><span>12</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-out2"></div>
+                <div class="sq-meter-fill" id="meter-out2" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="6" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-out2" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -995,7 +1199,7 @@
             <div class="ch-name">Out 3</div>
             <div class="ch-sublabel">Mid</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('out3', 'Out 3 - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-out3" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -1006,13 +1210,13 @@
           <div class="db-value" id="val-out3">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>12</span><span>6</span><span>0</span><span>6</span><span>12</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-out3"></div>
+                <div class="sq-meter-fill" id="meter-out3" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="6" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-out3" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -1027,7 +1231,7 @@
             <div class="ch-name">Out 4</div>
             <div class="ch-sublabel">High / Tweeter</div>
           </div>
-          <div class="eq-curve-box" onclick="openProcessorModal('out4', 'Out 4 - Compressor')">
+          <div class="eq-curve-box">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
               <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
               <path id="mini-curve-out4" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
@@ -1038,13 +1242,13 @@
           <div class="db-value" id="val-out4">0.0 dB</div>
           <div class="fader-meter-area">
             <div class="fader-scale">
-              <span>10</span><span>5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+              <span>12</span><span>6</span><span>0</span><span>6</span><span>12</span><span>20</span><span>30</span><span>40</span><span>∞</span>
             </div>
             <div class="vertical-slider-container">
               <div class="sq-led-meter">
-                <div class="sq-meter-fill" id="meter-out4"></div>
+                <div class="sq-meter-fill" id="meter-out4" style="height: 0%;"></div>
               </div>
-              <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="6" step="0.5" value="0">
+              <input type="range" class="vertical-fader" id="gain-out4" min="-40" max="12" step="0.5" value="0">
             </div>
             <div class="fader-right-indicator">
               <span>C</span><span class="tick-right"></span><span class="tick-right"></span><span class="tick-right"></span>
@@ -1065,40 +1269,9 @@
           <select id="hpf1-type" onchange="updateParam('hpf1_type', this.value)">
             <option value="Butterworth 24">Butterworth 24dB</option>
             <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
-            <option value="Bessel 18">Bessel 18dB</option>
           </select>
           <label>Frequency: <span id="xover-hpf1">35 Hz</span></label>
           <input id="hpf1-freq" type="range" min="20" max="120" value="35" oninput="updateParam('hpf1_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Out 1 Sub LPF</label>
-          <select id="lpf1-type" onchange="updateParam('lpf1_type', this.value)">
-            <option value="Butterworth 24">Butterworth 24dB</option>
-            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
-          </select>
-          <label>Frequency: <span id="xover-lpf1">120 Hz</span></label>
-          <input id="lpf1-freq" type="range" min="80" max="250" value="120" oninput="updateParam('lpf1_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Out 3 Mid HPF</label>
-          <select id="hpf3-type" onchange="updateParam('hpf3_type', this.value)">
-            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
-            <option value="Butterworth 12">Butterworth 12dB</option>
-          </select>
-          <label>Frequency: <span id="xover-hpf3">500 Hz</span></label>
-          <input id="hpf3-freq" type="range" min="200" max="2000" value="500" oninput="updateParam('hpf3_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Out 4 High LPF</label>
-          <select id="lpf4-type" onchange="updateParam('lpf4_type', this.value)">
-            <option value="Butterworth 18">Butterworth 18dB</option>
-            <option value="Linkwitz-Riley 24">Linkwitz-Riley 24dB</option>
-          </select>
-          <label>Frequency: <span id="xover-lpf4">18 kHz</span></label>
-          <input id="lpf4-freq" type="range" min="5000" max="20000" step="100" value="18000" oninput="updateParam('lpf4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -1110,29 +1283,6 @@
         <div class="param-card">
           <label>Band 1 Gain <span id="eq-g1">0 dB</span></label>
           <input id="eq1-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq1_gain', this.value)">
-          <label>Frequency <span id="eq-f1">63 Hz</span></label>
-          <input id="eq1-freq" type="range" min="20" max="200" value="63" oninput="updateParam('eq1_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Band 2 Gain <span id="eq-g2">0 dB</span></label>
-          <input id="eq2-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq2_gain', this.value)">
-          <label>Frequency <span id="eq-f2">250 Hz</span></label>
-          <input id="eq2-freq" type="range" min="100" max="1000" value="250" oninput="updateParam('eq2_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Band 3 Gain <span id="eq-g3">0 dB</span></label>
-          <input id="eq3-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq3_gain', this.value)">
-          <label>Frequency <span id="eq-f3">2.5 kHz</span></label>
-          <input id="eq3-freq" type="range" min="1000" max="8000" value="2500" oninput="updateParam('eq3_freq', this.value)">
-        </div>
-
-        <div class="param-card">
-          <label>Band 4 Gain <span id="eq-g4">0 dB</span></label>
-          <input id="eq4-gain" type="range" min="-12" max="12" step="0.5" value="0" oninput="updateParam('eq4_gain', this.value)">
-          <label>Frequency <span id="eq-f4">12 kHz</span></label>
-          <input id="eq4-freq" type="range" min="8000" max="20000" value="12000" oninput="updateParam('eq4_freq', this.value)">
         </div>
       </div>
     </div>
@@ -1146,24 +1296,6 @@
           <input id="delay1-input" type="range" min="0" max="50" step="0.1" value="0" oninput="updateParam('delay1', this.value)">
           <span id="delay1-val">0.0 ms</span>
         </div>
-
-        <div class="param-card">
-          <label>Out 2 Delay</label>
-          <input id="delay2-input" type="range" min="0" max="50" step="0.1" value="0" oninput="updateParam('delay2', this.value)">
-          <span id="delay2-val">0.0 ms</span>
-        </div>
-
-        <div class="param-card">
-          <label>Master Limiter Threshold</label>
-          <input id="limiter-input" type="range" min="-20" max="0" step="0.5" value="-3" oninput="updateParam('limiter', this.value)">
-          <span id="limiter-val">-3.0 dB</span>
-        </div>
-
-        <div class="param-card">
-          <label>Release Time</label>
-          <input id="release-input" type="range" min="10" max="1000" step="10" value="200" oninput="updateParam('release', this.value)">
-          <span id="release-val">200 ms</span>
-        </div>
       </div>
     </div>
 
@@ -1173,21 +1305,13 @@
       <div class="param-grid" style="grid-template-columns:minmax(0,350px);justify-content:center;">
         <div class="param-card">
           <label for="dlmd-name">Nama Perangkat / SSID ESP32</label>
-          <input type="text" id="dlmd-name" value="DCX2496-PRO" placeholder="Nama perangkat">
+          <input type="text" id="dlmd-name" value="DCX2496-PRO">
         </div>
-
         <div class="param-card">
           <label for="dlmd-ip">Alamat IP DLMD Fisik</label>
-          <input type="text" id="dlmd-ip" value="192.168.4.1" placeholder="192.168.4.1">
+          <input type="text" id="dlmd-ip" value="192.168.4.1">
         </div>
-
-        <button class="action-btn" type="button" onclick="saveConnectionSettings()">
-          Simpan Pengaturan
-        </button>
-
-        <p style="font-size:.65rem;color:#888;line-height:1.5;">
-          Masukkan alamat IP perangkat ESP32. Perubahan IP disimpan di browser.
-        </p>
+        <button class="action-btn" type="button" onclick="saveConnectionSettings()">Simpan Pengaturan</button>
       </div>
     </div>
 
@@ -1195,136 +1319,8 @@
 
   <!-- Footer -->
   <div class="app-footer">
-    <span id="connection-status-text">Kontrol web siap • koneksi perangkat belum diverifikasi</span>
+    <span id="connection-status-text">Kontrol web siap</span>
     <span>DLMS DSP v3.0</span>
-  </div>
-
-  <!-- MODAL / HALAMAN SQ MIXPAD COMPRESSOR -->
-  <div id="processor-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-channel-title">Ch 1 Compressor</div>
-        <button class="modal-close" onclick="closeProcessorModal()">✕ Tutup</button>
-      </div>
-      <div class="modal-body">
-        
-        <!-- Kotak Grafik Transfer SQ MixPad -->
-        <div class="sq-graph-box" id="editor-graph-box">
-          <svg viewBox="0 0 300 180" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffaa00" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#ffaa00" stop-opacity="0.05"/>
-              </linearGradient>
-            </defs>
-
-            <!-- Grid Sumbu dB -->
-            <line x1="50" y1="0" x2="50" y2="155" class="sq-grid-line"/>
-            <line x1="90" y1="0" x2="90" y2="155" class="sq-grid-line"/>
-            <line x1="130" y1="0" x2="130" y2="155" class="sq-grid-line"/>
-            <line x1="170" y1="0" x2="170" y2="155" class="sq-grid-line"/>
-            <line x1="210" y1="0" x2="210" y2="155" class="sq-grid-line"/>
-            <line x1="250" y1="0" x2="250" y2="155" class="sq-grid-line"/>
-
-            <line x1="10" y1="31" x2="290" y2="31" class="sq-grid-line"/>
-            <line x1="10" y1="62" x2="290" y2="62" class="sq-grid-line"/>
-            <line x1="10" y1="93" x2="290" y2="93" class="sq-grid-line"/>
-            <line x1="10" y1="124" x2="290" y2="124" class="sq-grid-line"/>
-            <line x1="10" y1="155" x2="290" y2="155" class="sq-grid-line"/>
-
-            <text x="2" y="33" class="sq-axis-label">-10</text>
-            <text x="2" y="64" class="sq-axis-label">-20</text>
-            <text x="2" y="95" class="sq-axis-label">-30</text>
-            <text x="2" y="126" class="sq-axis-label">-40</text>
-            <text x="2" y="157" class="sq-axis-label">-60</text>
-
-            <text x="45" y="167" class="sq-axis-label">-50</text>
-            <text x="85" y="167" class="sq-axis-label">-40</text>
-            <text x="125" y="167" class="sq-axis-label">-30</text>
-            <text x="165" y="167" class="sq-axis-label">-20</text>
-            <text x="205" y="167" class="sq-axis-label">-10</text>
-            <text x="248" y="167" class="sq-axis-label">0</text>
-
-            <!-- Gradient & Curve -->
-            <path id="sq-fill-path" class="sq-curve-fill" d="M 10 155 L 200 95 L 290 95 L 290 155 Z"/>
-            <path id="sq-curve-path" class="sq-curve-line" d="M 10 155 L 200 95 L 290 95"/>
-
-            <!-- Interactive Nodes -->
-            <circle id="node-thresh" cx="200" cy="95" r="5" class="sq-node-point"/>
-            <circle id="node-output" cx="290" cy="95" r="5" class="sq-node-point"/>
-          </svg>
-        </div>
-
-        <!-- BARISAN KENOP ATAS MODAL -->
-        <div class="sq-controls-grid">
-          <div class="sq-knob-card" onclick="openParamSubpage('Attack', 'comp-atk', 'ms', 0.5, 100, 0.5)">
-            <label>Attack</label>
-            <input type="range" min="0.5" max="100" step="0.5" value="60" id="comp-atk" oninput="updateCompParam()">
-            <span id="val-atk">60.0 ms</span>
-          </div>
-          <div class="sq-knob-card" onclick="openParamSubpage('Hold', 'comp-hold', 'ms', 1, 500, 1)">
-            <label>Hold</label>
-            <input type="range" min="1" max="500" step="1" value="6" id="comp-hold" oninput="updateCompParam()">
-            <span id="val-hold">6.32 ms</span>
-          </div>
-          <div class="sq-knob-card" onclick="openParamSubpage('Release', 'comp-rel', 'ms', 10, 1000, 1)">
-            <label>Release</label>
-            <input type="range" min="10" max="1000" step="1" value="141" id="comp-rel" oninput="updateCompParam()">
-            <span id="val-rel">141 ms</span>
-          </div>
-          <div class="sq-knob-card" onclick="openParamSubpage('Ratio', 'comp-ratio', ':1', 1, 20, 0.5)">
-            <label>Ratio</label>
-            <input type="range" min="1" max="20" step="0.5" value="1.5" id="comp-ratio" oninput="updateCompParam()">
-            <span id="val-ratio">1.5:1</span>
-          </div>
-          <div class="sq-knob-card" onclick="openParamSubpage('Threshold', 'comp-thr', 'dB', -60, 0, 0.5)">
-            <label>Thr</label>
-            <input type="range" min="-60" max="0" step="0.5" value="-30.5" id="comp-thr" oninput="updateCompParam()">
-            <span id="val-thr">-30.5 dB</span>
-          </div>
-          <div class="sq-knob-card" onclick="openParamSubpage('Knee', 'comp-knee', '', 0, 10, 1)">
-            <label>Knee</label>
-            <input type="range" min="0" max="10" step="1" value="0" id="comp-knee" oninput="updateCompParam()">
-            <span id="val-knee">0</span>
-          </div>
-        </div>
-
-        <!-- BARISAN GAIN, MIX, DAN TOMBOL MODE BAWAH MODAL -->
-        <div class="sq-bottom-panel">
-          <div class="sq-knob-card" style="flex:1;" onclick="openParamSubpage('Makeup Gain', 'comp-gain', 'dB', 0, 24, 0.5)">
-            <label>Gain</label>
-            <input type="range" min="0" max="24" step="0.5" value="0" id="comp-gain" oninput="updateCompParam()">
-            <span id="val-gain">0.0 dB</span>
-          </div>
-          <div class="sq-knob-card" style="flex:1;" onclick="openParamSubpage('Dry/Wet Mix', 'comp-mix', '%', 0, 100, 1)">
-            <label>Mix</label>
-            <input type="range" min="0" max="100" step="1" value="100" id="comp-mix" oninput="updateCompParam()">
-            <span id="val-mix">100 %</span>
-          </div>
-          
-          <div class="sq-mode-group" style="flex:2;">
-            <button class="sq-mode-btn active" id="btn-comp" onclick="setMode('comp')">Comp</button>
-            <button class="sq-mode-btn" id="btn-peak" onclick="setMode('peak')">Peak</button>
-            <button class="sq-mode-btn" id="btn-lin" onclick="setMode('lin')">Lin</button>
-            <button class="sq-mode-btn active" id="btn-log" onclick="setMode('log')">Log</button>
-          </div>
-        </div>
-
-        <!-- SUB-HALAMAN DETAIL / POPUP KONTROL MENDALAM -->
-        <div id="param-subpage" class="param-detail-subpage">
-          <div class="subpage-header">
-            <span id="subpage-title">Pengaturan Parameter</span>
-            <button class="subpage-close" onclick="closeParamSubpage()">✕ Tutup Halaman</button>
-          </div>
-          <div class="param-card" style="background:#090909; border:none;">
-            <label>Nilai Detail: <span id="subpage-val-display" style="color:var(--amber);">0</span></label>
-            <input type="range" id="subpage-slider" oninput="syncSubpageValue(this.value)">
-          </div>
-          <p style="font-size:.55rem;color:#777;margin:0;">Geser untuk mengubah parameter secara akurat.</p>
-        </div>
-
-      </div>
-    </div>
   </div>
 
 </div>
@@ -1333,275 +1329,370 @@
 <script>
 let targetIP = "192.168.4.1";
 let sendTimers = {};
-let activeModalChannel = null;
-let activeSubpageInputId = null;
+let currentFocusedChannel = "ina";
+let currentProcessorTab = "comp";
 
-const channelIds = [
-  "ina", "inb",
-  "out1", "out2", "out3", "out4"
-];
+const channelIds = ["ina", "inb", "out1", "out2", "out3", "out4"];
+const channelNames = { "ina": "In A", "inb": "In B", "out1": "Out 1 (Sub)", "out2": "Out 2 (Low)", "out3": "Out 3 (Mid)", "out4": "Out 4 (High)" };
 
 let muteStates = {};
 let onStates = {};
 let channelCompressors = {};
+let channelProcessors = {};
 
 channelIds.forEach(id => {
   muteStates[id] = false;
   onStates[id] = false;
   channelCompressors[id] = {
-    atk: 60, hold: 6.3, rel: 141, ratio: 1.5, thr: -30.5, knee: 0, gain: 0, mix: 100
+    atk: 60, rel: 141, ratio: 1.5, thr: -30.5, gain: 0, mix: 100
+  };
+  channelProcessors[id] = {
+    pre_gain: 12.0, pre_pad: 0, pre_phase: 0,
+    hpf_freq: 80, hpf_slope: 24,
+    gate_thr: -45, gate_rng: -40, gate_atk: 5.0, gate_rel: 200,
+    peq_band: 2, peq_freq: 1000, peq_gain: 0.0, peq_q: 1.4
   };
 });
 
-/* Fungsi Membuka Sub-Halaman Kontrol Parameter */
-function openParamSubpage(paramName, inputId, unit, min, max, step) {
-  activeSubpageInputId = inputId;
-  const subpage = document.getElementById("param-subpage");
-  const titleEl = document.getElementById("subpage-title");
-  const sliderEl = document.getElementById("subpage-slider");
-  const targetInput = document.getElementById(inputId);
-
-  if (subpage && titleEl && sliderEl && targetInput) {
-    titleEl.textContent = `Halaman Parameter: ${paramName}`;
-    sliderEl.min = min;
-    sliderEl.max = max;
-    sliderEl.step = step;
-    sliderEl.value = targetInput.value;
-    document.getElementById("subpage-val-display").textContent = targetInput.value + " " + unit;
-    subpage.classList.add("active");
-  }
+function switchProcessorPage(pageName) {
+  currentProcessorTab = pageName;
+  ["preamp", "hpf", "gate", "peq", "comp"].forEach(name => {
+    const btn = document.getElementById("side-" + name);
+    const page = document.getElementById("proc-page-" + name);
+    const knobs = document.getElementById("knobs-group-" + name);
+    if (btn) btn.classList.toggle("active", name === pageName);
+    if (page) page.style.display = (name === pageName) ? "block" : "none";
+    if (knobs) knobs.style.display = (name === pageName) ? "grid" : "none";
+  });
+  updateActiveProcessorUI();
 }
 
-function closeParamSubpage() {
-  const subpage = document.getElementById("param-subpage");
-  if (subpage) subpage.classList.remove("active");
-  activeSubpageInputId = null;
+function updateKnobRotation(indicatorId, val, min, max) {
+  const ind = document.getElementById(indicatorId);
+  if (!ind) return;
+  let pct = (val - min) / (max - min || 1);
+  let deg = -135 + (pct * 270);
+  ind.style.transform = `translateX(-50%) rotate(${deg}deg)`;
 }
 
-function syncSubpageValue(val) {
-  if (!activeSubpageInputId) return;
-  const targetInput = document.getElementById(activeSubpageInputId);
-  if (targetInput) {
-    targetInput.value = val;
-    updateCompParam();
-  }
-}
-
-/* =========================================================
-   INTERAKSI DRAG KONTROL GRAFIK & SINKRONISASI THUMBNAIL
-   ========================================================= */
-function initSQGraphInteraction() {
-  const box = document.getElementById("editor-graph-box");
-  const nodeThresh = document.getElementById("node-thresh");
-  const nodeOutput = document.getElementById("node-output");
-  if (!box || !nodeThresh || !nodeOutput) return;
-
-  let activeDragNode = null;
-
-  const handlePointerStart = (e, nodeType) => {
-    if (!activeModalChannel) return;
-    e.preventDefault();
-    e.stopPropagation();
-    activeDragNode = nodeType;
-
-    const nodeEl = nodeType === 'thresh' ? nodeThresh : nodeOutput;
-    nodeEl.classList.add("active-drag");
-    nodeEl.setPointerCapture(e.pointerId);
-  };
-
-  const handlePointerMove = (e) => {
-    if (!activeDragNode || !activeModalChannel) return;
-
-    const rect = box.getBoundingClientRect();
-    let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-    let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
-
-    let svgX = (x / rect.width) * 300;
-    let svgY = (y / rect.height) * 180;
-
-    let c = channelCompressors[activeModalChannel];
-
-    if (activeDragNode === 'thresh') {
-      let mappedThr = -60 + ((svgX - 10) / 280) * 60;
-      mappedThr = Math.max(-60, Math.min(0, mappedThr));
-      c.thr = Number(mappedThr.toFixed(1));
-
-      const thrInput = document.getElementById("comp-thr");
-      if (thrInput) thrInput.value = c.thr;
-    } 
-    else if (activeDragNode === 'output') {
-      let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
-      let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
-
-      let deltaX = 290 - thrX;
-      let deltaY = threshY - svgY;
-
-      if (deltaX > 5 && deltaY > 0) {
-        let calculatedRatio = deltaX / deltaY;
-        calculatedRatio = Math.max(1, Math.min(20, calculatedRatio));
-        c.ratio = Number(calculatedRatio.toFixed(1));
-
-        const ratioInput = document.getElementById("comp-ratio");
-        if (ratioInput) ratioInput.value = c.ratio;
-      }
-    }
-
-    updateCompParamUI();
-  };
-
-  const handlePointerEnd = (e) => {
-    if (!activeDragNode) return;
-
-    const nodeEl = activeDragNode === 'thresh' ? nodeThresh : nodeOutput;
-    nodeEl.classList.remove("active-drag");
-    try { nodeEl.releasePointerCapture(e.pointerId); } catch(err){}
-
-    if (activeModalChannel) {
-      updateParam("comp_" + activeModalChannel, `${channelCompressors[activeModalChannel].thr},${channelCompressors[activeModalChannel].ratio}`);
-    }
-    activeDragNode = null;
-  };
-
-  nodeThresh.addEventListener("pointerdown", (e) => handlePointerStart(e, 'thresh'));
-  nodeOutput.addEventListener("pointerdown", (e) => handlePointerStart(e, 'output'));
-
-  box.addEventListener("pointermove", handlePointerMove);
-  box.addEventListener("pointerup", handlePointerEnd);
-  box.addEventListener("pointercancel", handlePointerEnd);
-}
-
-function updateCompParam() {
-  if (!activeModalChannel) return;
-  let c = channelCompressors[activeModalChannel];
-
-  const getVal = (id) => document.getElementById(id)?.value;
-
-  if (getVal("comp-atk") !== undefined) c.atk = getVal("comp-atk");
-  if (getVal("comp-hold") !== undefined) c.hold = getVal("comp-hold");
-  if (getVal("comp-rel") !== undefined) c.rel = getVal("comp-rel");
-  if (getVal("comp-ratio") !== undefined) c.ratio = getVal("comp-ratio");
-  if (getVal("comp-thr") !== undefined) c.thr = getVal("comp-thr");
-  if (getVal("comp-knee") !== undefined) c.knee = getVal("comp-knee");
-  if (getVal("comp-gain") !== undefined) c.gain = getVal("comp-gain");
-  if (getVal("comp-mix") !== undefined) c.mix = getVal("comp-mix");
-
-  updateCompParamUI();
-
-  // Sinkonkan nilai pada sub-halaman jika sedang aktif
-  if (activeSubpageInputId) {
-    const activeVal = document.getElementById(activeSubpageInputId)?.value;
-    const subSlider = document.getElementById("subpage-slider");
-    if (subSlider && activeVal) {
-      subSlider.value = activeVal;
-      document.getElementById("subpage-val-display").textContent = activeVal;
-    }
-  }
-
-  updateParam("comp_gain_" + activeModalChannel, c.gain);
-  updateParam("comp_mix_" + activeModalChannel, c.mix);
-}
-
-function updateCompParamUI() {
-  if (!activeModalChannel) return;
-  let c = channelCompressors[activeModalChannel];
+function updateActiveProcessorUI() {
+  let p = channelProcessors[currentFocusedChannel];
+  let c = channelCompressors[currentFocusedChannel];
+  if (!p || !c) return;
 
   const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
 
-  setTxt("val-atk", Number(c.atk).toFixed(1) + " ms");
-  setTxt("val-hold", Number(c.hold).toFixed(2) + " ms");
-  setTxt("val-rel", Math.round(c.rel) + " ms");
-  setTxt("val-ratio", Number(c.ratio).toFixed(1) + ":1");
-  setTxt("val-thr", Number(c.thr).toFixed(1) + " dB");
-  setTxt("val-knee", c.knee);
-  setTxt("val-gain", Number(c.gain).toFixed(1) + " dB");
-  setTxt("val-mix", Math.round(c.mix) + " %");
+  if (currentProcessorTab === 'preamp') {
+    setTxt("tc-val-pregaining", Number(p.pre_gain).toFixed(1) + " dB");
+    setTxt("tc-val-prepad", p.pre_pad + " dB");
+    setTxt("tc-val-phase", p.pre_phase === 1 ? "Inverted" : "Normal");
+    updateKnobRotation("ind-pre-gain", p.pre_gain, -10, 60);
+    updateKnobRotation("ind-pre-pad", p.pre_pad, -20, 0);
+    updateKnobRotation("ind-pre-phase", p.pre_phase, 0, 1);
 
-  let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
-  let ratioVal = Math.max(1, Number(c.ratio));
-  
-  let startX = 10;
-  let startY = 155;
-  let threshX = thrX;
-  let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
-  let endX = 290;
-  let endY = threshY - ((endX - threshX) / ratioVal);
+    let posY = 200 - ((Number(p.pre_gain) - (-10)) / 70) * 200;
+    posY = Math.max(10, Math.min(190, posY));
+    document.getElementById("node-preamp")?.setAttribute("cy", posY);
+    document.getElementById("preamp-curve-path")?.setAttribute("d", `M 0 ${posY} L 300 ${posY}`);
+  } else if (currentProcessorTab === 'hpf') {
+    setTxt("tc-val-hpffreq", Math.round(p.hpf_freq) + " Hz");
+    setTxt("tc-val-hpfslope", p.hpf_slope + " dB");
+    updateKnobRotation("ind-hpf-freq", p.hpf_freq, 20, 400);
+    updateKnobRotation("ind-hpf-slope", p.hpf_slope, 12, 24);
 
-  endY = Math.max(10, Math.min(155, endY));
+    let hpfX = ((p.hpf_freq - 20) / 380) * 300;
+    let hpfY = 200 - ((p.hpf_freq - 20) / 380) * 140;
+    document.getElementById("node-hpf")?.setAttribute("cx", hpfX);
+    document.getElementById("node-hpf")?.setAttribute("cy", hpfY);
+    document.getElementById("hpf-curve-path")?.setAttribute("d", `M 0 160 L ${hpfX} ${hpfY} L 300 30`);
+    document.getElementById("hpf-fill-path")?.setAttribute("d", `M 0 160 L ${hpfX} ${hpfY} L 300 30 L 300 200 L 0 200 Z`);
+  } else if (currentProcessorTab === 'gate') {
+    setTxt("tc-val-gatethr", Number(p.gate_thr).toFixed(1) + " dB");
+    setTxt("tc-val-gaterng", Number(p.gate_rng).toFixed(1) + " dB");
+    setTxt("tc-val-gateatk", Number(p.gate_atk).toFixed(1) + " ms");
+    setTxt("tc-val-gaterel", Math.round(p.gate_rel) + " ms");
+    updateKnobRotation("ind-gate-thr", p.gate_thr, -80, 0);
+    updateKnobRotation("ind-gate-rng", p.gate_rng, -60, 0);
+    updateKnobRotation("ind-gate-atk", p.gate_atk, 0.1, 100);
+    updateKnobRotation("ind-gate-rel", p.gate_rel, 10, 1000);
 
-  let curvePath = `M ${startX} ${startY} L ${threshX} ${threshY} L ${endX} ${endY}`;
-  let fillPath = `M ${startX} ${startY} L ${threshX} ${threshY} L ${endX} ${endY} L ${endX} 155 L ${startX} 155 Z`;
+    let gX = ((Number(p.gate_thr) - (-80)) / 80) * 300;
+    document.getElementById("node-gate")?.setAttribute("cx", gX);
+    document.getElementById("gate-curve-path")?.setAttribute("d", `M 0 180 L ${gX} 180 L ${gX} 30 L 300 30`);
+    document.getElementById("gate-fill-path")?.setAttribute("d", `M 0 180 L ${gX} 180 L ${gX} 30 L 300 30 L 300 200 L 0 200 Z`);
+  } else if (currentProcessorTab === 'peq') {
+    setTxt("tc-val-peqband", "Band " + p.peq_band);
+    setTxt("tc-val-peqfreq", Math.round(p.peq_freq) + " Hz");
+    setTxt("tc-val-peqgain", Number(p.peq_gain).toFixed(1) + " dB");
+    setTxt("tc-val-peqq", Number(p.peq_q).toFixed(1) + " Q");
+    updateKnobRotation("ind-peq-band", p.peq_band, 1, 4);
+    updateKnobRotation("ind-peq-freq", p.peq_freq, 20, 20000);
+    updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
+    updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
-  const curveEl = document.getElementById("sq-curve-path");
-  const fillEl = document.getElementById("sq-fill-path");
-  const nodeEl = document.getElementById("node-thresh");
-  const nodeOutEl = document.getElementById("node-output");
+    let pX = ((p.peq_freq - 20) / 19980) * 300;
+    let pY = 100 - (p.peq_gain / 12) * 70;
+    document.getElementById("node-peq")?.setAttribute("cx", pX);
+    document.getElementById("node-peq")?.setAttribute("cy", pY);
+    document.getElementById("peq-curve-path")?.setAttribute("d", `M 0 100 Q ${pX} ${pY} 300 100`);
+    document.getElementById("peq-fill-path")?.setAttribute("d", `M 0 100 Q ${pX} ${pY} 300 100 L 300 200 L 0 200 Z`);
+  } else if (currentProcessorTab === 'comp') {
+    setTxt("tc-val-atk", Number(c.atk).toFixed(1) + " ms");
+    setTxt("tc-val-rel", Math.round(c.rel) + " ms");
+    setTxt("tc-val-ratio", Number(c.ratio).toFixed(1) + ":1");
+    setTxt("tc-val-thr", Number(c.thr).toFixed(1) + " dB");
+    setTxt("tc-val-gain", Number(c.gain).toFixed(1) + " dB");
+    setTxt("tc-val-mix", Math.round(c.mix) + " %");
+    updateKnobRotation("ind-active-atk", c.atk, 0.5, 100);
+    updateKnobRotation("ind-active-rel", c.rel, 10, 1000);
+    updateKnobRotation("ind-active-ratio", c.ratio, 1, 20);
+    updateKnobRotation("ind-active-thr", c.thr, -60, 0);
+    updateKnobRotation("ind-active-gain", c.gain, 0, 24);
+    updateKnobRotation("ind-active-mix", c.mix, 0, 100);
 
-  if (curveEl) curveEl.setAttribute("d", curvePath);
-  if (fillEl) fillEl.setAttribute("d", fillPath);
-  if (nodeEl) {
-    nodeEl.setAttribute("cx", threshX);
-    nodeEl.setAttribute("cy", threshY);
+    let thrX = ((Number(c.thr) + 60) / 60) * 300;
+    let ratioVal = Math.max(1, Number(c.ratio));
+    let threshY = 200 - ((Number(c.thr) + 60) / 60) * 160;
+    let endY = threshY - ((300 - thrX) / ratioVal);
+    endY = Math.max(20, Math.min(200, endY));
+
+    document.getElementById("sq-curve-path")?.setAttribute("d", `M 0 200 L ${thrX} ${threshY} L 300 ${endY}`);
+    document.getElementById("sq-fill-path")?.setAttribute("d", `M 0 200 L ${thrX} ${threshY} L 300 ${endY} L 300 200 Z`);
+    document.getElementById("node-thresh")?.setAttribute("cx", thrX);
+    document.getElementById("node-thresh")?.setAttribute("cy", threshY);
+    document.getElementById("node-output")?.setAttribute("cx", 300);
+    document.getElementById("node-output")?.setAttribute("cy", endY);
+
+    updateThumbnailCurve(currentFocusedChannel, thrX, threshY, endY);
   }
-  if (nodeOutEl) {
-    nodeOutEl.setAttribute("cx", endX);
-    nodeOutEl.setAttribute("cy", endY);
+
+  let mainFader = document.getElementById("gain-" + currentFocusedChannel);
+  if (mainFader) {
+    let val = parseFloat(mainFader.value);
+    setTxt("tc-val-mastergain", Number(val).toFixed(1) + " dB");
+    updateKnobRotation("ind-master-gain", val, -40, currentFocusedChannel.startsWith("in") ? 20 : 12);
+  }
+}
+
+function initKnobDrag(e, paramKey, min, max, step) {
+  e.preventDefault();
+  let startY = e.clientY;
+  let startVal = getParamValue(paramKey);
+
+  function onPointerMove(moveEvent) {
+    let deltaY = startY - moveEvent.clientY;
+    let range = max - min;
+    let sensitivity = range / 100;
+    let newVal = startVal + (deltaY * sensitivity);
+    newVal = Math.max(min, Math.min(max, newVal));
+    
+    if (step >= 1) {
+      newVal = Math.round(newVal);
+    } else {
+      newVal = Number(newVal.toFixed(1));
+    }
+
+    setParamValue(paramKey, newVal);
+    updateActiveProcessorUI();
+    updateParam(paramKey + "_" + currentFocusedChannel, newVal);
   }
 
-  updateThumbnailCurve(activeModalChannel, threshX, threshY, endY);
+  function onPointerUp() {
+    window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointerup", onPointerUp);
+  }
+
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
+}
+
+function getParamValue(key) {
+  let c = channelCompressors[currentFocusedChannel];
+  let p = channelProcessors[currentFocusedChannel];
+  if (key === 'active-atk') return c.atk;
+  if (key === 'active-rel') return c.rel;
+  if (key === 'active-ratio') return c.ratio;
+  if (key === 'active-thr') return c.thr;
+  if (key === 'active-gain') return c.gain;
+  if (key === 'active-mix') return c.mix;
+  if (key === 'pre-gain') return p.pre_gain;
+  if (key === 'pre-pad') return p.pre_pad;
+  if (key === 'pre-phase') return p.pre_phase;
+  if (key === 'hpf-freq') return p.hpf_freq;
+  if (key === 'hpf-slope') return p.hpf_slope;
+  if (key === 'gate-thr') return p.gate_thr;
+  if (key === 'gate-rng') return p.gate_rng;
+  if (key === 'gate-atk') return p.gate_atk;
+  if (key === 'gate-rel') return p.gate_rel;
+  if (key === 'peq-band') return p.peq_band;
+  if (key === 'peq-freq') return p.peq_freq;
+  if (key === 'peq-gain') return p.peq_gain;
+  if (key === 'peq-q') return p.peq_q;
+  if (key === 'master-gain') {
+    const f = document.getElementById("gain-" + currentFocusedChannel);
+    return f ? parseFloat(f.value) : 0;
+  }
+  return 0;
+}
+
+function setParamValue(key, val) {
+  let c = channelCompressors[currentFocusedChannel];
+  let p = channelProcessors[currentFocusedChannel];
+  if (key === 'active-atk') c.atk = val;
+  else if (key === 'active-rel') c.rel = val;
+  else if (key === 'active-ratio') c.ratio = val;
+  else if (key === 'active-thr') c.thr = val;
+  else if (key === 'active-gain') c.gain = val;
+  else if (key === 'active-mix') c.mix = val;
+  else if (key === 'pre-gain') p.pre_gain = val;
+  else if (key === 'pre-pad') p.pre_pad = val;
+  else if (key === 'pre-phase') p.pre_phase = val;
+  else if (key === 'hpf-freq') p.hpf_freq = val;
+  else if (key === 'hpf-slope') p.hpf_slope = val;
+  else if (key === 'gate-thr') p.gate_thr = val;
+  else if (key === 'gate-rng') p.gate_rng = val;
+  else if (key === 'gate-atk') p.gate_atk = val;
+  else if (key === 'gate-rel') p.gate_rel = val;
+  else if (key === 'peq-band') p.peq_band = val;
+  else if (key === 'peq-freq') p.peq_freq = val;
+  else if (key === 'peq-gain') p.peq_gain = val;
+  else if (key === 'peq-q') p.peq_q = val;
+  else if (key === 'master-gain') {
+    const mainFader = document.getElementById("gain-" + currentFocusedChannel);
+    if (mainFader) {
+      mainFader.value = val;
+      updateFaderLabel(currentFocusedChannel, val);
+    }
+  }
 }
 
 function updateThumbnailCurve(id, tx, ty, ey) {
   const miniPath = document.getElementById("mini-curve-" + id);
   if (!miniPath) return;
-
-  let pStartX = (10 / 300) * 100;
-  let pStartY = (155 / 180) * 40;
   let pThreshX = (tx / 300) * 100;
-  let pThreshY = (ty / 180) * 40;
-  let pEndX = (290 / 300) * 100;
-  let pEndY = (ey / 180) * 40;
-
-  miniPath.setAttribute("d", `M ${pStartX} ${pStartY} L ${pThreshX} ${pThreshY} L ${pEndX} ${pEndY}`);
+  let pThreshY = (ty / 200) * 40;
+  let pEndY = (ey / 200) * 40;
+  miniPath.setAttribute("d", `M 0 40 L ${pThreshX} ${pThreshY} L 100 ${pEndY}`);
 }
 
-function openProcessorModal(channelId, titleText) {
-  activeModalChannel = channelId;
-  const modal = document.getElementById("processor-modal");
-  const titleElem = document.getElementById("modal-channel-title");
-  if (titleElem) titleElem.textContent = titleText;
+function initInteractiveGraphs() {
+  ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
+    const box = document.getElementById(tab === 'comp' ? 'editor-graph-box' : tab + '-graph-box');
+    if (!box) return;
 
-  const c = channelCompressors[channelId];
-  const setInp = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
-
-  setInp("comp-atk", c.atk);
-  setInp("comp-hold", c.hold);
-  setInp("comp-rel", c.rel);
-  setInp("comp-ratio", c.ratio);
-  setInp("comp-thr", c.thr);
-  setInp("comp-knee", c.knee);
-  setInp("comp-gain", c.gain);
-  setInp("comp-mix", c.mix);
-
-  closeParamSubpage();
-  updateCompParamUI();
-  if (modal) modal.classList.add("active");
+    let isDragging = false;
+    box.addEventListener("pointerdown", (e) => {
+      isDragging = true;
+      box.setPointerCapture(e.pointerId);
+      // Dihapus agar klik/tekan awal tidak langsung menggeser kurva (harus digeser/drag dulu)
+    });
+    box.addEventListener("pointermove", (e) => {
+      if (isDragging) {
+        handleGraphMove(e, tab);
+      }
+    });
+    box.addEventListener("pointerup", (e) => {
+      isDragging = false;
+      try { box.releasePointerCapture(e.pointerId); } catch(err){}
+    });
+  });
 }
 
-function closeProcessorModal() {
-  const modal = document.getElementById("processor-modal");
-  if (modal) modal.classList.remove("active");
-  activeModalChannel = null;
-  closeParamSubpage();
-}
+function handleGraphMove(e, tab) {
+  const box = e.currentTarget;
+  const rect = box.getBoundingClientRect();
+  let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+  let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+  let svgX = (x / rect.width) * 300;
+  let svgY = (y / rect.height) * 200;
 
-function setMode(mode) {
-  if(mode === 'comp' || mode === 'peak') {
-    document.getElementById('btn-comp')?.classList.toggle('active', mode === 'comp');
-    document.getElementById('btn-peak')?.classList.toggle('active', mode === 'peak');
-  } else {
-    document.getElementById('btn-lin')?.classList.toggle('active', mode === 'lin');
-    document.getElementById('btn-log')?.classList.toggle('active', mode === 'log');
+  let p = channelProcessors[currentFocusedChannel];
+  let c = channelCompressors[currentFocusedChannel];
+
+  if (tab === 'comp') {
+    let mappedThr = -60 + (svgX / 300) * 60;
+    c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
+  } else if (tab === 'preamp') {
+    let mappedGain = -10 + (1 - (svgY / 200)) * 70;
+    p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
+  } else if (tab === 'hpf') {
+    let mappedFreq = 20 + (svgX / 300) * 380;
+    p.hpf_freq = Math.round(Math.max(20, Math.min(400, mappedFreq)));
+  } else if (tab === 'gate') {
+    let mappedThr = -80 + (svgX / 300) * 80;
+    p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
+  } else if (tab === 'peq') {
+    let mappedFreq = 20 + (svgX / 300) * 19980;
+    let mappedGain = 12 - (svgY / 200) * 24;
+    p.peq_freq = Math.round(Math.max(20, Math.min(20000, mappedFreq)));
+    p.peq_gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
   }
+
+  updateActiveProcessorUI();
+}
+
+function focusChannel(id) {
+  currentFocusedChannel = id;
+  channelIds.forEach(ch => {
+    document.getElementById("strip-" + ch)?.classList.remove("focused");
+  });
+  document.getElementById("strip-" + id)?.classList.add("focused");
+
+  const chLabel = document.getElementById("active-ch-label");
+  if (chLabel) chLabel.textContent = channelNames[id];
+
+  const mainFader = document.getElementById("gain-" + id);
+  if (mainFader) {
+    mainFader.max = id.startsWith("in") ? "20" : "12";
+  }
+
+  const btnOn = document.getElementById("on-" + id);
+  const tcPower = document.getElementById("tc-power-btn");
+  if (btnOn && tcPower) {
+    let isOn = !btnOn.classList.contains("off");
+    tcPower.classList.toggle("off", !isOn);
+    tcPower.textContent = isOn ? "IN (ACTIVE)" : "BYPASS";
+  }
+
+  updateActiveProcessorUI();
+}
+
+function toggleActivePower() {
+  toggleOn(currentFocusedChannel);
+  const btnOn = document.getElementById("on-" + currentFocusedChannel);
+  const tcPower = document.getElementById("tc-power-btn");
+  if (btnOn && tcPower) {
+    let isOn = !btnOn.classList.contains("off");
+    tcPower.classList.toggle("off", !isOn);
+    tcPower.textContent = isOn ? "IN (ACTIVE)" : "BYPASS";
+  }
+}
+
+function initDLMD() {
+  try {
+    targetIP = localStorage.getItem("dlmd_ip") || "192.168.4.1";
+    document.getElementById("dlmd-ip").value = targetIP;
+  } catch (err) {}
+
+  channelIds.forEach(id => {
+    const fader = document.getElementById("gain-" + id);
+    if (fader) {
+      updateFaderLabel(id, fader.value);
+      updateSqMeter(id, -40);
+      fader.addEventListener("input", () => {
+        updateFaderLabel(id, fader.value);
+        updateParam(id, fader.value);
+        if (id === currentFocusedChannel) {
+          updateActiveProcessorUI();
+        }
+      });
+    }
+  });
+
+  initInteractiveGraphs();
+  switchProcessorPage('comp');
+  focusChannel('ina');
+  setTimeout(syncFaderDimensions, 50);
 }
 
 function syncFaderDimensions() {
@@ -1614,75 +1705,21 @@ function syncFaderDimensions() {
   });
 }
 
-function initDLMD() {
-  try {
-    targetIP = localStorage.getItem("dlmd_ip") || "192.168.4.1";
-    const savedName = localStorage.getItem("dlmd_name") || "DLMD DIGITAL DSP";
-    const nameInp = document.getElementById("dlmd-name");
-    const ipInp = document.getElementById("dlmd-ip");
-    const ipDisp = document.getElementById("ip-display");
-
-    if (nameInp) nameInp.value = savedName;
-    if (ipInp) ipInp.value = targetIP;
-    if (ipDisp) ipDisp.textContent = targetIP;
-  } catch (err) {}
-
-  channelIds.forEach(id => {
-    const fader = document.getElementById("gain-" + id);
-    if (fader) {
-      updateFaderLabel(id, fader.value);
-      updateSqMeter(id, -40);
-
-      let isDragging = false;
-      let startValue = fader.value;
-      fader.addEventListener("pointerdown", () => { isDragging = true; startValue = fader.value; });
-      fader.addEventListener("input", () => {
-        if (!isDragging) { fader.value = startValue; return; }
-        updateParam(id, fader.value);
-      });
-      const stopDrag = () => { isDragging = false; };
-      fader.addEventListener("pointerup", stopDrag);
-      fader.addEventListener("pointercancel", stopDrag);
-    }
-    
-    activeModalChannel = id;
-    let c = channelCompressors[id];
-    let thrX = 10 + ((Number(c.thr) + 60) / 60) * 280;
-    let threshY = 155 - ((Number(c.thr) + 60) / 60) * 145;
-    let endY = threshY - ((290 - thrX) / Number(c.ratio));
-    updateThumbnailCurve(id, thrX, threshY, endY);
-    activeModalChannel = null;
-  });
-
-  initSQGraphInteraction();
-  focusChannel('ina');
-  switchTab('mixer', document.querySelector('.tab-btn.active'));
-
-  setTimeout(syncFaderDimensions, 50);
-  window.addEventListener('resize', syncFaderDimensions);
-}
-
-function focusChannel(id) {
-  channelIds.forEach(ch => {
-    document.getElementById("strip-" + ch)?.classList.remove("focused");
-  });
-  document.getElementById("strip-" + id)?.classList.add("focused");
-}
-
-function updateSqMeter(id, signalLeveldB) {
+function updateSqMeter(id, dB) {
   const meter = document.getElementById("meter-" + id);
   if (!meter) return;
-  const min = -40;
-  const max = id.startsWith("in") ? 12 : 6;
-  let pct = ((signalLeveldB - min) / (max - min)) * 100;
+  if (dB <= -40) {
+    meter.style.height = "0%";
+    return;
+  }
+  const maxLimit = id.startsWith("in") ? 20 : 12;
+  let pct = ((dB - (-40)) / (maxLimit - (-40))) * 100;
   meter.style.height = Math.max(0, Math.min(100, pct)) + "%";
 }
 
 function updateFaderLabel(id, value) {
   const label = document.getElementById("val-" + id);
-  if (!label) return;
-  const n = Number(value);
-  label.textContent = Number.isFinite(n) ? n.toFixed(1) + " dB" : value + " dB";
+  if (label) label.textContent = Number(value).toFixed(1) + " dB";
 }
 
 function updateParam(id, value) {
@@ -1692,31 +1729,23 @@ function updateParam(id, value) {
 }
 
 function sendDeviceCommand(url) {
-  setConnectionStatus("Mengirim perintah…", "#e5a000");
-  fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" })
-    .then(() => { setConnectionStatus("Perintah dikirim; belum terverifikasi", "#e5a000"); })
-    .catch(() => { setConnectionStatus("Gagal mengirim perintah", "#e04444"); });
+  fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(() => {});
 }
 
 function toggleMute(id, evt) {
   if (evt) evt.stopPropagation();
   muteStates[id] = !muteStates[id];
   const muted = muteStates[id];
-  const btn = document.getElementById("mute-" + id);
-  if (btn) {
-    btn.classList.toggle("muted", muted);
-    btn.textContent = muted ? "Muted" : "Mute";
-  }
+  document.getElementById("mute-" + id)?.classList.toggle("muted", muted);
   sendDeviceCommand("http://" + targetIP + "/mute?ch=" + encodeURIComponent(id) + "&state=" + (muted ? "1" : "0"));
 }
 
 function toggleOn(id, evt) {
   if (evt) evt.stopPropagation();
   onStates[id] = !onStates[id];
-  const isOn = onStates[id];
-  const btn = document.getElementById("on-" + id);
-  if (btn) btn.classList.toggle("off", !isOn);
-  sendDeviceCommand("http://" + targetIP + "/power?ch=" + encodeURIComponent(id) + "&state=" + (isOn ? "1" : "0"));
+  const isOn = !onStates[id];
+  document.getElementById("on-" + id)?.classList.toggle("off", isOn);
+  sendDeviceCommand("http://" + targetIP + "/power?ch=" + encodeURIComponent(id) + "&state=" + (isOn ? "0" : "1"));
 }
 
 function switchTab(tabName, clickedButton) {
@@ -1734,23 +1763,9 @@ function switchTab(tabName, clickedButton) {
 
 function saveConnectionSettings() {
   const ip = document.getElementById("dlmd-ip")?.value.trim() || "";
-  const name = document.getElementById("dlmd-name")?.value.trim() || "";
-  if (!/^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/.test(ip)) {
-    alert("Format IP salah!"); return;
-  }
   targetIP = ip;
   localStorage.setItem("dlmd_ip", ip);
-  localStorage.setItem("dlmd_name", name);
-  const ipDisp = document.getElementById("ip-display");
-  if (ipDisp) ipDisp.textContent = ip;
-  alert("Pengaturan disimpan!");
-}
-
-function setConnectionStatus(msg, color) {
-  const statusTxt = document.getElementById("connection-status-text");
-  if (statusTxt) statusTxt.textContent = msg;
-  const dot = document.getElementById("connection-dot");
-  if (dot) { dot.style.backgroundColor = color; dot.style.boxShadow = "0 0 7px " + color; }
+  alert("Pengaturan IP disimpan!");
 }
 
 if (document.readyState === "loading") {

@@ -19,9 +19,8 @@ jobs:
 
     - name: Build Debug APK
       run: chmod +x gradlew && ./gradlew assembleDebug
-
     - name: Upload APK Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # <-- Ubah dari v3 ke v4
       with:
         name: dsp-console-apk
         path: app/build/outputs/apk/debug/app-debug.apk

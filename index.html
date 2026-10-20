@@ -105,6 +105,39 @@
       box-shadow: 0 0 6px #00ff55;
     }
 
+    /* PLAYER BAR STYLING */
+    .player-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #161a22;
+      padding: 3px 8px;
+      border-bottom: 1px solid #333;
+      font-size: .58rem;
+      flex-shrink: 0;
+    }
+
+    .player-bar label {
+      background: var(--neon-blue);
+      color: #000;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .player-bar input[type="file"] {
+      display: none;
+    }
+
+    .player-bar audio {
+      flex: 1;
+      height: 24px;
+      outline: none;
+      filter: invert(90%) hue-rotate(180deg);
+    }
+
     .nav-tabs {
       display: flex;
       flex-shrink: 0;
@@ -979,6 +1012,14 @@
     </div>
   </div>
 
+  <!-- PLAYER PEMUTAR MUSIK FILE -->
+  <div class="player-bar">
+    <label for="audio-file-input">🎵 Pilih File Musik</label>
+    <input type="file" id="audio-file-input" accept="audio/*">
+    <audio id="audio-player" controls crossorigin="anonymous"></audio>
+    <span id="now-playing" style="color:var(--amber); font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Belum ada file dipilih</span>
+  </div>
+
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('mixer',this)">Output Matrix &amp; Input</button>
     <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ Koneksi Wi-Fi</button>
@@ -997,7 +1038,7 @@
         <!-- Area Grafik / GEQ Interaktif -->
         <div class="tc-center-graph">
           
-          <!-- HALAMAN 1: PREAMP / GAIN (DENGAN NEON & FILL MELUBER MELEWATI GARIS 0 DB) -->
+          <!-- HALAMAN 1: PREAMP / GAIN -->
           <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="preamp-graph-box">
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
@@ -1106,7 +1147,7 @@
             </div>
           </div>
 
-          <!-- HALAMAN 4: PEQ (TITIK & GARIS MENYATU, SINAR MELUBER LEWATI GARIS 0 DB) -->
+          <!-- HALAMAN 4: PEQ -->
           <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="peq-graph-box">
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
@@ -1371,6 +1412,12 @@ let channelCompressors = {};
 let channelProcessors = {};
 let channelGeqValues = {};
 
+// Variabel untuk Web Audio API & Analyser Meter
+let audioCtx = null;
+let audioAnalyser = null;
+let audioSourceNode = null;
+let isAudioInitialized = false;
+
 channelIds.forEach(id => {
   muteStates[id] = false;
   onStates[id] = false;
@@ -1601,7 +1648,6 @@ function updateActiveProcessorUI() {
     let pX = 30 + ((p.peq_freq - 20) / 19980) * 270;
     let pY = 100 - (p.peq_gain / 12) * 60;
     
-    // Titik node PEQ dikunci persis mengikuti lengkungan SVG agar tidak terpisah
     document.getElementById("node-peq-group")?.setAttribute("transform", `translate(${pX}, ${pY})`);
     document.getElementById("peq-curve-path")?.setAttribute("d", `M 30 100 Q ${pX} ${pY} 300 100`);
     document.getElementById("peq-fill-path")?.setAttribute("d", `M 30 100 Q ${pX} ${pY} 300 100 Z`);
@@ -1881,6 +1927,85 @@ function toggleActivePower() {
   }
 }
 
+// Inisialisasi Audio Player & Real-time Analyzer untuk LED Meter
+function initAudioPlayer() {
+  const fileInput = document.getElementById("audio-file-input");
+  const audioElement = document.getElementById("audio-player");
+  const nowPlaying = document.getElementById("now-playing");
+
+  fileInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    nowPlaying.textContent = file.name;
+    const fileURL = URL.createObjectURL(file);
+    audioElement.src = fileURL;
+    audioElement.play();
+
+    if (!isAudioInitialized) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+      audioAnalyser = audioCtx.createAnalyser();
+      audioAnalyser.fftSize = 256;
+
+      audioSourceNode = audioCtx.createMediaElementSource(audioElement);
+      audioSourceNode.connect(audioAnalyser);
+      audioAnalyser.connect(audioCtx.destination);
+      isAudioInitialized = true;
+    } else if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  });
+
+  // Loop untuk memperbarui tinggi LED meter secara real-time berdasarkan sinyal audio
+  const dataArray = new Uint8Array(128);
+  function renderMeters() {
+    requestAnimationFrame(renderMeters);
+    if (!audioAnalyser || audioElement.paused) {
+      // Jika audio berhenti, turunkan meter secara perlahan
+      channelIds.forEach(id => {
+        let currentHeight = parseFloat(document.getElementById("meter-" + id)?.style.height || "0");
+        if (currentHeight > 0) {
+          updateSqMeter(id, -40);
+        }
+      });
+      return;
+    }
+
+    audioAnalyser.getByteFrequencyData(dataArray);
+    
+    // Hitung rata-rata volume sinyal (RMS sederhana)
+    let sum = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+      sum += dataArray[i];
+    }
+    let average = sum / dataArray.length; // Nilai 0 - 255
+
+    // Konversi nilai rata-rata menjadi dB tiruan (-40dB s.d +20dB)
+    let baseDb = -40 + (average / 255) * 60; 
+
+    // Sebarkan nilai ke setiap channel dengan variasi kecil agar tampak alami
+    channelIds.forEach(id => {
+      if (muteStates[id] || onStates[id]) {
+        updateSqMeter(id, -40); // Jika dimute atau di-bypass
+        return;
+      }
+      
+      let faderVal = parseFloat(document.getElementById("gain-" + id)?.value || "0");
+      // Pengaruh fader gain pada level meter channel masing-masing
+      let channelDb = baseDb + (faderVal * 0.4); 
+
+      // Tambahkan sedikit variasi acak untuk output speaker (sub, low, mid, high)
+      if (id === 'out1') channelDb += (Math.random() * 4 - 2); // Sub merespon lebih berat
+      if (id === 'out4') channelDb += (Math.random() * 6 - 3); // High merespon lebih cepat
+
+      updateSqMeter(id, channelDb);
+    });
+  }
+
+  requestAnimationFrame(renderMeters);
+}
+
 function initDLMD() {
   try {
     let savedName = localStorage.getItem("dlmd_name") || "DCX2496-PRO";
@@ -1890,6 +2015,7 @@ function initDLMD() {
 
   buildMixerStrips();
   buildGeqSliders();
+  initAudioPlayer();
 
   channelIds.forEach(id => {
     const fader = document.getElementById("gain-" + id);

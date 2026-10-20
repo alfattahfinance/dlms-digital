@@ -1,3 +1,21 @@
-plugins {
-    id 'com.android.application' version '8.2.2' apply false
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // AGP 8.6.1 is the minimum stable AGP line that supports compileSdk 35.
+        classpath 'com.android.tools.build:gradle:8.6.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

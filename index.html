@@ -1931,13 +1931,21 @@ function updateFaderLabel(id, value) {
   if (label) label.textContent = Number(value).toFixed(1) + " dB";
 }
 
+function getEsp32BaseUrl() {
+  let ip = "192.168.4.1";
+  try { ip = (localStorage.getItem("dlmd_esp32_ip") || ip).trim(); } catch (err) {}
+  ip = ip.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+  return "http://" + ip;
+}
+
 function updateParam(id, value) {
-  const url = "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
+  const url = getEsp32BaseUrl() + "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
   clearTimeout(sendTimers[id]);
   sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 35);
 }
 
-function sendDeviceCommand(url) {
+function sendDeviceCommand(pathOrUrl) {
+  const url = /^https?:\/\//i.test(pathOrUrl) ? pathOrUrl : getEsp32BaseUrl() + pathOrUrl;
   fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(() => {});
 }
 

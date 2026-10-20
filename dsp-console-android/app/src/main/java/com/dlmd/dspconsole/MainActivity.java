@@ -1,4 +1,4 @@
-package com.dsp.console;
+package com.dlmd.dspconsole;
 
 import android.os.Bundle;
 import android.webkit.WebSettings;
@@ -21,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccess(true);
+        
+        // Memastikan mixed content diizinkan agar fetch ke ESP32 berjalan lancar
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
         // Memastikan halaman tetap terbuka di dalam aplikasi WebView
         webView.setWebViewClient(new WebViewClient() {

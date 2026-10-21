@@ -1901,12 +1901,27 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-hpf-freq", p.hpf_freq, 20, 400);
     updateKnobRotation("ind-hpf-slope", p.hpf_slope, 12, 24);
 
-    let hpfX = 30 + ((p.hpf_freq - 20) / 380) * 270;
-    let hpfY = 190 - ((p.hpf_freq - 20) / 380) * 130;
-    
+    // HPF Butterworth magnitude: high frequencies approach 0 dB; lows are attenuated.
+    const hpfFreq = Math.max(20, Number(p.hpf_freq) || 20);
+    const hpfOrder = Math.max(1, Math.round((Number(p.hpf_slope) || 12) / 6));
+    const hpfDb = f => {
+      const ratio = Math.max(1e-6, f / hpfFreq);
+      const mag = 1 / Math.sqrt(1 + Math.pow(1 / ratio, 2 * hpfOrder));
+      return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
+    };
+    const hpfPts = [];
+    for (let i = 0; i <= 180; i++) {
+      const x = 30 + 270 * i / 180;
+      const f = 20 * Math.pow(1000, i / 180); // 20 Hz .. 20 kHz, logarithmic
+      const db = hpfDb(f);
+      hpfPts.push([x, Math.max(40, Math.min(190, 100 - db * 3))]);
+    }
+    const hpfD = hpfPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
+    const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
+    const hpfY = 100 - hpfDb(hpfFreq) * 3;
     document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX}, ${hpfY})`);
-    document.getElementById("hpf-curve-path")?.setAttribute("d", `M 30 150 C 65 150, ${Math.max(70, hpfX - 35)} ${hpfY}, ${hpfX} ${hpfY} S 250 40, 300 40`);
-    document.getElementById("hpf-fill-path")?.setAttribute("d", `M 30 100 L 100 100 L ${hpfX} ${hpfY} L 300 40 Z`);
+    document.getElementById("hpf-curve-path")?.setAttribute("d", hpfD);
+    document.getElementById("hpf-fill-path")?.setAttribute("d", hpfD + " L 300 100 L 30 100 Z");
   } else if (currentProcessorTab === 'gate' && !isOut) {
     setTxt("tc-val-gatethr", Number(p.gate_thr).toFixed(1) + " dB");
     setTxt("tc-val-gaterng", Number(p.gate_rng).toFixed(1) + " dB");
@@ -1917,10 +1932,16 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-gate-atk", p.gate_atk, 0.1, 100);
     updateKnobRotation("ind-gate-rel", p.gate_rel, 10, 1000);
 
-    let gX = 30 + ((Number(p.gate_thr) - (-80)) / 80) * 270;
-    document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, 170)`);
-    document.getElementById("gate-curve-path")?.setAttribute("d", `M 30 170 C ${Math.max(40, gX - 45)} 170, ${gX - 8} 170, ${gX} 158 L ${gX} 52 C ${gX + 8} 40, ${gX + 35} 40, 300 40`);
-    document.getElementById("gate-fill-path")?.setAttribute("d", `M 30 100 L ${gX} 100 L ${gX} 40 L 300 40 Z`);
+    // Gate transfer curve: X=input dB (-80..0), Y=output dB (-80..0).
+    const gateThr = Math.max(-80, Math.min(0, Number(p.gate_thr) || -45));
+    const gateRange = Math.max(-60, Math.min(0, Number(p.gate_rng) || -40));
+    const gx = v => 30 + (v + 80) / 80 * 270;
+    const gy = v => 190 - (v + 80) / 80 * 150;
+    const gX = gx(gateThr), gY = gy(Math.max(-80, gateThr + gateRange));
+    document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
+    const gateD = `M 30 ${gy(-80)} L ${gX.toFixed(2)} ${gy(-80)} L ${gX.toFixed(2)} ${gY.toFixed(2)} L 300 ${gy(0)}`;
+    document.getElementById("gate-curve-path")?.setAttribute("d", gateD);
+    document.getElementById("gate-fill-path")?.setAttribute("d", gateD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'peq') {
     setTxt("tc-val-peqband", "Band " + p.peq_band);
     setTxt("tc-val-peqfreq", Math.round(p.peq_freq) + " Hz");
@@ -1931,12 +1952,32 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
-    let pX = 30 + ((p.peq_freq - 20) / 19980) * 270;
-    let pY = 100 - (p.peq_gain / 12) * 60;
-    
+    // RBJ peaking-EQ biquad magnitude response, sampled on a logarithmic frequency axis.
+    const pf = Math.max(20, Math.min(20000, Number(p.peq_freq) || 1000));
+    const pg = Math.max(-12, Math.min(12, Number(p.peq_gain) || 0));
+    const pq = Math.max(0.1, Math.min(10, Number(p.peq_q) || 1.4));
+    const peqPts = [];
+    for (let i = 0; i <= 240; i++) {
+      const x = 30 + 270 * i / 240;
+      const f = 20 * Math.pow(1000, i / 240);
+      const A = Math.pow(10, pg / 40), w = 2 * Math.PI * f / 48000;
+      const alpha = Math.sin(w) / (2 * pq), cw = Math.cos(w);
+      const b0 = 1 + alpha * A, b1 = -2 * cw, b2 = 1 - alpha * A;
+      const a0 = 1 + alpha / A, a1 = -2 * cw, a2 = 1 - alpha / A;
+      const nr = b0 + b1 * Math.cos(w) + b2 * Math.cos(2*w);
+      const ni = -b1 * Math.sin(w) - b2 * Math.sin(2*w);
+      const dr = a0 + a1 * Math.cos(w) + a2 * Math.cos(2*w);
+      const di = -a1 * Math.sin(w) - a2 * Math.sin(2*w);
+      const mag = Math.sqrt((nr*nr + ni*ni) / Math.max(1e-18, dr*dr + di*di));
+      const db = Math.max(-18, Math.min(18, 20 * Math.log10(Math.max(1e-9, mag))));
+      peqPts.push([x, Math.max(10, Math.min(190, 100 - db * 5))]);
+    }
+    const peqD = peqPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
+    const pX = 30 + 270 * Math.log(pf / 20) / Math.log(1000);
+    const pY = 100 - pg * 5;
     document.getElementById("node-peq-group")?.setAttribute("transform", `translate(${pX}, ${pY})`);
-    document.getElementById("peq-curve-path")?.setAttribute("d", `M 30 100 C ${Math.max(35, pX - 90)} 100, ${Math.max(35, pX - 55)} ${pY}, ${pX} ${pY} S ${Math.min(295, pX + 65)} 100, 300 100`);
-    document.getElementById("peq-fill-path")?.setAttribute("d", `M 30 100 Q ${pX} ${pY} 300 100 Z`);
+    document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
+    document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 100 L 30 100 Z");
   } else if (currentProcessorTab === 'geq') {
     updateGeqUI();
   } else if (currentProcessorTab === 'comp') {
@@ -1959,13 +2000,18 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-active-gain", c.gain, 0, 24);
     updateKnobRotation("ind-active-mix", c.mix, 0, 100);
 
-    let thrX = 30 + ((Number(c.thr) + 60) / 60) * 270;
-    let threshY = 190 - ((Number(c.thr) + 60) / 60) * 140;
-    let endY = c.outY;
-
-    document.getElementById("sq-curve-path")?.setAttribute("d", `M 30 190 C ${Math.max(35, thrX - 90)} 190, ${Math.max(35, thrX - 35)} ${threshY}, ${thrX} ${threshY} S ${Math.min(295, thrX + 60)} ${endY}, 300 ${endY}`);
-    document.getElementById("sq-fill-path")?.setAttribute("d", `M 30 100 L ${thrX} ${threshY} L 300 ${endY} L 300 100 Z`);
-    
+    // Compressor transfer function: unity below threshold, compressed slope 1/ratio above it.
+    const compThr = Math.max(-60, Math.min(0, Number(c.thr) || -30));
+    const compRatio = Math.max(1, Number(c.ratio) || 1);
+    const compGain = Number(c.gain) || 0;
+    const cx = v => 30 + (v + 60) / 60 * 270;
+    const cy = v => 190 - (v + 60) / 60 * 150;
+    const thrX = cx(compThr), threshY = cy(compThr);
+    const outAtZero = Math.max(-60, Math.min(0, compThr + (0 - compThr) / compRatio + compGain));
+    const endY = cy(outAtZero);
+    const compD = `M 30 ${cy(-60)} L ${thrX.toFixed(2)} ${threshY.toFixed(2)} L 300 ${endY.toFixed(2)}`;
+    document.getElementById("sq-curve-path")?.setAttribute("d", compD);
+    document.getElementById("sq-fill-path")?.setAttribute("d", compD + " L 300 190 L 30 190 Z");
     document.getElementById("node-thresh-group")?.setAttribute("transform", `translate(${thrX}, ${threshY})`);
     document.getElementById("node-output-group")?.setAttribute("transform", `translate(300, ${endY})`);
 

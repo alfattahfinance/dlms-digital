@@ -1425,6 +1425,7 @@ let isAudioInitialized = false;
 
 let analysers = {};
 let filters = {};
+let outputMeterGains = {};
 
 channelIds.forEach(id => {
   muteStates[id] = false;
@@ -1964,57 +1965,54 @@ function initAudioPlayer() {
 function setupAudioDSPNodes(audioElement) {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   audioCtx = new AudioContextClass();
-
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
+
+  // Keep normal browser playback audible. Meters below measure the actual
+  // player signal, not the visual position of a fader.
   audioSourceNode.connect(audioCtx.destination);
 
-  // Analyzer input: In A receives the local audio-player signal.
-  // In B stays silent until a real second input source is connected.
   channelIds.forEach(id => {
     const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 512;
-    analyser.smoothingTimeConstant = 0.18;
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.25;
     analysers[id] = analyser;
   });
 
+  // IN A is the actual signal from the web audio player, pre-fader.
   audioSourceNode.connect(analysers.ina);
 
-  // Independent crossover paths for output meters.
-  const lp = audioCtx.createBiquadFilter();
-  lp.type = "lowpass";
-  lp.frequency.value = 130;
-  audioSourceNode.connect(lp);
-  lp.connect(analysers.out1);
-  filters.out1 = lp;
+  // IN B has no separate physical/browser input source wired in this page.
+  // Leave it disconnected rather than copying IN A and displaying false data.
 
-  const low = audioCtx.createBiquadFilter();
-  low.type = "bandpass";
-  low.frequency.value = 350;
-  low.Q.value = 0.8;
-  audioSourceNode.connect(low);
-  low.connect(analysers.out2);
-  filters.out2 = low;
+  // Output meter signal paths: filtered player audio, then that output's
+  // fader gain and mute state, then analyser. These are meter paths only;
+  // a real hardware/DSP output still requires an actual audio output backend.
+  const makeOutputMeterPath = (id, type, frequency, q = 1) => {
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.value = frequency;
+    filter.Q.value = q;
 
-  const mid = audioCtx.createBiquadFilter();
-  mid.type = "bandpass";
-  mid.frequency.value = 1800;
-  mid.Q.value = 0.8;
-  audioSourceNode.connect(mid);
-  mid.connect(analysers.out3);
-  filters.out3 = mid;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 1;
 
-  const hp = audioCtx.createBiquadFilter();
-  hp.type = "highpass";
-  hp.frequency.value = 3500;
-  audioSourceNode.connect(hp);
-  hp.connect(analysers.out4);
-  filters.out4 = hp;
+    audioSourceNode.connect(filter);
+    filter.connect(gain);
+    gain.connect(analysers[id]);
+
+    filters[id] = filter;
+    outputMeterGains[id] = gain;
+  };
+
+  outputMeterGains = {};
+  makeOutputMeterPath("out1", "lowpass", 130);
+  makeOutputMeterPath("out2", "bandpass", 350, 0.8);
+  makeOutputMeterPath("out3", "bandpass", 1800, 0.8);
+  makeOutputMeterPath("out4", "highpass", 3500);
 }
 
-// Convert measured RMS to a mixer-style meter:
-// -60 dBFS = bottom, 0 dBFS = top.
-// Inputs are measured pre-fader; outputs include their own fader gain.
-function getMeterPercent(analyser, faderDb) {
+function getMeterPercent(analyser) {
+  // Time-domain RMS is based on the audio waveform, not fader position.
   const samples = new Uint8Array(analyser.fftSize);
   analyser.getByteTimeDomainData(samples);
 
@@ -2027,10 +2025,7 @@ function getMeterPercent(analyser, faderDb) {
   const rms = Math.sqrt(sumSquares / samples.length);
   if (!Number.isFinite(rms) || rms < 0.0005) return 0;
 
-  let dbfs = 20 * Math.log10(rms);
-  if (Number.isFinite(faderDb)) dbfs += faderDb;
-
-  // Convert -60..0 dBFS to 0..100%. Small floor avoids a noisy idle meter.
+  const dbfs = 20 * Math.log10(rms);
   return Math.max(0, Math.min(100, ((dbfs + 60) / 60) * 100));
 }
 
@@ -2045,20 +2040,26 @@ function renderRealtimeMeters() {
     if (!meterEl) return;
 
     const analyser = analysers[id];
+    const outputGain = outputMeterGains && outputMeterGains[id];
 
-    // No player signal means no demo-meter activity. In B is intentionally
-    // independent and remains at zero until a real In B source is connected.
     if (!playable || !analyser || muteStates[id] || onStates[id]) {
       meterEl.style.height = "0%";
       return;
     }
 
-    const faderDb = isInputChannel(id)
-      ? 0
-      : parseFloat(document.getElementById("gain-" + id)?.value || "0");
+    // Output meter path follows actual waveform after per-output gain/mute.
+    // The fader only sets gain; with no audio signal the meter remains at zero.
+    if (outputGain) {
+      const faderDb = parseFloat(document.getElementById("gain-" + id)?.value || "0");
+      const gain = Math.pow(10, faderDb / 20);
+      outputGain.gain.setTargetAtTime(
+        muteStates[id] || onStates[id] ? 0 : gain,
+        audioCtx.currentTime,
+        0.015
+      );
+    }
 
-    const percent = getMeterPercent(analyser, faderDb);
-    meterEl.style.height = percent.toFixed(1) + "%";
+    meterEl.style.height = getMeterPercent(analyser).toFixed(1) + "%";
   });
 }
 

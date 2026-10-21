@@ -1108,6 +1108,66 @@
       .fader-scale, .fader-right-indicator { font-size: 7px; }
     }
 
+
+    /* FIX: pastikan jalur fader channel tidak terpotong di tablet landscape */
+    .fader-workspace, #panel-mixer {
+      min-height: 0;
+      min-width: 0;
+    }
+    #panel-mixer {
+      display: flex;
+      flex-direction: column;
+    }
+    .mixer-bank {
+      flex: 1 1 0;
+      min-height: 190px;
+      height: auto;
+      align-items: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
+    }
+    .channel-strip {
+      height: 100%;
+      min-height: 0;
+      overflow: visible;
+    }
+    .fader-meter-area {
+      flex: 1 1 0;
+      min-height: 120px;
+      height: auto;
+    }
+    .vertical-slider-container,
+    input[type="range"].vertical-fader {
+      min-height: 0;
+    }
+    .section-group-title {
+      flex: 0 0 auto;
+    }
+    @media (orientation: landscape) and (max-height: 700px) {
+      .touchscreen-console {
+        height: clamp(100px, 22dvh, 155px);
+        max-height: 25dvh;
+      }
+      .mixer-bank {
+        min-height: 155px;
+      }
+      .fader-meter-area {
+        min-height: 95px;
+      }
+      .channel-strip {
+        gap: 2px;
+        padding: 2px;
+      }
+      .ch-header-sq { padding: 1px; }
+      .eq-curve-box { height: 16px; }
+      .db-value { padding: 0; }
+      .sq-btn { padding-top: 2px; padding-bottom: 2px; }
+    }
+    @media (max-width: 760px) and (orientation: landscape) {
+      .channel-strip { flex: 0 0 clamp(78px, 15vw, 112px); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }

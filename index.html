@@ -2394,7 +2394,9 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
       updateParam("hpf-freq_" + currentFocusedChannel, p.hpf_freq);
     }
   } else if (tab === "gate") {
-    const mappedThr = -80 + normalizedX * 80;
+    // Free/diagonal drag: combine horizontal input-level and vertical output-level coordinates.
+    const normalizedY = Math.max(0, Math.min(1, 1 - (svgY / height)));
+    const mappedThr = -80 + (((normalizedX + normalizedY) / 2) * 80);
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
     updateParam("gate-thr_" + currentFocusedChannel, p.gate_thr);
   } else if (tab === "peq") {

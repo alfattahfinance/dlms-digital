@@ -2352,7 +2352,7 @@ function initInteractiveGraphs() {
           const distance = Math.hypot(x - point.x, y - point.y);
           return !best || distance < best.distance
             ? { id: node.dataset.peqBand, distance } : best;
-        }, null)?.id || String(pickNearestPeqBand(point.x, svg));
+        }, null)?.id || "3";
       }
       handleGraphMove(e, tab, activeDragNode, box, svg);
     }

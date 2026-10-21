@@ -2127,91 +2127,134 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 
 function initInteractiveGraphs() {
   ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
-    const box = document.getElementById(tab === 'comp' ? 'editor-graph-box' : tab + '-graph-box');
-    if (!box) return;
+    const box = document.getElementById(tab === "comp" ? "editor-graph-box" : tab + "-graph-box");
+    if (!box || box.dataset.graphPointerReady === "1") return;
+
+    const svg = box.querySelector("svg");
+    if (!svg) return;
+    box.dataset.graphPointerReady = "1";
+
+    // Pointer Events cover mouse, touch and pen. Disable browser pan/zoom only
+    // while interacting with the graph, and use SVG's own coordinate transform.
+    box.style.touchAction = "none";
+    box.style.userSelect = "none";
+    box.style.webkitUserSelect = "none";
 
     let isDragging = false;
     let activeDragNode = null;
+    let activePointerId = null;
 
-    function handlePointerDown(e) {
+    function graphPoint(event) {
+      const matrix = svg.getScreenCTM();
+      if (!matrix || typeof svg.createSVGPoint !== "function") return null;
+      const point = svg.createSVGPoint();
+      point.x = event.clientX;
+      point.y = event.clientY;
+      const local = point.matrixTransform(matrix.inverse());
+      if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) return null;
+      const viewBox = svg.viewBox && svg.viewBox.baseVal;
+      const width = viewBox && viewBox.width ? viewBox.width : 320;
+      const height = viewBox && viewBox.height ? viewBox.height : 210;
+      return {
+        x: Math.max(30, Math.min(300, local.x)),
+        y: Math.max(0, Math.min(height, local.y)),
+        width, height
+      };
+    }
+
+    function onPointerDown(e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      const point = graphPoint(e);
+      if (!point) return;
+      e.preventDefault();
       isDragging = true;
-      box.setPointerCapture(e.pointerId);
+      activePointerId = e.pointerId;
+      try { box.setPointerCapture(e.pointerId); } catch (err) {}
 
-      if (tab === 'comp') {
-        const rect = box.getBoundingClientRect();
-        let x = e.clientX - rect.left;
-        let c = channelCompressors[currentFocusedChannel];
-        let thrX = 30 + ((Number(c.thr) + 60) / 60) * 270;
-        let scaleX = rect.width / 320;
-        let mappedThrScreenX = thrX * scaleX;
-
-        if (x > mappedThrScreenX + 30) {
-          activeDragNode = 'output';
-        } else {
-          activeDragNode = 'threshold';
-        }
+      if (tab === "comp") {
+        const c = channelCompressors[currentFocusedChannel];
+        const thresholdX = 30 + ((Number(c.thr) + 60) / 60) * 270;
+        activeDragNode = point.x > thresholdX + 18 ? "output" : "threshold";
       }
-
-      handleGraphMove(e, tab, activeDragNode);
+      handleGraphMove(e, tab, activeDragNode, box, svg);
     }
 
-    function handlePointerMove(e) {
-      if (isDragging) {
-        handleGraphMove(e, tab, activeDragNode);
-      }
+    function onPointerMove(e) {
+      if (!isDragging || e.pointerId !== activePointerId) return;
+      e.preventDefault();
+      handleGraphMove(e, tab, activeDragNode, box, svg);
     }
 
-    function handlePointerUp(e) {
-      if (isDragging) {
-        isDragging = false;
-        activeDragNode = null;
-        try { box.releasePointerCapture(e.pointerId); } catch(err){}
-      }
+    function onPointerEnd(e) {
+      if (e.pointerId !== activePointerId) return;
+      isDragging = false;
+      activeDragNode = null;
+      activePointerId = null;
+      try { if (box.hasPointerCapture(e.pointerId)) box.releasePointerCapture(e.pointerId); } catch (err) {}
     }
 
-    box.addEventListener("pointerdown", handlePointerDown);
-    box.addEventListener("pointermove", handlePointerMove);
-    box.addEventListener("pointerup", handlePointerUp);
-    box.addEventListener("pointercancel", handlePointerUp);
+    box.addEventListener("pointerdown", onPointerDown, { passive: false });
+    box.addEventListener("pointermove", onPointerMove, { passive: false });
+    box.addEventListener("pointerup", onPointerEnd);
+    box.addEventListener("pointercancel", onPointerEnd);
+    box.addEventListener("lostpointercapture", onPointerEnd);
   });
 }
 
-function handleGraphMove(e, tab, dragNode) {
-  const box = e.currentTarget;
-  const rect = box.getBoundingClientRect();
-  let x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-  let y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
-  let svgX = 30 + ((x / rect.width) * 270);
-  let svgY = (y / rect.height) * 210;
+function handleGraphMove(e, tab, dragNode, box, svg) {
+  const graph = svg || (box && box.querySelector("svg"));
+  if (!graph) return;
 
-  let p = channelProcessors[currentFocusedChannel];
-  let c = channelCompressors[currentFocusedChannel];
+  // Convert screen coordinates into the SVG viewBox coordinate system. This
+  // accounts for mobile viewport scaling, borders, Retina DPR and SVG layout.
+  const matrix = graph.getScreenCTM();
+  if (!matrix || typeof graph.createSVGPoint !== "function") return;
+  const point = graph.createSVGPoint();
+  point.x = e.clientX;
+  point.y = e.clientY;
+  const local = point.matrixTransform(matrix.inverse());
+  if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) return;
 
-  if (tab === 'comp') {
-    if (dragNode === 'output') {
+  const vb = graph.viewBox && graph.viewBox.baseVal;
+  const width = vb && vb.width ? vb.width : 320;
+  const height = vb && vb.height ? vb.height : 210;
+  const svgX = Math.max(30, Math.min(300, local.x));
+  const svgY = Math.max(0, Math.min(height, local.y));
+  const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
+
+  const p = channelProcessors[currentFocusedChannel];
+  const c = channelCompressors[currentFocusedChannel];
+  if (!p || !c) return;
+
+  if (tab === "comp") {
+    if (dragNode === "output") {
       c.outY = Math.max(20, Math.min(190, svgY));
       updateParam("active-gain_" + currentFocusedChannel, c.outY);
     } else {
-      let mappedThr = -60 + (((svgX - 30) / 270) * 60);
+      const mappedThr = -60 + normalizedX * 60;
       c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
       updateParam("active-thr_" + currentFocusedChannel, c.thr);
     }
-  } else if (tab === 'preamp') {
-    let mappedGain = -10 + ((1 - (svgY / 210)) * 70);
+  } else if (tab === "preamp") {
+    const mappedGain = -10 + (1 - svgY / height) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
     updateParam("pre-gain_" + currentFocusedChannel, p.pre_gain);
-  } else if (tab === 'hpf') {
-    let mappedFreq = 20 + (((svgX - 30) / 270) * 380);
-    p.hpf_freq = Math.round(Math.max(20, Math.min(400, mappedFreq)));
+  } else if (tab === "hpf") {
+    const minFreq = 20, maxFreq = 400;
+    const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
+    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0) return;
+    p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
     updateParam("hpf-freq_" + currentFocusedChannel, p.hpf_freq);
-  } else if (tab === 'gate') {
-    let mappedThr = -80 + (((svgX - 30) / 270) * 80);
+  } else if (tab === "gate") {
+    const mappedThr = -80 + normalizedX * 80;
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
     updateParam("gate-thr_" + currentFocusedChannel, p.gate_thr);
-  } else if (tab === 'peq') {
-    let mappedFreq = 20 + (((svgX - 30) / 270) * 19980);
-    let mappedGain = 12 - ((svgY / 210) * 24);
-    p.peq_freq = Math.round(Math.max(20, Math.min(20000, mappedFreq)));
+  } else if (tab === "peq") {
+    const minFreq = 20, maxFreq = 20000;
+    const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
+    const mappedGain = 12 - (svgY / height) * 24;
+    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0 || !Number.isFinite(mappedGain)) return;
+    p.peq_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
     p.peq_gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
     updateParam("peq-freq_" + currentFocusedChannel, p.peq_freq);
     updateParam("peq-gain_" + currentFocusedChannel, p.peq_gain);

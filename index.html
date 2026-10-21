@@ -323,7 +323,8 @@
       transition: stop-opacity .18s ease;
     }
 
-    /* Skin gelombang neon konsisten untuk seluruh halaman grafik DSP. */
+    /* Neon dipertegas; animasi hanya mengubah cahaya, bukan menggeser dash
+       sehingga garis tetap terlihat di browser Android/WebView. */
     .sq-curve-line,
     .neon-line-blue,
     .neon-line-emerald,
@@ -332,42 +333,40 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
-      stroke-dasharray: 900;
-      stroke-dashoffset: 0;
-      animation: curveGlowPulse 2.8s ease-in-out infinite, curveFlow 12s linear infinite;
+      stroke-dasharray: none !important;
+      stroke-dashoffset: 0 !important;
+      opacity: 1;
+      animation: curveGlowPulse 2.4s ease-in-out infinite;
+      paint-order: stroke;
     }
 
     .sq-curve-line {
-      stroke: #ffbf36;
-      stroke-width: 2.8;
-      filter: drop-shadow(0 0 3px rgba(255, 191, 54, .95)) drop-shadow(0 0 8px rgba(255, 166, 0, .65));
+      stroke: #ffd15c;
+      stroke-width: 3.2;
+      filter: drop-shadow(0 0 2px #ffbf36) drop-shadow(0 0 6px rgba(255,166,0,.95)) drop-shadow(0 0 13px rgba(255,166,0,.65));
     }
 
     .neon-line-blue {
-      stroke: #20eaff;
-      stroke-width: 2.6;
-      filter: drop-shadow(0 0 3px rgba(32, 234, 255, 1)) drop-shadow(0 0 8px rgba(0, 195, 255, .85)) drop-shadow(0 0 15px rgba(0, 195, 255, .35));
+      stroke: #36f4ff;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 2px #8afaff) drop-shadow(0 0 6px rgba(0,229,255,1)) drop-shadow(0 0 13px rgba(0,195,255,.9)) drop-shadow(0 0 20px rgba(0,195,255,.55));
     }
 
     .neon-line-emerald {
-      stroke: #22ffc3;
-      stroke-width: 2.6;
-      filter: drop-shadow(0 0 3px rgba(34, 255, 195, 1)) drop-shadow(0 0 9px rgba(0, 255, 170, .72));
+      stroke: #3dffd0;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 2px #a5ffe9) drop-shadow(0 0 7px rgba(0,255,170,1)) drop-shadow(0 0 14px rgba(0,255,170,.75));
     }
 
     .neon-line-peq {
-      stroke: #ff4b91;
-      stroke-width: 2.8;
-      filter: drop-shadow(0 0 3px rgba(255, 75, 145, 1)) drop-shadow(0 0 9px rgba(255, 42, 109, .85)) drop-shadow(0 0 16px rgba(255, 42, 109, .35));
+      stroke: #ff559e;
+      stroke-width: 3.2;
+      filter: drop-shadow(0 0 2px #ffc0d8) drop-shadow(0 0 7px rgba(255,42,109,1)) drop-shadow(0 0 14px rgba(255,42,109,.85)) drop-shadow(0 0 21px rgba(255,42,109,.5));
     }
 
     @keyframes curveGlowPulse {
-      0%, 100% { opacity: .9; }
+      0%, 100% { opacity: .96; }
       50% { opacity: 1; }
-    }
-
-    @keyframes curveFlow {
-      to { stroke-dashoffset: -1800; }
     }
 
     @media (prefers-reduced-motion: reduce) {

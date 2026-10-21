@@ -2143,14 +2143,19 @@ function initInteractiveGraphs() {
     let isDragging = false;
     let activeDragNode = null;
     let activePointerId = null;
+    let pendingMove = null;
+    let graphFrame = 0;
 
     function graphPoint(event) {
+      // SVG coordinates are CSS-pixel independent; getScreenCTM maps the
+      // actual screen point into viewBox space (including mobile scaling).
       const matrix = svg.getScreenCTM();
       if (!matrix || typeof svg.createSVGPoint !== "function") return null;
       const point = svg.createSVGPoint();
       point.x = event.clientX;
       point.y = event.clientY;
-      const local = point.matrixTransform(matrix.inverse());
+      let local;
+      try { local = point.matrixTransform(matrix.inverse()); } catch (err) { return null; }
       if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) return null;
       const viewBox = svg.viewBox && svg.viewBox.baseVal;
       const width = viewBox && viewBox.width ? viewBox.width : 320;
@@ -2160,6 +2165,27 @@ function initInteractiveGraphs() {
         y: Math.max(0, Math.min(height, local.y)),
         width, height
       };
+    }
+
+    function scheduleGraphMove(e) {
+      // Keep only the newest pointer position and draw at most once per frame.
+      pendingMove = { clientX: e.clientX, clientY: e.clientY, pointerId: e.pointerId };
+      if (graphFrame) return;
+      graphFrame = requestAnimationFrame(() => {
+        graphFrame = 0;
+        const latest = pendingMove;
+        pendingMove = null;
+        if (isDragging && latest && latest.pointerId === activePointerId) {
+          handleGraphMove(latest, tab, activeDragNode, box, svg);
+        }
+      });
+    }
+
+    function flushGraphMove(e) {
+      if (graphFrame) cancelAnimationFrame(graphFrame);
+      graphFrame = 0;
+      pendingMove = null;
+      if (e && isDragging) handleGraphMove(e, tab, activeDragNode, box, svg);
     }
 
     function onPointerDown(e) {
@@ -2182,11 +2208,14 @@ function initInteractiveGraphs() {
     function onPointerMove(e) {
       if (!isDragging || e.pointerId !== activePointerId) return;
       e.preventDefault();
-      handleGraphMove(e, tab, activeDragNode, box, svg);
+      scheduleGraphMove(e);
     }
 
     function onPointerEnd(e) {
       if (e.pointerId !== activePointerId) return;
+      // Apply the final touch position before releasing capture to avoid a
+      // one-frame visual jump or a stale-looking curve at the end of a drag.
+      flushGraphMove(e);
       isDragging = false;
       activeDragNode = null;
       activePointerId = null;

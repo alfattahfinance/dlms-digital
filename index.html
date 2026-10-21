@@ -587,6 +587,31 @@
       margin-top: 2px;
     }
 
+    /* Knob master mini: ukuran dan poros indikator khusus agar tepat di tengah. */
+    .master-gain-knob {
+      --knob-size: 28px;
+      width: var(--knob-size);
+      height: var(--knob-size);
+      flex: 0 0 var(--knob-size);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .master-gain-knob::before {
+      inset: 2px;
+    }
+
+    .master-gain-knob::after {
+      inset: 4px;
+    }
+
+    .master-gain-indicator {
+      top: 4px;
+      width: 2px;
+      height: 7px;
+      transform-origin: 50% 6px;
+    }
+
     .tc-master-strip {
       display: flex;
       align-items: center;
@@ -1409,7 +1434,7 @@
             <div class="tc-master-strip" onpointerdown="initKnobDrag(event, 'master-gain', -40, 20, 0.5)">
               <label id="active-ch-label">In A</label>
               <div style="display:flex; align-items:center; gap:5px;">
-                <div class="physical-knob" style="width:26px; height:26px;"><div class="knob-indicator" id="ind-master-gain" style="height:7px;"></div></div>
+                <div class="physical-knob master-gain-knob"><div class="knob-indicator master-gain-indicator" id="ind-master-gain"></div></div>
                 <span id="tc-val-mastergain">0.0 dB</span>
               </div>
             </div>

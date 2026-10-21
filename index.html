@@ -1930,10 +1930,10 @@ function enforceDSPNodePolicy(pageName) {
       if (node) node.style.display = allowed.has(id) ? "" : "none";
     });
   });
-  const preampNode = document.getElementById("node-preamp-group");
-  const outputNode = document.getElementById("node-output-group");
-  if (preampNode) preampNode.style.display = "none";
-  if (outputNode) outputNode.style.display = "none";
+  ["node-preamp-group", "node-output-group", "node-peq-group"].forEach(id => {
+    const legacy = document.getElementById(id);
+    if (legacy) legacy.style.display = "none";
+  });
 }
 
 function switchProcessorPage(pageName) {
@@ -1983,9 +1983,13 @@ function updateActiveProcessorUI() {
     document.getElementById("preamp-fill-path")?.setAttribute("d", `M 30 100 L 300 100 L 300 ${posY} L 30 ${posY} Z`);
   } else if (currentProcessorTab === 'hpf') {
     setTxt("tc-val-hpffreq", Math.round(p.hpf_freq) + " Hz");
-    setTxt("tc-val-hpfslope", p.hpf_slope + " dB");
-    updateKnobRotation("ind-hpf-freq", p.hpf_freq, 20, 400);
-    updateKnobRotation("ind-hpf-slope", p.hpf_slope, 12, 24);
+    setTxt("tc-val-hpfslope", p.hpf_slope + " dB/oct");
+    setTxt("tc-val-lpffreq", Math.round(p.lpf_freq) + " Hz");
+    setTxt("tc-val-lpfslope", p.lpf_slope + " dB/oct");
+    updateKnobRotation("ind-hpf-freq", p.hpf_freq, 20, 1000);
+    updateKnobRotation("ind-hpf-slope", p.hpf_slope, 6, 48);
+    updateKnobRotation("ind-lpf-freq", p.lpf_freq, 100, 20000);
+    updateKnobRotation("ind-lpf-slope", p.lpf_slope, 6, 48);
 
     // HPF Butterworth magnitude: high frequencies approach 0 dB; lows are attenuated.
     const hpfFreq = Math.max(20, Number(p.hpf_freq) || 20);
@@ -2004,10 +2008,28 @@ function updateActiveProcessorUI() {
     }
     const hpfD = hpfPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
     const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
+    const lpfFreq = Math.max(100, Number(p.lpf_freq) || 18000);
+    const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
     const hpfY = 100 - hpfDb(hpfFreq) * 3;
+    const lpfY = 100;
+    const lpfDb = f => {
+      const ratio = Math.max(1e-6, f / lpfFreq);
+      const order = Math.max(1, Math.round((Number(p.lpf_slope) || 24) / 6));
+      const mag = 1 / Math.sqrt(1 + Math.pow(ratio, 2 * order));
+      return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
+    };
+    const combinedPts = [];
+    for (let i = 0; i <= 180; i++) {
+      const x = 30 + 270 * i / 180;
+      const f = 20 * Math.pow(1000, i / 180);
+      const db = hpfDb(f) + lpfDb(f);
+      combinedPts.push([x, Math.max(40, Math.min(190, 100 - db * 3))]);
+    }
+    const combinedD = combinedPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
     document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX}, ${hpfY})`);
-    document.getElementById("hpf-curve-path")?.setAttribute("d", hpfD);
-    document.getElementById("hpf-fill-path")?.setAttribute("d", hpfD + " L 300 100 L 30 100 Z");
+    document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX}, ${lpfY})`);
+    document.getElementById("hpf-curve-path")?.setAttribute("d", combinedD);
+    document.getElementById("hpf-fill-path")?.setAttribute("d", combinedD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'gate' && !isOut) {
     setTxt("tc-val-gatethr", Number(p.gate_thr).toFixed(1) + " dB");
     setTxt("tc-val-gaterng", Number(p.gate_rng).toFixed(1) + " dB");
@@ -2033,12 +2055,14 @@ function updateActiveProcessorUI() {
     setTxt("tc-val-peqfreq", Math.round(p.peq_freq) + " Hz");
     setTxt("tc-val-peqgain", Number(p.peq_gain).toFixed(1) + " dB");
     setTxt("tc-val-peqq", Number(p.peq_q).toFixed(1) + " Q");
-    updateKnobRotation("ind-peq-band", p.peq_band, 1, 4);
+    updateKnobRotation("ind-peq-band", p.peq_band, 1, 5);
     updateKnobRotation("ind-peq-freq", p.peq_freq, 20, 20000);
     updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
     // RBJ peaking-EQ biquad magnitude response, sampled on a logarithmic frequency axis.
+    const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
+    if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }
     const pf = Math.max(20, Math.min(20000, Number(p.peq_freq) || 1000));
     const pg = Math.max(-12, Math.min(12, Number(p.peq_gain) || 0));
     const pq = Math.max(0.1, Math.min(10, Number(p.peq_q) || 1.4));
@@ -2060,9 +2084,14 @@ function updateActiveProcessorUI() {
       peqPts.push([x, Math.max(10, Math.min(190, 100 - db * 5))]);
     }
     const peqD = peqPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
-    const pX = 30 + 270 * Math.log(pf / 20) / Math.log(1000);
-    const pY = 100 - pg * 5;
-    document.getElementById("node-peq-group")?.setAttribute("transform", `translate(${pX}, ${pY})`);
+    p.peq_bands.forEach((band, index) => {
+      const node = document.getElementById("node-peq-band-" + (index + 1));
+      if (!node) return;
+      const nodeX = 30 + 270 * Math.log(Math.max(20, Math.min(20000, Number(band.freq) || 1000)) / 20) / Math.log(1000);
+      const nodeY = 100 - Math.max(-12, Math.min(12, Number(band.gain) || 0)) * 5;
+      node.setAttribute("transform", `translate(${nodeX}, ${nodeY})`);
+      node.style.opacity = Number(p.peq_band) === index + 1 ? "1" : "0.72";
+    });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
     document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 100 L 30 100 Z");
   } else if (currentProcessorTab === 'geq') {
@@ -2353,22 +2382,34 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
     updateParam("pre-gain_" + currentFocusedChannel, p.pre_gain);
   } else if (tab === "hpf") {
-    const minFreq = 20, maxFreq = 400;
+    const isLPF = dragNode === "lpf";
+    const minFreq = isLPF ? 100 : 20;
+    const maxFreq = isLPF ? 20000 : 1000;
     const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
     if (!Number.isFinite(mappedFreq) || mappedFreq <= 0) return;
-    p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-    updateParam("hpf-freq_" + currentFocusedChannel, p.hpf_freq);
+    if (isLPF) {
+      p.lpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
+      updateParam("lpf-freq_" + currentFocusedChannel, p.lpf_freq);
+    } else {
+      p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
+      updateParam("hpf-freq_" + currentFocusedChannel, p.hpf_freq);
+    }
   } else if (tab === "gate") {
     const mappedThr = -80 + normalizedX * 80;
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
     updateParam("gate-thr_" + currentFocusedChannel, p.gate_thr);
   } else if (tab === "peq") {
+    const bandIndex = Math.max(0, Math.min(4, (Number(dragNode) || p.peq_band) - 1));
+    p.peq_band = bandIndex + 1;
+    const band = p.peq_bands[bandIndex];
     const minFreq = 20, maxFreq = 20000;
     const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
     const mappedGain = 12 - (svgY / height) * 24;
     if (!Number.isFinite(mappedFreq) || mappedFreq <= 0 || !Number.isFinite(mappedGain)) return;
-    p.peq_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-    p.peq_gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
+    band.freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
+    band.gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
+    p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q;
+    updateParam("peq-band_" + currentFocusedChannel, p.peq_band);
     updateParam("peq-freq_" + currentFocusedChannel, p.peq_freq);
     updateParam("peq-gain_" + currentFocusedChannel, p.peq_gain);
   }

@@ -795,15 +795,14 @@
       margin: 0 auto;
     }
 
-    /* DESAIN DAN WARNA LED METER YANG DISESUAIKAN */
+    /* INDEPENDENT LED METER (TIDAK IKUT BERGESER DENGAN FADER) */
     .sq-led-meter {
       position: absolute;
       left: 50%;
-      top: 2px;
-      bottom: 2px;
+      top: 4px;
+      bottom: 4px;
       transform: translateX(-50%);
-      width: 14px;
-      height: calc(100% - 4px);
+      width: 12px;
       background: #05070a;
       border-radius: 2px;
       overflow: hidden;
@@ -824,8 +823,8 @@
         #00e676 65%, 
         #ffea00 80%, 
         #ff1744 100%);
-      box-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
-      transition: height 0.04s cubic-bezier(0, 0, 0.2, 1);
+      box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
+      transition: height 0.03s linear;
     }
 
     .fader-right-indicator {
@@ -1419,12 +1418,11 @@ let channelCompressors = {};
 let channelProcessors = {};
 let channelGeqValues = {};
 
-// Variabel Web Audio API untuk Pemisahan Frekuensi Crossover DSP
+// Variabel Web Audio API untuk Pemisahan Frekuensi Crossover DSP & Meter
 let audioCtx = null;
 let audioSourceNode = null;
 let isAudioInitialized = false;
 
-// Analyser Nodes khusus per channel
 let analysers = {};
 let filters = {};
 
@@ -1968,50 +1966,43 @@ function setupAudioDSPNodes(audioElement) {
   audioCtx = new AudioContext();
 
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
-  
-  // Hubungkan audio langsung ke speaker utama
   audioSourceNode.connect(audioCtx.destination);
 
-  // Buat Filter Crossover & Analyser Node Khusus Tiap Channel
+  // Buat Analyser Node & Filter Crossover per Channel secara Independen
   channelIds.forEach(id => {
     let analyser = audioCtx.createAnalyser();
     analyser.fftSize = 128;
-    analyser.smoothingTimeConstant = 0.6; // Efek balistik meter halus DSP
+    analyser.smoothingTimeConstant = 0.4; // Respon balistik lebih cepat & responsif
 
     if (id === 'ina' || id === 'inb') {
-      // Input Master: Direct Fullband
       audioSourceNode.connect(analyser);
     } else if (id === 'out1') {
-      // Subwoofer: Low-Pass Filter (0 - 120Hz)
       let lp = audioCtx.createBiquadFilter();
       lp.type = "lowpass";
-      lp.frequency.value = 120;
+      lp.frequency.value = 130;
       audioSourceNode.connect(lp);
       lp.connect(analyser);
       filters[id] = lp;
     } else if (id === 'out2') {
-      // Low / Woofer: Band-Pass Filter (120Hz - 500Hz)
       let bp = audioCtx.createBiquadFilter();
       bp.type = "bandpass";
-      bp.frequency.value = 300;
+      bp.frequency.value = 350;
       bp.Q.value = 1.0;
       audioSourceNode.connect(bp);
       bp.connect(analyser);
       filters[id] = bp;
     } else if (id === 'out3') {
-      // Mid / Vocal: Band-Pass Filter (500Hz - 3000Hz)
       let bp = audioCtx.createBiquadFilter();
       bp.type = "bandpass";
-      bp.frequency.value = 1500;
+      bp.frequency.value = 1800;
       bp.Q.value = 1.0;
       audioSourceNode.connect(bp);
       bp.connect(analyser);
       filters[id] = bp;
     } else if (id === 'out4') {
-      // High / Tweeter: High-Pass Filter (> 3000Hz)
       let hp = audioCtx.createBiquadFilter();
       hp.type = "highpass";
-      hp.frequency.value = 3000;
+      hp.frequency.value = 3500;
       audioSourceNode.connect(hp);
       hp.connect(analyser);
       filters[id] = hp;
@@ -2030,7 +2021,7 @@ function renderRealtimeMeters() {
     const meterEl = document.getElementById("meter-" + id);
     if (!meterEl) return;
 
-    // Jika Audio tidak diputar, Mute Aktif, atau Channel Off -> Turunkan Meter
+    // Jika Audio Pause, Mute Aktif, atau Bypass/Off -> Matikan Meter
     if (!audioCtx || !audioElement || audioElement.paused || muteStates[id] || onStates[id]) {
       meterEl.style.height = "0%";
       return;
@@ -2042,19 +2033,18 @@ function renderRealtimeMeters() {
     let dataArray = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(dataArray);
 
-    // Hitung Root Mean Square (RMS) sinyal frekuensi
-    let sumSquares = 0;
+    let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
-      sumSquares += dataArray[i] * dataArray[i];
+      sum += dataArray[i];
     }
-    let rms = Math.sqrt(sumSquares / dataArray.length); // Skala 0 - 255
+    let average = sum / dataArray.length; // Nilai 0 - 255
 
-    // Skala Fader Gain
+    // Ambil nilai fader gain saat ini untuk mensimulasikan besaran level sinyal output nyata
     let faderVal = parseFloat(document.getElementById("gain-" + id)?.value || "0");
-    let gainMultiplier = Math.pow(10, faderVal / 20); // Konversi dB ke Penguatan Linear
+    let gainMultiplier = Math.pow(10, faderVal / 20);
 
-    // Hitung Persentase Level Meter LED (0 - 100%)
-    let rawPercent = (rms / 255) * 100 * gainMultiplier * 1.5;
+    // Hitung persentase tinggi LED murni berdasarkan level sinyal audio
+    let rawPercent = (average / 160) * 100 * gainMultiplier;
     let finalPercent = Math.max(0, Math.min(100, rawPercent));
 
     meterEl.style.height = finalPercent.toFixed(1) + "%";
@@ -2109,7 +2099,7 @@ function getEsp32BaseUrl() {
 function updateParam(id, value) {
   const url = getEsp32BaseUrl() + "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
   clearTimeout(sendTimers[id]);
-  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 35);
+  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 20); // Pengiriman dipercepat agar responsif
 }
 
 function sendDeviceCommand(pathOrUrl) {

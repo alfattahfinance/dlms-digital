@@ -1962,92 +1962,103 @@ function initAudioPlayer() {
 }
 
 function setupAudioDSPNodes(audioElement) {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  audioCtx = new AudioContext();
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  audioCtx = new AudioContextClass();
 
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
   audioSourceNode.connect(audioCtx.destination);
 
-  // Buat Analyser Node & Filter Crossover per Channel secara Independen
+  // Analyzer input: In A receives the local audio-player signal.
+  // In B stays silent until a real second input source is connected.
   channelIds.forEach(id => {
-    let analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 128;
-    analyser.smoothingTimeConstant = 0.4; // Respon balistik lebih cepat & responsif
-
-    if (id === 'ina' || id === 'inb') {
-      audioSourceNode.connect(analyser);
-    } else if (id === 'out1') {
-      let lp = audioCtx.createBiquadFilter();
-      lp.type = "lowpass";
-      lp.frequency.value = 130;
-      audioSourceNode.connect(lp);
-      lp.connect(analyser);
-      filters[id] = lp;
-    } else if (id === 'out2') {
-      let bp = audioCtx.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.frequency.value = 350;
-      bp.Q.value = 1.0;
-      audioSourceNode.connect(bp);
-      bp.connect(analyser);
-      filters[id] = bp;
-    } else if (id === 'out3') {
-      let bp = audioCtx.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.frequency.value = 1800;
-      bp.Q.value = 1.0;
-      audioSourceNode.connect(bp);
-      bp.connect(analyser);
-      filters[id] = bp;
-    } else if (id === 'out4') {
-      let hp = audioCtx.createBiquadFilter();
-      hp.type = "highpass";
-      hp.frequency.value = 3500;
-      audioSourceNode.connect(hp);
-      hp.connect(analyser);
-      filters[id] = hp;
-    }
-
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    analyser.smoothingTimeConstant = 0.18;
     analysers[id] = analyser;
   });
+
+  audioSourceNode.connect(analysers.ina);
+
+  // Independent crossover paths for output meters.
+  const lp = audioCtx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 130;
+  audioSourceNode.connect(lp);
+  lp.connect(analysers.out1);
+  filters.out1 = lp;
+
+  const low = audioCtx.createBiquadFilter();
+  low.type = "bandpass";
+  low.frequency.value = 350;
+  low.Q.value = 0.8;
+  audioSourceNode.connect(low);
+  low.connect(analysers.out2);
+  filters.out2 = low;
+
+  const mid = audioCtx.createBiquadFilter();
+  mid.type = "bandpass";
+  mid.frequency.value = 1800;
+  mid.Q.value = 0.8;
+  audioSourceNode.connect(mid);
+  mid.connect(analysers.out3);
+  filters.out3 = mid;
+
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = "highpass";
+  hp.frequency.value = 3500;
+  audioSourceNode.connect(hp);
+  hp.connect(analysers.out4);
+  filters.out4 = hp;
+}
+
+// Convert measured RMS to a mixer-style meter:
+// -60 dBFS = bottom, 0 dBFS = top.
+// Inputs are measured pre-fader; outputs include their own fader gain.
+function getMeterPercent(analyser, faderDb) {
+  const samples = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(samples);
+
+  let sumSquares = 0;
+  for (let i = 0; i < samples.length; i++) {
+    const sample = (samples[i] - 128) / 128;
+    sumSquares += sample * sample;
+  }
+
+  const rms = Math.sqrt(sumSquares / samples.length);
+  if (!Number.isFinite(rms) || rms < 0.0005) return 0;
+
+  let dbfs = 20 * Math.log10(rms);
+  if (Number.isFinite(faderDb)) dbfs += faderDb;
+
+  // Convert -60..0 dBFS to 0..100%. Small floor avoids a noisy idle meter.
+  return Math.max(0, Math.min(100, ((dbfs + 60) / 60) * 100));
 }
 
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
-  
+
   const audioElement = document.getElementById("audio-player");
-  
+  const playable = !!audioCtx && !!audioElement && !audioElement.paused && !audioElement.ended;
+
   channelIds.forEach(id => {
     const meterEl = document.getElementById("meter-" + id);
     if (!meterEl) return;
 
-    // Jika Audio Pause, Mute Aktif, atau Bypass/Off -> Matikan Meter
-    if (!audioCtx || !audioElement || audioElement.paused || muteStates[id] || onStates[id]) {
+    const analyser = analysers[id];
+
+    // No player signal means no demo-meter activity. In B is intentionally
+    // independent and remains at zero until a real In B source is connected.
+    if (!playable || !analyser || muteStates[id] || onStates[id]) {
       meterEl.style.height = "0%";
       return;
     }
 
-    const analyser = analysers[id];
-    if (!analyser) return;
+    const faderDb = isInputChannel(id)
+      ? 0
+      : parseFloat(document.getElementById("gain-" + id)?.value || "0");
 
-    let dataArray = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(dataArray);
-
-    let sum = 0;
-    for (let i = 0; i < dataArray.length; i++) {
-      sum += dataArray[i];
-    }
-    let average = sum / dataArray.length; // Nilai 0 - 255
-
-    // Ambil nilai fader gain saat ini untuk mensimulasikan besaran level sinyal output nyata
-    let faderVal = parseFloat(document.getElementById("gain-" + id)?.value || "0");
-    let gainMultiplier = Math.pow(10, faderVal / 20);
-
-    // Hitung persentase tinggi LED murni berdasarkan level sinyal audio
-    let rawPercent = (average / 160) * 100 * gainMultiplier;
-    let finalPercent = Math.max(0, Math.min(100, rawPercent));
-
-    meterEl.style.height = finalPercent.toFixed(1) + "%";
+    const percent = getMeterPercent(analyser, faderDb);
+    meterEl.style.height = percent.toFixed(1) + "%";
   });
 }
 

@@ -331,31 +331,52 @@
     .sq-curve-line {
       stroke: #ffd15c;
       stroke-width: 2.8;
-      filter: drop-shadow(0 0 5px rgba(255,166,0,.75));
+      /* Avoid SVG filter layers: iOS Safari can leave stale pixels after transforms. */
+      filter: none !important;
     }
 
     .neon-line-blue {
       stroke: #36f4ff;
       stroke-width: 2.8;
-      filter: drop-shadow(0 0 6px rgba(0,229,255,.8));
+      filter: none !important;
     }
 
     .neon-line-emerald {
       stroke: #3dffd0;
       stroke-width: 2.8;
-      filter: drop-shadow(0 0 6px rgba(0,255,170,.8));
+      filter: none !important;
     }
 
     .neon-line-peq {
       stroke: #ff559e;
       stroke-width: 3;
-      filter: drop-shadow(0 0 6px rgba(255,42,109,.8));
+      filter: none !important;
     }
 
     .screen-real-knob {
       cursor: grab;
       touch-action: none;
-      filter: drop-shadow(0 0 4px rgba(0, 229, 255, .72));
+      filter: none !important;
+    }
+
+    /* Keep SVG graph repaints clipped to the visible graph bounds on mobile. */
+    .sq-graph-box {
+      isolation: isolate;
+      contain: paint;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .sq-graph-box svg {
+      overflow: hidden;
+      clip-path: inset(0);
+      shape-rendering: geometricPrecision;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     .screen-real-knob:hover, .screen-real-knob:active {

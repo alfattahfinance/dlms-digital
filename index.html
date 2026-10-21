@@ -1979,7 +1979,7 @@ function updateActiveProcessorUI() {
     posY = Math.max(15, Math.min(185, posY));
     
     document.getElementById("node-preamp-group")?.setAttribute("transform", `translate(165, ${posY})`);
-    document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} C 100 ${posY - 1}, 220 ${posY + 1}, 300 ${posY}`);
+    document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} L 300 ${posY}`);
     document.getElementById("preamp-fill-path")?.setAttribute("d", `M 30 100 L 300 100 L 300 ${posY} L 30 ${posY} Z`);
   } else if (currentProcessorTab === 'hpf') {
     setTxt("tc-val-hpffreq", Math.round(p.hpf_freq) + " Hz");
@@ -2129,7 +2129,6 @@ function updateActiveProcessorUI() {
     document.getElementById("sq-curve-path")?.setAttribute("d", compD);
     document.getElementById("sq-fill-path")?.setAttribute("d", compD + " L 300 190 L 30 190 Z");
     document.getElementById("node-thresh-group")?.setAttribute("transform", `translate(${thrX}, ${threshY})`);
-    document.getElementById("node-output-group")?.setAttribute("transform", `translate(300, ${endY})`);
 
     updateThumbnailCurve(currentFocusedChannel, thrX, threshY, endY);
   }

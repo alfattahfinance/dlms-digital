@@ -53,12 +53,12 @@
     }
 
     .chassis-rack {
-      min-height: 28px;
+      min-height: 26px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 12px;
+      padding: 2px 12px;
       background: var(--dark-chassis);
       border: 1px solid #444;
       box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 4px 6px rgba(0,0,0,0.6);
@@ -67,22 +67,22 @@
 
     .screw {
       position: absolute;
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: radial-gradient(circle,#888 20%,#444 70%,#111);
       box-shadow: inset 0 1px 2px #000;
     }
 
-    .screw-tl { top: 3px; left: 6px; }
-    .screw-tr { top: 3px; right: 6px; }
-    .screw-bl { bottom: 3px; left: 6px; }
-    .screw-br { bottom: 3px; right: 6px; }
+    .screw-tl { top: 2px; left: 5px; }
+    .screw-tr { top: 2px; right: 5px; }
+    .screw-bl { bottom: 2px; left: 5px; }
+    .screw-br { bottom: 2px; right: 5px; }
 
     .chassis-title {
       color: #fff;
       font-weight: 800;
-      font-size: .7rem;
+      font-size: .65rem;
       letter-spacing: 1.2px;
       margin-left: 10px;
     }
@@ -92,7 +92,7 @@
       align-items: center;
       gap: 5px;
       color: #aaa;
-      font-size: .55rem;
+      font-size: .52rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -111,16 +111,16 @@
       align-items: center;
       gap: 8px;
       background: #161a22;
-      padding: 3px 8px;
+      padding: 2px 8px;
       border-bottom: 1px solid #333;
-      font-size: .58rem;
+      font-size: .55rem;
       flex-shrink: 0;
     }
 
     .player-bar label {
       background: var(--neon-blue);
       color: #000;
-      padding: 3px 6px;
+      padding: 2px 6px;
       border-radius: 3px;
       font-weight: 800;
       cursor: pointer;
@@ -133,7 +133,7 @@
 
     .player-bar audio {
       flex: 1;
-      height: 24px;
+      height: 22px;
       outline: none;
       filter: invert(90%) hue-rotate(180deg);
     }
@@ -142,7 +142,7 @@
       display: flex;
       flex-shrink: 0;
       gap: 3px;
-      padding: 3px 5px;
+      padding: 2px 5px;
       background: #111;
       border-bottom: 1px solid #333;
       overflow-x: auto;
@@ -150,12 +150,12 @@
 
     .tab-btn {
       flex-shrink: 0;
-      padding: 5px 10px;
+      padding: 3px 8px;
       color: #ccc;
       background: #222;
       border: 1px solid #444;
       border-radius: 3px;
-      font-size: .58rem;
+      font-size: .55rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -185,38 +185,40 @@
       width: 100%;
     }
 
-    /* TOUCHSCREEN PROCESSOR CONSOLE */
+    /* KONTROL TOUCHSCREEN KONSOL UTAMA (DIOPTIMALKAN UNTUK LANDSCAPE) */
     .touchscreen-console {
-      flex-shrink: 0;
-      height: 285px;
+      flex: 0 0 auto;
+      height: 195px;
+      max-height: 48vh;
       background: radial-gradient(circle at center, #111a26 0%, #05080e 100%);
       border: 1px solid #2563eb;
       border-radius: 4px;
       display: flex;
-      padding: 5px;
-      gap: 8px;
+      padding: 4px;
+      gap: 6px;
       box-shadow: inset 0 0 20px rgba(0,149,255,0.15), 0 0 12px rgba(0,0,0,0.8);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .tc-sidebar {
-      width: 100px;
+      width: 95px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       background: #090d16;
       border: 1px solid #1e293b;
-      padding: 3px;
+      padding: 2px;
       border-radius: 3px;
       overflow-y: auto;
+      flex-shrink: 0;
     }
 
     .tc-side-btn {
       background: #131d31;
       color: #94a3b8;
       border: 1px solid #334155;
-      padding: 5px;
-      font-size: .55rem;
+      padding: 4px;
+      font-size: .52rem;
       font-weight: bold;
       text-align: center;
       border-radius: 2px;
@@ -239,12 +241,13 @@
 
     .tc-center-graph {
       flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       background: var(--screen-bg);
       border: 1px solid #1e293b;
       border-radius: 3px;
-      padding: 6px;
+      padding: 4px;
       position: relative;
       box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
       overflow: hidden;
@@ -256,6 +259,15 @@
       position: relative;
       touch-action: none;
       cursor: crosshair;
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid rgba(71, 85, 105, .55);
+      border-radius: 4px;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(8, 35, 52, .38), transparent 72%),
+        linear-gradient(180deg, #050b14 0%, #03070d 100%);
     }
 
     .sq-graph-box svg {
@@ -267,33 +279,18 @@
       overflow: hidden;
     }
 
-    /* Pastikan halaman grafik memenuhi kartu tanpa melebar keluar area. */
     .processor-subpage {
       box-sizing: border-box;
       min-width: 0;
       min-height: 0;
       overflow: hidden;
+      width: 100%;
+      height: 100%;
     }
 
-    .sq-graph-box {
-      box-sizing: border-box;
-      min-width: 0;
-      min-height: 0;
-      overflow: hidden;
-      border: 1px solid rgba(71, 85, 105, .55);
-      border-radius: 5px;
-      background:
-        radial-gradient(ellipse at 50% 45%, rgba(8, 35, 52, .38), transparent 72%),
-        linear-gradient(180deg, #050b14 0%, #03070d 100%);
-      box-shadow: inset 0 0 18px rgba(0, 0, 0, .9), 0 0 7px rgba(0, 229, 255, .06);
-    }
-
-    /* Grafik DSP bergaya console digital profesional: grid penuh, hitam pekat,
-       garis acuan jelas, dan area kurva transparan seperti referensi. */
     .sq-grid-line {
       stroke: #62676d;
       stroke-width: 1;
-      stroke-dasharray: none;
       opacity: .72;
       vector-effect: non-scaling-stroke;
     }
@@ -301,14 +298,13 @@
     .zero-fixed-line {
       stroke: #a0a6ad;
       stroke-width: 1.35;
-      stroke-dasharray: none;
       opacity: .92;
       vector-effect: non-scaling-stroke;
     }
 
     .sq-grid-text {
       fill: #d1d5db;
-      font-size: 8px;
+      font-size: 7.5px;
       font-weight: 600;
       font-family: Arial, sans-serif;
     }
@@ -319,12 +315,6 @@
       stroke: none;
     }
 
-    .sq-graph-box svg defs linearGradient stop {
-      transition: stop-opacity .18s ease;
-    }
-
-    /* Neon dipertegas; animasi hanya mengubah cahaya, bukan menggeser dash
-       sehingga garis tetap terlihat di browser Android/WebView. */
     .sq-curve-line,
     .neon-line-blue,
     .neon-line-emerald,
@@ -336,74 +326,40 @@
       stroke-dasharray: none !important;
       stroke-dashoffset: 0 !important;
       opacity: 1;
-      animation: curveGlowPulse 2.4s ease-in-out infinite;
-      paint-order: stroke;
     }
 
     .sq-curve-line {
       stroke: #ffd15c;
-      stroke-width: 3.2;
-      filter: drop-shadow(0 0 2px #ffbf36) drop-shadow(0 0 6px rgba(255,166,0,.95)) drop-shadow(0 0 13px rgba(255,166,0,.65));
+      stroke-width: 2.8;
+      filter: drop-shadow(0 0 5px rgba(255,166,0,.75));
     }
 
     .neon-line-blue {
       stroke: #36f4ff;
-      stroke-width: 3;
-      filter: drop-shadow(0 0 2px #8afaff) drop-shadow(0 0 6px rgba(0,229,255,1)) drop-shadow(0 0 13px rgba(0,195,255,.9)) drop-shadow(0 0 20px rgba(0,195,255,.55));
+      stroke-width: 2.8;
+      filter: drop-shadow(0 0 6px rgba(0,229,255,.8));
     }
 
     .neon-line-emerald {
       stroke: #3dffd0;
-      stroke-width: 3;
-      filter: drop-shadow(0 0 2px #a5ffe9) drop-shadow(0 0 7px rgba(0,255,170,1)) drop-shadow(0 0 14px rgba(0,255,170,.75));
+      stroke-width: 2.8;
+      filter: drop-shadow(0 0 6px rgba(0,255,170,.8));
     }
 
     .neon-line-peq {
       stroke: #ff559e;
-      stroke-width: 3.2;
-      filter: drop-shadow(0 0 2px #ffc0d8) drop-shadow(0 0 7px rgba(255,42,109,1)) drop-shadow(0 0 14px rgba(255,42,109,.85)) drop-shadow(0 0 21px rgba(255,42,109,.5));
-    }
-
-    @keyframes curveGlowPulse {
-      0%, 100% { opacity: .96; }
-      50% { opacity: 1; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq {
-        animation: none;
-      }
+      stroke-width: 3;
+      filter: drop-shadow(0 0 6px rgba(255,42,109,.8));
     }
 
     .screen-real-knob {
       cursor: grab;
       touch-action: none;
-      transition: filter .12s ease;
       filter: drop-shadow(0 0 4px rgba(0, 229, 255, .72));
-    }
-
-    .screen-real-knob circle:first-child {
-      opacity: .82;
-      filter: blur(.3px);
-    }
-
-    .screen-real-knob circle:nth-child(2) {
-      stroke-width: 1.7;
-    }
-
-    .screen-real-knob circle:nth-child(3) {
-      stroke: rgba(255,255,255,.94);
-      stroke-width: 1;
-    }
-
-    .screen-real-knob circle:nth-child(4) {
-      fill: #fff;
-      filter: drop-shadow(0 0 3px rgba(255,255,255,1));
     }
 
     .screen-real-knob:hover, .screen-real-knob:active {
       cursor: grabbing;
-      filter: drop-shadow(0 0 5px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(0,229,255,.9));
     }
 
     /* 31-BAND GEQ CONTAINER */
@@ -412,25 +368,25 @@
       height: 100%;
       display: flex;
       flex-direction: row;
-      gap: 3px;
+      gap: 2px;
       background: var(--screen-bg);
       border-radius: 2px;
-      padding: 4px;
+      padding: 3px;
       overflow: hidden;
     }
 
     .geq-scale-side {
-      width: 28px;
+      width: 24px;
       flex-shrink: 0;
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 5px;
+      font-size: 4.5px;
       color: #64748b;
       font-family: monospace;
       text-align: right;
-      padding: 16px 4px 22px 0;
+      padding: 12px 2px 18px 0;
       font-weight: bold;
     }
 
@@ -441,8 +397,8 @@
       height: 100%;
       flex: 1;
       min-width: 0;
-      gap: 2px;
-      padding: 0 2px;
+      gap: 1px;
+      padding: 0 1px;
     }
 
     .geq-slider-col {
@@ -451,8 +407,8 @@
       align-items: center;
       height: 100%;
       flex: 1;
-      min-width: 14px;
-      max-width: 20px;
+      min-width: 12px;
+      max-width: 18px;
       flex-shrink: 0;
     }
 
@@ -472,8 +428,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 110px;
-      height: 14px;
+      width: 90px;
+      height: 12px;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
       outline: none;
@@ -482,7 +438,7 @@
 
     input[type="range"].geq-range::-webkit-slider-runnable-track {
       width: 100%;
-      height: 3px;
+      height: 2.5px;
       background: #1e293b;
       border-radius: 2px;
     }
@@ -490,29 +446,28 @@
     input[type="range"].geq-range::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 14px;
-      height: 8px;
-      margin-top: -2.5px;
+      width: 12px;
+      height: 7px;
+      margin-top: -2.2px;
       background: var(--neon-emerald);
       border: 1px solid #fff;
       border-radius: 2px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .geq-val-label {
-      font-size: 3.8px;
+      font-size: 3.5px;
       color: #34d399;
       font-family: monospace;
       text-align: center;
       white-space: nowrap;
-      height: 11px;
-      line-height: 11px;
+      height: 9px;
+      line-height: 9px;
       font-weight: bold;
       flex-shrink: 0;
     }
 
     .geq-freq-label-wrapper {
-      height: 22px;
+      height: 18px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -521,7 +476,7 @@
     }
 
     .geq-freq-label {
-      font-size: 5px;
+      font-size: 4.5px;
       color: #64748b;
       font-family: monospace;
       text-align: center;
@@ -531,15 +486,15 @@
       font-weight: bold;
     }
 
-    /* PANEL KANAN TOUCHSCREEN */
+    /* PANEL KANAN TOUCHSCREEN (UKURAN KOMPAK KHUSUS HORIZONTAL) */
     .tc-right-knobs-panel {
-      width: 185px;
+      width: 165px;
       display: flex;
       flex-direction: column;
       background: #090d16;
       border: 1px solid #1e293b;
       border-radius: 3px;
-      padding: 5px;
+      padding: 4px;
       justify-content: space-between;
       flex-shrink: 0;
     }
@@ -547,9 +502,9 @@
     .knobs-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 5px;
+      gap: 4px;
       overflow-y: auto;
-      max-height: 195px;
+      max-height: 135px;
       padding-right: 2px;
       align-content: start;
     }
@@ -558,35 +513,24 @@
       background: linear-gradient(to bottom, #131d31, #0a0f1d);
       border: 1px solid #334155;
       border-radius: 3px;
-      padding: 4px;
+      padding: 3px;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: grab;
       touch-action: none;
-      transition: all 0.2s;
-    }
-
-    .physical-knob-container:active {
-      cursor: grabbing;
-    }
-
-    .physical-knob-container:hover {
-      border-color: var(--amber);
     }
 
     .physical-knob-container label {
-      font-size: .48rem;
+      font-size: .45rem;
       color: #94a3b8;
       text-transform: uppercase;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
       font-weight: bold;
     }
 
-    /* Knob bergaya komponen rotary hardware asli: grip bergerigi,
-       tutup aluminium gelap, dan garis penunjuk yang tetap bisa diputar. */
     .physical-knob {
-      --knob-size: 42px;
+      --knob-size: 32px;
       width: var(--knob-size);
       height: var(--knob-size);
       flex: 0 0 var(--knob-size);
@@ -600,68 +544,40 @@
       background:
         repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #657080 4deg 5deg, #252c37 5deg 9deg),
         #202733;
-      box-shadow:
-        0 3px 2px #02040a,
-        0 5px 7px rgba(0,0,0,.75),
-        inset 0 1px 1px rgba(255,255,255,.32);
+      box-shadow: 0 2px 2px #02040a, inset 0 1px 1px rgba(255,255,255,.32);
     }
 
     .physical-knob::before {
       content: "";
       position: absolute;
-      inset: 3px;
+      inset: 2.5px;
       border-radius: 50%;
       z-index: -1;
-      background:
-        radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
+      background: radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
       border: 1px solid #87909c;
-      box-shadow:
-        inset 0 2px 3px rgba(255,255,255,.22),
-        inset 0 -3px 5px rgba(0,0,0,.9);
-    }
-
-    .physical-knob::after {
-      content: "";
-      position: absolute;
-      inset: 7px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,.55);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.08);
-      pointer-events: none;
     }
 
     .knob-indicator {
       position: absolute;
-      top: 6px;
+      top: 4px;
       left: 50%;
-      width: 3px;
-      height: 12px;
+      width: 2.5px;
+      height: 9px;
       background: linear-gradient(to right, #d8dde4 0%, #ffffff 48%, #9ca3af 100%);
       border: 1px solid #202630;
-      box-shadow: 0 0 2px rgba(255,255,255,.35), 0 1px 1px #000;
       transform: translateX(-50%);
-      transform-origin: 50% 14px;
+      transform-origin: 50% 12px;
       border-radius: 2px;
       z-index: 2;
       pointer-events: none;
     }
 
-    .physical-knob-container:active .physical-knob {
-      filter: brightness(1.12);
-      box-shadow: 0 1px 1px #02040a, inset 0 2px 4px rgba(0,0,0,.65);
-    }
-
-    .physical-knob-container:focus-within .physical-knob {
-      outline: 1px solid rgba(245,158,11,.7);
-      outline-offset: 2px;
-    }
-
     .physical-knob-container span {
-      font-size: .52rem;
+      font-size: .48rem;
       color: var(--amber);
       font-family: monospace;
       font-weight: bold;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     .tc-master-strip {
@@ -670,21 +586,21 @@
       justify-content: space-between;
       background: #030712;
       border: 1px solid #334155;
-      padding: 3px 5px;
+      padding: 2px 4px;
       border-radius: 3px;
-      margin-top: 3px;
+      margin-top: 2px;
       cursor: grab;
       touch-action: none;
     }
 
     .tc-master-strip label {
-      font-size: .48rem;
+      font-size: .45rem;
       color: #94a3b8;
       font-weight: bold;
     }
 
     .tc-master-strip span {
-      font-size: .52rem;
+      font-size: .48rem;
       color: var(--sq-green);
       font-family: monospace;
       font-weight: bold;
@@ -695,12 +611,12 @@
       color: #fff;
       border: 1px solid #4ade80;
       border-radius: 3px;
-      font-size: .5rem;
+      font-size: .48rem;
       font-weight: bold;
-      padding: 4px 0;
+      padding: 3px 0;
       cursor: pointer;
       width: 100%;
-      margin-top: 3px;
+      margin-top: 2px;
       text-align: center;
     }
 
@@ -713,15 +629,16 @@
     .section-group-title {
       flex-shrink: 0;
       width: 100%;
-      margin: 1px 0 3px;
+      margin: 1px 0 2px;
       color: #aaa;
-      font-size: .58rem;
+      font-size: .52rem;
       font-weight: 800;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       padding-left: 2px;
     }
 
+    /* BANK MIXER / CHANNEL STRIPS BAWAH (DISESUAIKAN AGAR TIDAK TERPOTONG SECARA VERTIKAL) */
     .mixer-bank {
       flex: 1;
       min-height: 0;
@@ -729,7 +646,7 @@
       align-items: stretch;
       justify-content: space-between;
       flex-wrap: nowrap;
-      gap: 6px;
+      gap: 4px;
       width: 100%;
       padding: 2px 0;
       overflow-x: auto;
@@ -743,13 +660,12 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 4px;
-      padding: 6px;
+      gap: 3px;
+      padding: 4px;
       background: var(--strip-bg);
       border: 1px solid #333;
       border-radius: 4px;
       box-shadow: inset 0 0 8px rgba(255,255,255,0.03), 0 4px 12px rgba(0,0,0,0.6);
-      transition: border-color 0.2s, box-shadow 0.2s;
       cursor: pointer;
     }
 
@@ -762,9 +678,9 @@
       background: linear-gradient(to bottom, #15803d, #14532d);
       border: 1px solid var(--sq-green);
       border-radius: 3px;
-      padding: 3px 2px;
+      padding: 2px;
       text-align: center;
-      box-shadow: inset 0 1px 3px rgba(255,255,255,0.3);
+      flex-shrink: 0;
     }
 
     .ch-header-sq.out-header {
@@ -774,29 +690,28 @@
 
     .ch-name {
       color: #ffffff;
-      font-size: .68rem;
+      font-size: .58rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
     }
 
     .ch-sublabel {
       color: #bbf7d0;
-      font-size: .48rem;
-      margin-top: 1px;
+      font-size: .42rem;
+      margin-top: 0px;
     }
 
     .eq-curve-box {
       width: 100%;
-      height: 32px;
+      height: 22px;
       background: #09090b;
       border: 1px solid #27272a;
-      border-radius: 3px;
+      border-radius: 2px;
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+      flex-shrink: 0;
     }
 
     .eq-curve-box svg {
@@ -815,36 +730,34 @@
     .mini-path {
       fill: none;
       stroke: var(--amber);
-      stroke-width: 2;
+      stroke-width: 1.5;
     }
 
     .db-value {
       color: var(--amber);
       font-family: "Courier New", monospace;
-      font-size: .58rem;
+      font-size: .52rem;
       font-weight: bold;
       text-align: center;
       background: #0f0f12;
       padding: 1px 0;
       border-radius: 2px;
       border: 1px solid #333;
+      flex-shrink: 0;
     }
 
     .sq-btn {
       width: 100%;
-      padding: 3px 0;
+      padding: 2px 0;
       background: linear-gradient(to bottom, #333, #222);
       color: #ccc;
       border: 1px solid #555;
-      border-radius: 3px;
-      font-size: .55rem;
+      border-radius: 2px;
+      font-size: .5rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-      margin: 0 auto;
-      display: block;
-      transition: all 0.1s;
+      flex-shrink: 0;
     }
 
     .sq-btn.on-btn {
@@ -857,19 +770,17 @@
       background: linear-gradient(to bottom, #334155, #1e293b) !important;
       color: #64748b !important;
       border-color: #475569 !important;
-      box-shadow: none !important;
     }
 
     .sq-btn.muted {
       background: linear-gradient(to bottom, #dc2626, #991b1b) !important;
       color: #fff !important;
       border-color: #f87171 !important;
-      box-shadow: 0 0 8px rgba(220, 38, 38, 0.6) !important;
     }
 
     .fader-meter-area {
       flex: 1;
-      min-height: 80px;
+      min-height: 0;
       width: 100%;
       position: relative;
       display: flex;
@@ -878,25 +789,24 @@
       background: #090c10;
       border: 1px solid #27272a;
       border-radius: 3px;
-      padding: 3px 2px;
+      padding: 2px 1px;
       overflow: hidden;
-      gap: 2px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.95);
+      gap: 1px;
     }
 
     .fader-scale {
       position: relative;
-      width: 18px;
+      width: 15px;
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 5px;
+      font-size: 4.5px;
       color: #888;
       font-family: monospace;
       text-align: right;
       z-index: 1;
-      padding: 2px 0;
+      padding: 1px 0;
       pointer-events: none;
       font-weight: bold;
     }
@@ -907,7 +817,7 @@
       align-items: center;
       justify-content: flex-end;
       width: 100%;
-      padding-right: 2px;
+      padding-right: 1px;
     }
 
     .vertical-slider-container {
@@ -920,14 +830,13 @@
       margin: 0 auto;
     }
 
-    /* INDEPENDENT LED METER (TIDAK IKUT BERGESER DENGAN FADER) */
     .sq-led-meter {
       position: absolute;
       left: 50%;
-      top: 4px;
-      bottom: 4px;
+      top: 2px;
+      bottom: 2px;
       transform: translateX(-50%);
-      width: 12px;
+      width: 10px;
       background: #05070a;
       border-radius: 2px;
       overflow: hidden;
@@ -937,34 +846,28 @@
       border: 1px solid #1a2332;
       pointer-events: none;
       z-index: 1;
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.9);
     }
 
     .sq-meter-fill {
       width: 100%;
       height: 0%;
-      background: linear-gradient(to top, 
-        #00e676 0%, 
-        #00e676 65%, 
-        #ffea00 80%, 
-        #ff1744 100%);
-      box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
+      background: linear-gradient(to top, #00e676 0%, #00e676 65%, #ffea00 80%, #ff1744 100%);
       transition: height 0.03s linear;
     }
 
     .fader-right-indicator {
       position: relative;
-      width: 20px;
+      width: 14px;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: space-between;
-      font-size: 5px;
+      font-size: 4.5px;
       color: #888;
       font-family: monospace;
       z-index: 1;
-      padding: 4px 0;
+      padding: 2px 0;
       pointer-events: none;
       font-weight: bold;
     }
@@ -977,7 +880,7 @@
 
     .tick-right {
       position: relative;
-      width: 3px;
+      width: 2px;
       height: 1px;
       background: #555;
       margin: auto 0;
@@ -989,8 +892,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: calc(100% - 4px);
-      height: 32px;
+      width: calc(100% - 2px);
+      height: 26px;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
       border: none;
@@ -1005,15 +908,14 @@
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 44px;  
-      height: 28px; 
+      width: 36px;  
+      height: 22px; 
       margin-top: -1px; 
       box-sizing: border-box;
-      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border: 1.2px solid rgba(255, 255, 255, 0.45);
       border-radius: 3px;
       background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(30, 30, 30, 0.65);
-      backdrop-filter: blur(2px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.8);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.8);
       cursor: grab;
     }
 
@@ -1024,7 +926,7 @@
       width: 100%;
       height: 100%;
       min-height: 0;
-      padding: 8px;
+      padding: 6px;
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 3px;
@@ -1112,240 +1014,9 @@
       padding: 2px 6px;
       color: #aaa;
       border-top: 1px solid #333;
-      font-size: .5rem;
+      font-size: .48rem;
       font-weight: bold;
       background: var(--dark-chassis);
-    }
-
-    /* Responsive orientation: tablet/phone portrait and landscape. */
-    html, body {
-      min-width: 0;
-      min-height: 100%;
-      overscroll-behavior: none;
-    }
-
-    .app-container {
-      min-width: 0;
-      min-height: 0;
-      padding: clamp(2px, .6vw, 6px);
-      gap: clamp(2px, .4vw, 4px);
-    }
-
-    .chassis-rack,
-    .player-bar,
-    .nav-tabs {
-      min-width: 0;
-      max-width: 100%;
-    }
-
-    .chassis-title {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .fader-workspace,
-    .touchscreen-console,
-    .mixer-bank,
-    .tc-center-graph,
-    .processor-subpage,
-    .knobs-grid {
-      min-width: 0;
-      min-height: 0;
-    }
-
-    .touchscreen-console {
-      flex: 0 1 auto;
-      height: clamp(220px, 42dvh, 360px);
-      max-height: 48dvh;
-      min-height: 0;
-    }
-
-    .tc-sidebar {
-      flex: 0 0 clamp(66px, 14vw, 112px);
-      min-width: 0;
-    }
-
-    .tc-center-graph {
-      flex: 1 1 0;
-      min-width: 0;
-      min-height: 0;
-    }
-
-    .sq-graph-box {
-      flex: 1 1 auto;
-      min-width: 0;
-      min-height: 0;
-    }
-
-    .sq-graph-box svg {
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-    }
-
-    .mixer-bank {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: auto;
-    }
-
-    .knobs-grid {
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 92px), 1fr));
-      align-content: start;
-    }
-
-    @media (orientation: portrait) {
-      .app-container {
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-
-      .touchscreen-console {
-        flex: 0 0 auto;
-        height: clamp(210px, 34dvh, 310px);
-        max-height: none;
-      }
-
-      .tc-sidebar {
-        flex-basis: clamp(60px, 18vw, 88px);
-      }
-
-      .mixer-bank {
-        overflow-x: auto;
-        overflow-y: hidden;
-      }
-
-      .player-bar audio {
-        min-width: 0;
-      }
-
-      .nav-tabs {
-        scrollbar-width: thin;
-      }
-    }
-
-    /* Landscape tablet: use the available width without shrinking controls
-       to desktop-sized fixed dimensions. */
-    @media (orientation: landscape) and (min-width: 700px) {
-      .app-container {
-        height: 100vh;
-        height: 100dvh;
-        box-sizing: border-box;
-        padding: 3px;
-        gap: 3px;
-      }
-
-      .chassis-rack {
-        flex: 0 0 28px;
-        min-height: 28px;
-        box-sizing: border-box;
-        padding: 2px 10px;
-      }
-
-      .player-bar {
-        flex: 0 0 27px;
-        min-height: 27px;
-        box-sizing: border-box;
-        padding: 1px 6px;
-      }
-
-      .nav-tabs {
-        flex: 0 0 29px;
-        min-height: 29px;
-        box-sizing: border-box;
-        padding: 2px 5px;
-      }
-
-      .fader-workspace {
-        flex: 1 1 0;
-        min-height: 0;
-        height: 0;
-        padding: 2px;
-        gap: 3px;
-        overflow: hidden;
-      }
-
-      .touchscreen-console {
-        flex: 0 0 clamp(220px, 37dvh, 330px);
-        width: 100%;
-        height: clamp(220px, 37dvh, 330px);
-        max-height: 44dvh;
-        min-height: 0;
-        box-sizing: border-box;
-        margin: 0 0 2px;
-        padding: 4px;
-        gap: 6px;
-      }
-
-      .tc-sidebar {
-        flex: 0 0 clamp(72px, 8vw, 108px);
-        width: auto;
-      }
-
-      .tc-center-graph {
-        flex: 1 1 0;
-        width: 0;
-        min-width: 0;
-      }
-
-      .tc-right-panel {
-        flex: 0 0 clamp(100px, 13vw, 190px);
-        min-width: 0;
-      }
-
-      .mixer-bank {
-        flex: 1 1 0;
-        width: 100%;
-        height: 0;
-        min-height: 100px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        align-content: stretch;
-      }
-
-      .mixer-bank > * {
-        min-width: 0;
-      }
-
-      .footer-bar {
-        flex: 0 0 18px;
-        min-height: 18px;
-        box-sizing: border-box;
-      }
-    }
-
-    @media (orientation: landscape) and (max-height: 500px) {
-      .app-container {
-        overflow: hidden;
-      }
-
-      .chassis-rack {
-        min-height: 24px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-      }
-
-      .touchscreen-console {
-        height: 42dvh;
-        max-height: 42dvh;
-        min-height: 145px;
-      }
-
-      .tc-side-btn {
-        padding: 3px 2px;
-      }
-
-      .mixer-bank {
-        overflow: auto;
-      }
-    }
-
-    @media (min-width: 600px) {
-      .param-grid {
-        grid-template-columns: repeat(4,minmax(0,1fr));
-      }
     }
   </style>
 </head>
@@ -1669,7 +1340,7 @@
           <div id="knobs-group-geq" class="knobs-grid" style="display:none;">
             <div class="physical-knob-container" style="grid-column: span 2;" onclick="resetGEQ()">
               <label>Reset GEQ</label>
-              <div class="physical-knob" style="width:28px; height:28px;"><div class="knob-indicator" style="transform:translateX(-50%) rotate(0deg)"></div></div>
+              <div class="physical-knob" style="width:26px; height:26px;"><div class="knob-indicator" style="transform:translateX(-50%) rotate(0deg)"></div></div>
               <span>Flat 0 dB</span>
             </div>
           </div>
@@ -1710,8 +1381,8 @@
           <div>
             <div class="tc-master-strip" onpointerdown="initKnobDrag(event, 'master-gain', -40, 20, 0.5)">
               <label id="active-ch-label">In A</label>
-              <div style="display:flex; align-items:center; gap:5px;">
-                <div class="physical-knob" style="width:26px; height:26px;"><div class="knob-indicator" id="ind-master-gain" style="height:7px;"></div></div>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <div class="physical-knob" style="width:24px; height:24px;"><div class="knob-indicator" id="ind-master-gain" style="height:6px;"></div></div>
                 <span id="tc-val-mastergain">0.0 dB</span>
               </div>
             </div>
@@ -1768,7 +1439,6 @@ let channelCompressors = {};
 let channelProcessors = {};
 let channelGeqValues = {};
 
-// Variabel Web Audio API untuk Pemisahan Frekuensi Crossover DSP & Meter
 let audioCtx = null;
 let audioSourceNode = null;
 let isAudioInitialized = false;
@@ -1801,7 +1471,7 @@ function buildMixerStrips() {
   channelIds.forEach(id => {
     let isOut = !isInputChannel(id);
     let name = channelNames[id];
-    let sub = isOut ? (id === 'out1' ? 'Subwoofer' : (id === 'out2' ? 'Low / Woofer' : (id === 'out3' ? 'Mid' : 'High / Tweeter'))) : (id === 'ina' ? 'Master In 1' : 'Master In 2');
+    let sub = isOut ? (id === 'out1' ? 'Sub' : (id === 'out2' ? 'Low' : (id === 'out3' ? 'Mid' : 'High'))) : (id === 'ina' ? 'Master 1' : 'Master 2');
     
     html += `
       <div class="channel-strip ${id === currentFocusedChannel ? 'focused' : ''}" id="strip-${id}" onclick="focusChannel('${id}')">
@@ -1820,7 +1490,7 @@ function buildMixerStrips() {
         <div class="db-value" id="val-${id}">0.0 dB</div>
         <div class="fader-meter-area">
           <div class="fader-scale">
-            ${isOut ? '<span>12</span><span>6</span><span>0</span><span>6</span><span>12</span><span>20</span><span>30</span><span>40</span><span>∞</span>' : '<span>20</span><span>10</span><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>'}
+            ${isOut ? '<span>12</span><span>0</span><span>-12</span><span>-40</span>' : '<span>20</span><span>0</span><span>-20</span><span>-40</span>'}
           </div>
           <div class="vertical-slider-container">
             <div class="sq-led-meter">
@@ -2286,7 +1956,6 @@ function toggleActivePower() {
   }
 }
 
-/* INISIALISASI PEMUTAR MUSIK & ANALYZER CROSSOVER DSP MATRIKS */
 function initAudioPlayer() {
   const fileInput = document.getElementById("audio-file-input");
   const audioElement = document.getElementById("audio-player");
@@ -2317,8 +1986,6 @@ function setupAudioDSPNodes(audioElement) {
   audioCtx = new AudioContextClass();
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
 
-  // Keep normal browser playback audible. Meters below measure the actual
-  // player signal, not the visual position of a fader.
   audioSourceNode.connect(audioCtx.destination);
 
   channelIds.forEach(id => {
@@ -2328,15 +1995,8 @@ function setupAudioDSPNodes(audioElement) {
     analysers[id] = analyser;
   });
 
-  // IN A is the actual signal from the web audio player, pre-fader.
   audioSourceNode.connect(analysers.ina);
 
-  // IN B has no separate physical/browser input source wired in this page.
-  // Leave it disconnected rather than copying IN A and displaying false data.
-
-  // Output meter signal paths: filtered player audio, then that output's
-  // fader gain and mute state, then analyser. These are meter paths only;
-  // a real hardware/DSP output still requires an actual audio output backend.
   const makeOutputMeterPath = (id, type, frequency, q = 1) => {
     const filter = audioCtx.createBiquadFilter();
     filter.type = type;
@@ -2362,7 +2022,6 @@ function setupAudioDSPNodes(audioElement) {
 }
 
 function getMeterPercent(analyser) {
-  // Time-domain RMS is based on the audio waveform, not fader position.
   const samples = new Uint8Array(analyser.fftSize);
   analyser.getByteTimeDomainData(samples);
 
@@ -2397,8 +2056,6 @@ function renderRealtimeMeters() {
       return;
     }
 
-    // Output meter path follows actual waveform after per-output gain/mute.
-    // The fader only sets gain; with no audio signal the meter remains at zero.
     if (outputGain) {
       const faderDb = parseFloat(document.getElementById("gain-" + id)?.value || "0");
       const gain = Math.pow(10, faderDb / 20);
@@ -2461,7 +2118,7 @@ function getEsp32BaseUrl() {
 function updateParam(id, value) {
   const url = getEsp32BaseUrl() + "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
   clearTimeout(sendTimers[id]);
-  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 20); // Pengiriman dipercepat agar responsif
+  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 20);
 }
 
 function sendDeviceCommand(pathOrUrl) {

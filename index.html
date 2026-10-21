@@ -1426,12 +1426,6 @@
                 <path id="preamp-fill-path" class="sq-curve-fill" style="fill:url(#preampGrad);" d="M 30 100 L 300 100 L 300 100 L 30 100 Z"/>
                 <path id="preamp-curve-path" class="neon-line-blue" d="M 30 100 L 300 100"/>
                 
-                <g id="node-preamp-group" class="screen-real-knob" transform="translate(165, 100)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
-                </g>
               </svg>
             </div>
           </div>
@@ -1553,12 +1547,6 @@
                   <circle r="2" fill="#ffffff"/>
                 </g>
 
-                <g id="node-output-group" class="screen-real-knob" transform="translate(300, 105)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyAmber)" stroke="#ffbb00" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
-                </g>
               </svg>
             </div>
           </div>
@@ -1592,10 +1580,16 @@
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-freq"></div></div>
               <span id="tc-val-hpffreq">80 Hz</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-slope', 12, 24, 12)">
-              <label>Slope</label>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-slope', 6, 48, 6)">
+              <label>HPF Slope</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-slope"></div></div>
-              <span id="tc-val-hpfslope">24 dB</span>
+              <span id="tc-val-hpfslope">24 dB/oct</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'lpf-freq', 100, 20000, 10)">
+              <label>LPF Freq</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-freq"></div></div><span id="tc-val-lpffreq">18000 Hz</span>
+            </div>
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'lpf-slope', 6, 48, 6)">
+              <label>LPF Slope</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-slope"></div></div><span id="tc-val-lpfslope">24 dB/oct</span>
             </div>
           </div>
 
@@ -1623,7 +1617,7 @@
           </div>
 
           <div id="knobs-group-peq" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-band', 1, 4, 1)">
+            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-band', 1, 5, 1)">
               <label>Band</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-peq-band"></div></div>
               <span id="tc-val-peqband">Band 2</span>
@@ -1673,16 +1667,6 @@
               <label id="lbl-thr">Thr</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-thr"></div></div>
               <span id="tc-val-thr">-30.5 dB</span>
-            </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-gain', 0, 24, 0.5)">
-              <label>Gain</label>
-              <div class="physical-knob"><div class="knob-indicator" id="ind-active-gain"></div></div>
-              <span id="tc-val-gain">0.0 dB</span>
-            </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-mix', 0, 100, 1)" id="container-mix">
-              <label>Mix</label>
-              <div class="physical-knob"><div class="knob-indicator" id="ind-active-mix"></div></div>
-              <span id="tc-val-mix">100 %</span>
             </div>
           </div>
 
@@ -1761,9 +1745,10 @@ channelIds.forEach(id => {
   channelCompressors[id] = { atk: 60, rel: 141, ratio: 1.5, thr: -30.5, outY: 105, gain: 0, mix: 100 };
   channelProcessors[id] = {
     pre_gain: 12.0, pre_pad: 0, pre_phase: 0,
-    hpf_freq: 80, hpf_slope: 24,
+    hpf_freq: 80, hpf_slope: 24, lpf_freq: 18000, lpf_slope: 24,
     gate_thr: -45, gate_rng: -40, gate_atk: 5.0, gate_rel: 200,
-    peq_band: 2, peq_freq: 1000, peq_gain: 0.0, peq_q: 1.4
+    peq_band: 2, peq_freq: 1000, peq_gain: 0.0, peq_q: 1.4,
+    peq_bands: [{freq:80,gain:0,q:1.4},{freq:250,gain:0,q:1.4},{freq:1000,gain:0,q:1.4},{freq:4000,gain:0,q:1.4},{freq:12000,gain:0,q:1.4}]
   };
   channelGeqValues[id] = new Array(geqFrequencies.length).fill(0);
 });
@@ -1902,8 +1887,58 @@ function resetGEQ() {
   updateParam('geq_reset', '0');
 }
 
+const DSP_NODE_POLICY = Object.freeze({
+  preamp: [],
+  hpf: ["node-hpf-group", "node-lpf-group"],
+  gate: ["node-gate-group"],
+  peq: ["node-peq-band-1", "node-peq-band-2", "node-peq-band-3", "node-peq-band-4", "node-peq-band-5"],
+  geq: [],
+  comp: ["node-thresh-group"]
+});
+
+function initializePermanentDSPNodes() {
+  const svgFor = id => document.querySelector("#proc-page-" + id + " svg");
+  const makeNode = (id, x, y, color, radius) => {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("id", id); g.setAttribute("class", "screen-real-knob");
+    g.setAttribute("transform", "translate(" + x + "," + y + ")");
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", String(radius)); c.setAttribute("fill", "#101010");
+    c.setAttribute("stroke", color); c.setAttribute("stroke-width", "2");
+    g.appendChild(c); return g;
+  };
+  const hpfSvg = svgFor("hpf");
+  if (hpfSvg && !document.getElementById("node-lpf-group")) hpfSvg.appendChild(makeNode("node-lpf-group", 275, 100, "#00e5ff", 8));
+  const peqSvg = svgFor("peq");
+  if (peqSvg) {
+    for (let i = 1; i <= 5; i++) {
+      const id = "node-peq-band-" + i;
+      if (!document.getElementById(id)) {
+        const node = makeNode(id, 30 + i * 45, 100, "#ff2a6d", 7);
+        node.dataset.peqBand = String(i); peqSvg.appendChild(node);
+      }
+    }
+  }
+}
+
+function enforceDSPNodePolicy(pageName) {
+  initializePermanentDSPNodes();
+  const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
+  Object.keys(DSP_NODE_POLICY).forEach(page => {
+    (DSP_NODE_POLICY[page] || []).forEach(id => {
+      const node = document.getElementById(id);
+      if (node) node.style.display = allowed.has(id) ? "" : "none";
+    });
+  });
+  const preampNode = document.getElementById("node-preamp-group");
+  const outputNode = document.getElementById("node-output-group");
+  if (preampNode) preampNode.style.display = "none";
+  if (outputNode) outputNode.style.display = "none";
+}
+
 function switchProcessorPage(pageName) {
   currentProcessorTab = pageName;
+  enforceDSPNodePolicy(pageName);
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
     const page = document.getElementById("proc-page-" + name);
@@ -2121,6 +2156,8 @@ function getParamValue(key) {
   if (key === 'pre-phase') return p.pre_phase;
   if (key === 'hpf-freq') return p.hpf_freq;
   if (key === 'hpf-slope') return p.hpf_slope;
+  if (key === 'lpf-freq') return p.lpf_freq;
+  if (key === 'lpf-slope') return p.lpf_slope;
   if (key === 'gate-thr') return p.gate_thr;
   if (key === 'gate-rng') return p.gate_rng;
   if (key === 'gate-atk') return p.gate_atk;
@@ -2150,6 +2187,8 @@ function setParamValue(key, val) {
   else if (key === 'pre-phase') p.pre_phase = val;
   else if (key === 'hpf-freq') p.hpf_freq = val;
   else if (key === 'hpf-slope') p.hpf_slope = val;
+  else if (key === 'lpf-freq') p.lpf_freq = val;
+  else if (key === 'lpf-slope') p.lpf_slope = val;
   else if (key === 'gate-thr') p.gate_thr = val;
   else if (key === 'gate-rng') p.gate_rng = val;
   else if (key === 'gate-atk') p.gate_atk = val;
@@ -2248,11 +2287,10 @@ function initInteractiveGraphs() {
       activePointerId = e.pointerId;
       try { box.setPointerCapture(e.pointerId); } catch (err) {}
 
-      if (tab === "comp") {
-        const c = channelCompressors[currentFocusedChannel];
-        const thresholdX = 30 + ((Number(c.thr) + 60) / 60) * 270;
-        activeDragNode = point.x > thresholdX + 18 ? "output" : "threshold";
-      }
+      if (tab === "preamp") return;
+      if (tab === "comp") activeDragNode = "threshold";
+      if (tab === "hpf") activeDragNode = point.x < 165 ? "hpf" : "lpf";
+      if (tab === "peq") activeDragNode = String(Math.max(1, Math.min(5, Math.round((point.x - 30) / 54))));
       handleGraphMove(e, tab, activeDragNode, box, svg);
     }
 
@@ -2307,14 +2345,9 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
   if (!p || !c) return;
 
   if (tab === "comp") {
-    if (dragNode === "output") {
-      c.outY = Math.max(20, Math.min(190, svgY));
-      updateParam("active-gain_" + currentFocusedChannel, c.outY);
-    } else {
-      const mappedThr = -60 + normalizedX * 60;
-      c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
-      updateParam("active-thr_" + currentFocusedChannel, c.thr);
-    }
+    const mappedThr = -60 + normalizedX * 60;
+    c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
+    updateParam("active-thr_" + currentFocusedChannel, c.thr);
   } else if (tab === "preamp") {
     const mappedGain = -10 + (1 - svgY / height) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
@@ -2515,7 +2548,9 @@ function initDLMD() {
     }
   });
 
+  initializePermanentDSPNodes();
   initInteractiveGraphs();
+  enforceDSPNodePolicy("preamp");
   focusChannel('ina');
   setTimeout(syncFaderDimensions, 50);
 }

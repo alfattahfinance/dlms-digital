@@ -2101,29 +2101,28 @@ function updateActiveProcessorUI() {
     document.getElementById("lbl-rel").textContent = isOut ? "Decay" : "Release";
     document.getElementById("lbl-ratio").textContent = isOut ? "Over" : "Ratio";
     document.getElementById("lbl-thr").textContent = isOut ? "Limit" : "Thr";
-    document.getElementById("container-mix").style.display = isOut ? "none" : "flex";
+    // Gain/Mix controls were intentionally removed from the 4-knob Compressor UI.
+    // Keep this legacy container optional so a missing element cannot abort all knob/graph updates.
+    const legacyMixContainer = document.getElementById("container-mix");
+    if (legacyMixContainer) legacyMixContainer.style.display = isOut ? "none" : "flex";
 
     setTxt("tc-val-atk", Number(c.atk).toFixed(1) + " ms");
     setTxt("tc-val-rel", Math.round(c.rel) + " ms");
     setTxt("tc-val-ratio", Number(c.ratio).toFixed(1) + (isOut ? "" : ":1"));
     setTxt("tc-val-thr", Number(c.thr).toFixed(1) + " dB");
-    setTxt("tc-val-gain", Number(c.gain).toFixed(1) + " dB");
-    setTxt("tc-val-mix", Math.round(c.mix) + " %");
     updateKnobRotation("ind-active-atk", c.atk, 0.5, 100);
     updateKnobRotation("ind-active-rel", c.rel, 10, 1000);
     updateKnobRotation("ind-active-ratio", c.ratio, 1, 20);
     updateKnobRotation("ind-active-thr", c.thr, -60, 0);
-    updateKnobRotation("ind-active-gain", c.gain, 0, 24);
-    updateKnobRotation("ind-active-mix", c.mix, 0, 100);
 
-    // Compressor transfer function: unity below threshold, compressed slope 1/ratio above it.
+    // Compressor transfer curve: one permanent threshold node; ratio alone sets
+    // the post-threshold slope. Keep legacy gain/mix values out of this graph.
     const compThr = Math.max(-60, Math.min(0, Number(c.thr) || -30));
     const compRatio = Math.max(1, Number(c.ratio) || 1);
-    const compGain = Number(c.gain) || 0;
     const cx = v => 30 + (v + 60) / 60 * 270;
     const cy = v => 190 - (v + 60) / 60 * 150;
     const thrX = cx(compThr), threshY = cy(compThr);
-    const outAtZero = Math.max(-60, Math.min(0, compThr + (0 - compThr) / compRatio + compGain));
+    const outAtZero = Math.max(-60, Math.min(0, compThr + (0 - compThr) / compRatio));
     const endY = cy(outAtZero);
     const compD = `M 30 ${cy(-60)} L ${thrX.toFixed(2)} ${threshY.toFixed(2)} L 300 ${endY.toFixed(2)}`;
     document.getElementById("sq-curve-path")?.setAttribute("d", compD);
@@ -2331,6 +2330,9 @@ function initInteractiveGraphs() {
       if (tab === "preamp") {
         activeDragNode = null; // No node exists; dragging the line itself adjusts global GAIN.
       } else if (tab === "comp") {
+        // This app names the Compressor page "comp" internally (not "Compressor").
+        // Only start a threshold-node drag when the pointer is close to the node;
+        // dragging elsewhere on the graph still tracks the threshold for touch usability.
         activeDragNode = "threshold";
       } else if (tab === "hpf") {
         const markers = [
@@ -2407,10 +2409,13 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
   const c = channelCompressors[currentFocusedChannel];
   if (!p || !c) return;
 
-  if (tab === "comp") {
+  if (tab === "comp" && currentProcessorTab === "comp") {
+    // X controls Threshold (-60..0 dB); Y is intentionally free to move without
+    // creating a second node. Redraw updates the node and THR knob immediately.
     const mappedThr = -60 + normalizedX * 60;
     c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
     updateParam("active-thr_" + currentFocusedChannel, c.thr);
+    updateActiveProcessorUI();
   } else if (tab === "preamp") {
     const mappedGain = -10 + (1 - svgY / height) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));

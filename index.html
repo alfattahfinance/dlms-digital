@@ -288,29 +288,39 @@
       box-shadow: inset 0 0 18px rgba(0, 0, 0, .9), 0 0 7px rgba(0, 229, 255, .06);
     }
 
+    /* Grafik DSP bergaya console digital profesional: grid penuh, hitam pekat,
+       garis acuan jelas, dan area kurva transparan seperti referensi. */
     .sq-grid-line {
-      stroke: #1e293b;
-      stroke-width: 1.1;
-      stroke-dasharray: 3 3;
+      stroke: #62676d;
+      stroke-width: 1;
+      stroke-dasharray: none;
+      opacity: .72;
+      vector-effect: non-scaling-stroke;
     }
 
     .zero-fixed-line {
-      stroke: #475569;
-      stroke-width: 1.2;
+      stroke: #a0a6ad;
+      stroke-width: 1.35;
       stroke-dasharray: none;
-      opacity: 0.85;
+      opacity: .92;
+      vector-effect: non-scaling-stroke;
     }
 
     .sq-grid-text {
-      fill: #64748b;
+      fill: #d1d5db;
       font-size: 8px;
-      font-weight: bold;
-      font-family: monospace;
+      font-weight: 600;
+      font-family: Arial, sans-serif;
     }
 
     .sq-curve-fill {
-      opacity: 0.55;
+      opacity: .38;
       pointer-events: none;
+      stroke: none;
+    }
+
+    .sq-graph-box svg defs linearGradient stop {
+      transition: stop-opacity .18s ease;
     }
 
     .sq-curve-line {
@@ -357,31 +367,31 @@
       cursor: grab;
       touch-action: none;
       transition: filter .12s ease;
-      filter: drop-shadow(0 0 3px rgba(0, 229, 255, .65));
+      filter: drop-shadow(0 0 4px rgba(0, 229, 255, .72));
     }
 
     .screen-real-knob circle:first-child {
-      opacity: .72;
+      opacity: .82;
+      filter: blur(.3px);
     }
 
     .screen-real-knob circle:nth-child(2) {
-      stroke-width: 1.5;
-      filter: drop-shadow(0 0 3px currentColor);
+      stroke-width: 1.7;
     }
 
     .screen-real-knob circle:nth-child(3) {
-      stroke: rgba(255,255,255,.9);
+      stroke: rgba(255,255,255,.94);
       stroke-width: 1;
     }
 
     .screen-real-knob circle:nth-child(4) {
       fill: #fff;
-      filter: drop-shadow(0 0 3px rgba(255,255,255,.95));
+      filter: drop-shadow(0 0 3px rgba(255,255,255,1));
     }
 
     .screen-real-knob:hover, .screen-real-knob:active {
       cursor: grabbing;
-      filter: drop-shadow(0 0 5px rgba(255,255,255,.95)) drop-shadow(0 0 11px rgba(0,229,255,.75));
+      filter: drop-shadow(0 0 5px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(0,229,255,.9));
     }
 
     /* 31-BAND GEQ CONTAINER */

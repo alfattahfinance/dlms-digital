@@ -506,29 +506,77 @@
       font-weight: bold;
     }
 
+    /* Knob bergaya komponen rotary hardware asli: grip bergerigi,
+       tutup aluminium gelap, dan garis penunjuk yang tetap bisa diputar. */
     .physical-knob {
-      width: 38px;
-      height: 38px;
+      --knob-size: 42px;
+      width: var(--knob-size);
+      height: var(--knob-size);
+      flex: 0 0 var(--knob-size);
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 60%, #030712 100%);
-      border: 2px solid #64748b;
       position: relative;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.3);
+      isolation: isolate;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 1px solid #05070b;
+      background:
+        repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #657080 4deg 5deg, #252c37 5deg 9deg),
+        #202733;
+      box-shadow:
+        0 3px 2px #02040a,
+        0 5px 7px rgba(0,0,0,.75),
+        inset 0 1px 1px rgba(255,255,255,.32);
+    }
+
+    .physical-knob::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
+      border: 1px solid #87909c;
+      box-shadow:
+        inset 0 2px 3px rgba(255,255,255,.22),
+        inset 0 -3px 5px rgba(0,0,0,.9);
+    }
+
+    .physical-knob::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,.55);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.08);
+      pointer-events: none;
     }
 
     .knob-indicator {
       position: absolute;
-      top: 3px;
+      top: 6px;
       left: 50%;
-      width: 2.5px;
-      height: 11px;
-      background: var(--amber);
+      width: 3px;
+      height: 12px;
+      background: linear-gradient(to right, #d8dde4 0%, #ffffff 48%, #9ca3af 100%);
+      border: 1px solid #202630;
+      box-shadow: 0 0 2px rgba(255,255,255,.35), 0 1px 1px #000;
       transform: translateX(-50%);
-      transform-origin: bottom center;
-      border-radius: 1px;
+      transform-origin: 50% 14px;
+      border-radius: 2px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .physical-knob-container:active .physical-knob {
+      filter: brightness(1.12);
+      box-shadow: 0 1px 1px #02040a, inset 0 2px 4px rgba(0,0,0,.65);
+    }
+
+    .physical-knob-container:focus-within .physical-knob {
+      outline: 1px solid rgba(245,158,11,.7);
+      outline-offset: 2px;
     }
 
     .physical-knob-container span {

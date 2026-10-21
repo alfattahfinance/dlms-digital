@@ -366,19 +366,25 @@
      * The graph box itself clips all content at its responsive border box.
      */
     .sq-graph-box {
-      overflow: clip;
+      /* Use WebKit's stable rectangular clip; avoid overflow:clip on iOS Safari. */
+      overflow: hidden;
       contain: none;
       isolation: auto;
       transform: none;
       -webkit-transform: none;
       backface-visibility: visible;
       -webkit-backface-visibility: visible;
+      background-color: #03070d;
     }
 
     .sq-graph-box svg {
       display: block;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       clip-path: none;
+      /* Opaque graph backing reduces stale transparent-tile artifacts on mobile. */
+      background-color: #03070d;
       shape-rendering: geometricPrecision;
       transform: none;
       -webkit-transform: none;

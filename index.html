@@ -1226,6 +1226,96 @@
       }
     }
 
+    /* Landscape tablet: use the available width without shrinking controls
+       to desktop-sized fixed dimensions. */
+    @media (orientation: landscape) and (min-width: 700px) {
+      .app-container {
+        height: 100vh;
+        height: 100dvh;
+        box-sizing: border-box;
+        padding: 3px;
+        gap: 3px;
+      }
+
+      .chassis-rack {
+        flex: 0 0 28px;
+        min-height: 28px;
+        box-sizing: border-box;
+        padding: 2px 10px;
+      }
+
+      .player-bar {
+        flex: 0 0 27px;
+        min-height: 27px;
+        box-sizing: border-box;
+        padding: 1px 6px;
+      }
+
+      .nav-tabs {
+        flex: 0 0 29px;
+        min-height: 29px;
+        box-sizing: border-box;
+        padding: 2px 5px;
+      }
+
+      .fader-workspace {
+        flex: 1 1 0;
+        min-height: 0;
+        height: 0;
+        padding: 2px;
+        gap: 3px;
+        overflow: hidden;
+      }
+
+      .touchscreen-console {
+        flex: 0 0 clamp(220px, 37dvh, 330px);
+        width: 100%;
+        height: clamp(220px, 37dvh, 330px);
+        max-height: 44dvh;
+        min-height: 0;
+        box-sizing: border-box;
+        margin: 0 0 2px;
+        padding: 4px;
+        gap: 6px;
+      }
+
+      .tc-sidebar {
+        flex: 0 0 clamp(72px, 8vw, 108px);
+        width: auto;
+      }
+
+      .tc-center-graph {
+        flex: 1 1 0;
+        width: 0;
+        min-width: 0;
+      }
+
+      .tc-right-panel {
+        flex: 0 0 clamp(100px, 13vw, 190px);
+        min-width: 0;
+      }
+
+      .mixer-bank {
+        flex: 1 1 0;
+        width: 100%;
+        height: 0;
+        min-height: 100px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        align-content: stretch;
+      }
+
+      .mixer-bank > * {
+        min-width: 0;
+      }
+
+      .footer-bar {
+        flex: 0 0 18px;
+        min-height: 18px;
+        box-sizing: border-box;
+      }
+    }
+
     @media (orientation: landscape) and (max-height: 500px) {
       .app-container {
         overflow: hidden;

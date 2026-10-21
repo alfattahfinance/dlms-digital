@@ -2051,6 +2051,8 @@ function updateActiveProcessorUI() {
     document.getElementById("gate-curve-path")?.setAttribute("d", gateD);
     document.getElementById("gate-fill-path")?.setAttribute("d", gateD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'peq') {
+    const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
+    if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }
     setTxt("tc-val-peqband", "Band " + p.peq_band);
     setTxt("tc-val-peqfreq", Math.round(p.peq_freq) + " Hz");
     setTxt("tc-val-peqgain", Number(p.peq_gain).toFixed(1) + " dB");
@@ -2061,8 +2063,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
     // RBJ peaking-EQ biquad magnitude response, sampled on a logarithmic frequency axis.
-    const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
-    if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }
     const pf = Math.max(20, Math.min(20000, Number(p.peq_freq) || 1000));
     const pg = Math.max(-12, Math.min(12, Number(p.peq_gain) || 0));
     const pq = Math.max(0.1, Math.min(10, Number(p.peq_q) || 1.4));
@@ -2221,10 +2221,23 @@ function setParamValue(key, val) {
   else if (key === 'gate-rng') p.gate_rng = val;
   else if (key === 'gate-atk') p.gate_atk = val;
   else if (key === 'gate-rel') p.gate_rel = val;
-  else if (key === 'peq-band') p.peq_band = val;
-  else if (key === 'peq-freq') p.peq_freq = val;
-  else if (key === 'peq-gain') p.peq_gain = val;
-  else if (key === 'peq-q') p.peq_q = val;
+  else if (key === 'peq-band') {
+    p.peq_band = Math.max(1, Math.min(5, Math.round(Number(val) || 1)));
+    const band = p.peq_bands[p.peq_band - 1];
+    if (band) { p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q; }
+  }
+  else if (key === 'peq-freq') {
+    p.peq_freq = Number(val);
+    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].freq = p.peq_freq;
+  }
+  else if (key === 'peq-gain') {
+    p.peq_gain = Number(val);
+    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].gain = p.peq_gain;
+  }
+  else if (key === 'peq-q') {
+    p.peq_q = Number(val);
+    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].q = p.peq_q;
+  }
   else if (key === 'master-gain') {
     const mainFader = document.getElementById("gain-" + currentFocusedChannel);
     if (mainFader) {
@@ -2315,10 +2328,32 @@ function initInteractiveGraphs() {
       activePointerId = e.pointerId;
       try { box.setPointerCapture(e.pointerId); } catch (err) {}
 
-      if (tab === "preamp") return;
-      if (tab === "comp") activeDragNode = "threshold";
-      if (tab === "hpf") activeDragNode = point.x < 165 ? "hpf" : "lpf";
-      if (tab === "peq") activeDragNode = String(Math.max(1, Math.min(5, Math.round((point.x - 30) / 54))));
+      if (tab === "preamp") {
+        activeDragNode = null; // No node exists; dragging the line itself adjusts global GAIN.
+      } else if (tab === "comp") {
+        activeDragNode = "threshold";
+      } else if (tab === "hpf") {
+        const markers = [
+          { id: "hpf", el: document.getElementById("node-hpf-group") },
+          { id: "lpf", el: document.getElementById("node-lpf-group") }
+        ].filter(item => item.el && item.el.style.display !== "none");
+        activeDragNode = markers.reduce((best, item) => {
+          const matrix = item.el.transform.baseVal.consolidate()?.matrix;
+          const x = matrix ? matrix.e : (item.id === "hpf" ? 100 : 280);
+          return !best || Math.abs(x - point.x) < Math.abs(best.x - point.x)
+            ? { id: item.id, x } : best;
+        }, null)?.id || (point.x < 165 ? "hpf" : "lpf");
+      } else if (tab === "peq") {
+        const markers = Array.from(svg.querySelectorAll("[data-peq-band]"));
+        activeDragNode = markers.reduce((best, node) => {
+          const matrix = node.transform.baseVal.consolidate()?.matrix;
+          const x = matrix ? matrix.e : 160;
+          const y = matrix ? matrix.f : 100;
+          const distance = Math.hypot(x - point.x, y - point.y);
+          return !best || distance < best.distance
+            ? { id: node.dataset.peqBand, distance } : best;
+        }, null)?.id || String(pickNearestPeqBand(point.x, svg));
+      }
       handleGraphMove(e, tab, activeDragNode, box, svg);
     }
 

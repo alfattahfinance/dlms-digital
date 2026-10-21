@@ -359,24 +359,31 @@
       filter: none !important;
     }
 
-    /* Keep SVG graph repaints clipped to the visible graph bounds on mobile. */
+    /*
+     * Keep SVG repainting on the normal document layer.
+     * Forced GPU layers (translateZ), paint containment and clip-path can
+     * leave stale tiles on some iOS Safari/WebKit sizes during SVG path edits.
+     * The graph box itself clips all content at its responsive border box.
+     */
     .sq-graph-box {
-      isolation: isolate;
-      contain: paint;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      overflow: clip;
+      contain: none;
+      isolation: auto;
+      transform: none;
+      -webkit-transform: none;
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
     }
 
     .sq-graph-box svg {
+      display: block;
       overflow: hidden;
-      clip-path: inset(0);
+      clip-path: none;
       shape-rendering: geometricPrecision;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      transform: none;
+      -webkit-transform: none;
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
     }
 
     .screen-real-knob:hover, .screen-real-knob:active {

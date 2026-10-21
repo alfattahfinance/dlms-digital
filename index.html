@@ -323,44 +323,57 @@
       transition: stop-opacity .18s ease;
     }
 
-    .sq-curve-line {
+    /* Skin gelombang neon konsisten untuk seluruh halaman grafik DSP. */
+    .sq-curve-line,
+    .neon-line-blue,
+    .neon-line-emerald,
+    .neon-line-peq {
       fill: none;
-      stroke: #ffbf36;
-      stroke-width: 2.8;
       stroke-linecap: round;
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
+      stroke-dasharray: 900;
+      stroke-dashoffset: 0;
+      animation: curveGlowPulse 2.8s ease-in-out infinite, curveFlow 12s linear infinite;
+    }
+
+    .sq-curve-line {
+      stroke: #ffbf36;
+      stroke-width: 2.8;
       filter: drop-shadow(0 0 3px rgba(255, 191, 54, .95)) drop-shadow(0 0 8px rgba(255, 166, 0, .65));
     }
 
     .neon-line-blue {
       stroke: #20eaff;
       stroke-width: 2.6;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-      fill: none;
       filter: drop-shadow(0 0 3px rgba(32, 234, 255, 1)) drop-shadow(0 0 8px rgba(0, 195, 255, .85)) drop-shadow(0 0 15px rgba(0, 195, 255, .35));
     }
 
     .neon-line-emerald {
       stroke: #22ffc3;
       stroke-width: 2.6;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-      fill: none;
       filter: drop-shadow(0 0 3px rgba(34, 255, 195, 1)) drop-shadow(0 0 9px rgba(0, 255, 170, .72));
     }
 
     .neon-line-peq {
       stroke: #ff4b91;
       stroke-width: 2.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-      fill: none;
       filter: drop-shadow(0 0 3px rgba(255, 75, 145, 1)) drop-shadow(0 0 9px rgba(255, 42, 109, .85)) drop-shadow(0 0 16px rgba(255, 42, 109, .35));
+    }
+
+    @keyframes curveGlowPulse {
+      0%, 100% { opacity: .9; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes curveFlow {
+      to { stroke-dashoffset: -1800; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq {
+        animation: none;
+      }
     }
 
     .screen-real-knob {
@@ -1729,7 +1742,7 @@ function updateActiveProcessorUI() {
     posY = Math.max(15, Math.min(185, posY));
     
     document.getElementById("node-preamp-group")?.setAttribute("transform", `translate(165, ${posY})`);
-    document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} L 300 ${posY}`);
+    document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} C 100 ${posY - 1}, 220 ${posY + 1}, 300 ${posY}`);
     document.getElementById("preamp-fill-path")?.setAttribute("d", `M 30 100 L 300 100 L 300 ${posY} L 30 ${posY} Z`);
   } else if (currentProcessorTab === 'hpf') {
     setTxt("tc-val-hpffreq", Math.round(p.hpf_freq) + " Hz");
@@ -1741,7 +1754,7 @@ function updateActiveProcessorUI() {
     let hpfY = 190 - ((p.hpf_freq - 20) / 380) * 130;
     
     document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX}, ${hpfY})`);
-    document.getElementById("hpf-curve-path")?.setAttribute("d", `M 30 150 L ${hpfX} ${hpfY} L 300 40`);
+    document.getElementById("hpf-curve-path")?.setAttribute("d", `M 30 150 C 65 150, ${Math.max(70, hpfX - 35)} ${hpfY}, ${hpfX} ${hpfY} S 250 40, 300 40`);
     document.getElementById("hpf-fill-path")?.setAttribute("d", `M 30 100 L 100 100 L ${hpfX} ${hpfY} L 300 40 Z`);
   } else if (currentProcessorTab === 'gate' && !isOut) {
     setTxt("tc-val-gatethr", Number(p.gate_thr).toFixed(1) + " dB");
@@ -1755,7 +1768,7 @@ function updateActiveProcessorUI() {
 
     let gX = 30 + ((Number(p.gate_thr) - (-80)) / 80) * 270;
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, 170)`);
-    document.getElementById("gate-curve-path")?.setAttribute("d", `M 30 170 L ${gX} 170 L ${gX} 40 L 300 40`);
+    document.getElementById("gate-curve-path")?.setAttribute("d", `M 30 170 C ${Math.max(40, gX - 45)} 170, ${gX - 8} 170, ${gX} 158 L ${gX} 52 C ${gX + 8} 40, ${gX + 35} 40, 300 40`);
     document.getElementById("gate-fill-path")?.setAttribute("d", `M 30 100 L ${gX} 100 L ${gX} 40 L 300 40 Z`);
   } else if (currentProcessorTab === 'peq') {
     setTxt("tc-val-peqband", "Band " + p.peq_band);
@@ -1771,7 +1784,7 @@ function updateActiveProcessorUI() {
     let pY = 100 - (p.peq_gain / 12) * 60;
     
     document.getElementById("node-peq-group")?.setAttribute("transform", `translate(${pX}, ${pY})`);
-    document.getElementById("peq-curve-path")?.setAttribute("d", `M 30 100 Q ${pX} ${pY} 300 100`);
+    document.getElementById("peq-curve-path")?.setAttribute("d", `M 30 100 C ${Math.max(35, pX - 90)} 100, ${Math.max(35, pX - 55)} ${pY}, ${pX} ${pY} S ${Math.min(295, pX + 65)} 100, 300 100`);
     document.getElementById("peq-fill-path")?.setAttribute("d", `M 30 100 Q ${pX} ${pY} 300 100 Z`);
   } else if (currentProcessorTab === 'geq') {
     updateGeqUI();
@@ -1799,7 +1812,7 @@ function updateActiveProcessorUI() {
     let threshY = 190 - ((Number(c.thr) + 60) / 60) * 140;
     let endY = c.outY;
 
-    document.getElementById("sq-curve-path")?.setAttribute("d", `M 30 190 L ${thrX} ${threshY} L 300 ${endY}`);
+    document.getElementById("sq-curve-path")?.setAttribute("d", `M 30 190 C ${Math.max(35, thrX - 90)} 190, ${Math.max(35, thrX - 35)} ${threshY}, ${thrX} ${threshY} S ${Math.min(295, thrX + 60)} ${endY}, 300 ${endY}`);
     document.getElementById("sq-fill-path")?.setAttribute("d", `M 30 100 L ${thrX} ${threshY} L 300 ${endY} L 300 100 Z`);
     
     document.getElementById("node-thresh-group")?.setAttribute("transform", `translate(${thrX}, ${threshY})`);

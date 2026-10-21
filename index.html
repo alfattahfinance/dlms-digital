@@ -1020,6 +1020,40 @@
     }
 
 
+
+    /* FIX SCROLL PANEL KNOB KANAN: panel dapat digulir, knob tetap bisa disentuh/drag */
+    .tc-right-knobs-panel {
+      min-height: 0;
+      max-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      scrollbar-width: thin;
+      scrollbar-color: #777 #252525;
+      justify-content: flex-start;
+      gap: 6px;
+    }
+    .tc-right-knobs-panel::-webkit-scrollbar { width: 6px; }
+    .tc-right-knobs-panel::-webkit-scrollbar-track { background: #252525; border-radius: 4px; }
+    .tc-right-knobs-panel::-webkit-scrollbar-thumb { background: #777; border-radius: 4px; }
+    .tc-right-knobs-panel > .knobs-grid {
+      flex: 0 0 auto;
+      min-height: 0;
+      max-height: none;
+      overflow: visible;
+      padding: 0 1px 3px;
+      align-content: start;
+    }
+    .tc-right-knobs-panel > .knobs-grid[style*="display: none"] { display: none !important; }
+    .tc-right-knobs-panel > div:last-child { flex: 0 0 auto; }
+    .tc-right-knobs-panel .physical-knob-container { touch-action: none; }
+    @media (orientation: landscape) and (max-height: 600px) {
+      .tc-right-knobs-panel { gap: 4px; padding: 3px; }
+      .tc-right-knobs-panel .knobs-grid { gap: 3px; }
+    }
+
     /* THEME UPDATE: bodi graphite/charcoal seperti mixer digital profesional */
     :root {
       --dark-chassis: linear-gradient(145deg, #454545, #292929);

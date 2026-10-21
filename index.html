@@ -362,6 +362,23 @@
       cursor: grabbing;
     }
 
+    /*
+     * Mobile Safari/WebKit can leave stale pixels when SVG paths with CSS
+     * drop-shadow filters are repeatedly changed during touch drags.
+     * The graph is SVG (not canvas), so clearRect() is not applicable here.
+     * Disable filter compositing on touch-first devices to prevent ghost trails;
+     * keep the neon stroke colors and rounded line joins intact.
+     */
+    @media (hover: none) and (pointer: coarse) {
+      .sq-curve-line,
+      .neon-line-blue,
+      .neon-line-emerald,
+      .neon-line-peq,
+      .screen-real-knob {
+        filter: none !important;
+      }
+    }
+
     /* 31-BAND GEQ CONTAINER */
     .geq-container {
       width: 100%;

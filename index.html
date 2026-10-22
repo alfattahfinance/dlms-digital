@@ -1904,7 +1904,10 @@ function buildGeqSliders() {
   const maxLog = Math.log10(20000);
   wrapper.innerHTML = geqFrequencies.map((freq, idx) => {
     const hz = geqFrequencyHz(freq);
-    const xPercent = ((Math.log10(hz) - minLog) / (maxLog - minLog)) * 100;
+    // Sisakan ruang di kedua ujung agar kepala fader pertama dan terakhir
+    // tidak terpotong oleh batas wrapper saat digeser sampai ujung scroll.
+    const logPosition = (Math.log10(hz) - minLog) / (maxLog - minLog);
+    const xPercent = 2 + (Math.max(0, Math.min(1, logPosition)) * 96);
     return `
       <div class="geq-slider-col" style="left:${xPercent}%;" data-frequency="${hz}">
         <div class="geq-val-label" id="geq-val-${idx}">0.0</div>

@@ -2043,6 +2043,26 @@ function enforceDSPNodePolicy(pageName) {
 function switchProcessorPage(pageName) {
   currentProcessorTab = pageName;
   enforceDSPNodePolicy(pageName);
+
+  // RTA canvases exist only for HPF, PEQ and GEQ. Toggle their actual
+  // display state on every tab change so they cannot remain layered behind Gate SVG.
+  const rtaAllowed = ["peq", "hpf", "geq"].includes(pageName);
+  Object.values(rtaCanvases).forEach(item => {
+    if (!item || !item.canvas) return;
+    item.canvas.style.display = rtaAllowed ? "block" : "none";
+    if (!rtaAllowed) {
+      const ctx = item.canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, item.canvas.width, item.canvas.height);
+        ctx.beginPath();
+      }
+    }
+  });
+
+  // Gate uses SVG exclusively; keep it visible only while Gate is active.
+  const gateSvg = document.querySelector("#gate-graph-box > svg");
+  if (gateSvg) gateSvg.style.display = pageName === "gate" ? "block" : "none";
+
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
     const page = document.getElementById("proc-page-" + name);

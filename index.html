@@ -285,14 +285,19 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: 0;
+      z-index: 1;
       pointer-events: none;
       opacity: 1;
     }
+    /* Keep the live spectrum above the graph background but visible through
+       the translucent tuning fill; curve lines and draggable nodes stay on top. */
     .sq-graph-box > svg {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       background: transparent;
+    }
+    .sq-curve-fill {
+      opacity: .28;
     }
     #geq-container-box { position: relative; }
     #geq-container-box > .rta-canvas { z-index: 0; }

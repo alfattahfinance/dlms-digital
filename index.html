@@ -2257,26 +2257,43 @@ function updateActiveProcessorUI() {
     // could leave stale-looking fragments in iOS Safari during pointer dragging.
     const gateBaseY = 188;
     const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(12, Math.min(188, gY)).toFixed(2)} L 298 12`;
-    const gateCurvePath = document.getElementById("gate-curve-path");
-    if (gateCurvePath) {
-      gateCurvePath.setAttribute("d", gateCurveD);
-      gateCurvePath.setAttribute("fill", "none");
-      gateCurvePath.style.fill = "none";
-    }
-    // Restore a separate gradient area under the Gate curve. Only the curve
-    // path is stroked; the closed fill polygon has no stroke, so its closing
-    // edges cannot create stray neon lines.
-    const gateFillPath = document.getElementById("gate-fill-path");
-    if (gateFillPath) {
-      gateFillPath.setAttribute("d", `${gateCurveD} L 298 188 L 30 188 Z`);
-      gateFillPath.setAttribute("fill", "url(#gateGrad)");
-      gateFillPath.setAttribute("fill-rule", "nonzero");
-      gateFillPath.setAttribute("stroke", "none");
-      gateFillPath.style.fill = "url(#gateGrad)";
-      gateFillPath.style.stroke = "none";
-      gateFillPath.style.opacity = "0.28";
-      gateFillPath.style.pointerEvents = "none";
-    }
+    // Recreate only the two Gate SVG paths on each update. Safari/WebView can
+    // retain stale raster tiles when the same SVG path is repeatedly mutated
+    // during touch dragging; replacing the path node forces a clean repaint
+    // without accumulating old paths or changing the SVG stacking order.
+    const replaceGatePath = (id, d, configure) => {
+      const oldPath = document.getElementById(id);
+      if (!oldPath) return;
+      const newPath = oldPath.cloneNode(false);
+      newPath.setAttribute("d", d);
+      if (typeof configure === "function") configure(newPath);
+      oldPath.replaceWith(newPath);
+    };
+
+    // Fill first; it stays un-stroked so the polygon's closing edges never
+    // create stray neon lines.
+    replaceGatePath(
+      "gate-fill-path",
+      `${gateCurveD} L 298 188 L 30 188 Z`,
+      path => {
+        path.setAttribute("fill", "url(#gateGrad)");
+        path.setAttribute("fill-rule", "nonzero");
+        path.setAttribute("stroke", "none");
+        path.style.fill = "url(#gateGrad)";
+        path.style.stroke = "none";
+        path.style.opacity = "0.28";
+        path.style.pointerEvents = "none";
+      }
+    );
+
+    replaceGatePath(
+      "gate-curve-path",
+      gateCurveD,
+      path => {
+        path.setAttribute("fill", "none");
+        path.style.fill = "none";
+      }
+    );
   } else if (currentProcessorTab === 'peq') {
     const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
     if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }

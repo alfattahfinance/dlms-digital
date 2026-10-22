@@ -1992,7 +1992,8 @@ function initializePermanentDSPNodes() {
 }
 
 function enforceDSPNodePolicy(pageName) {
-  initFaderThumbHitTesting();\n  initializePermanentDSPNodes();
+  initFaderThumbHitTesting();
+  initializePermanentDSPNodes();
   const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
   Object.keys(DSP_NODE_POLICY).forEach(page => {
     (DSP_NODE_POLICY[page] || []).forEach(id => {

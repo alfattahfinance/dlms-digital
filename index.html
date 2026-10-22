@@ -2072,38 +2072,47 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
-    // RBJ peaking-EQ biquad magnitude response, sampled on a logarithmic frequency axis.
-    const pf = Math.max(20, Math.min(20000, Number(p.peq_freq) || 1000));
-    const pg = Math.max(-12, Math.min(12, Number(p.peq_gain) || 0));
-    const pq = Math.max(0.1, Math.min(10, Number(p.peq_q) || 1.4));
+    // Total PEQ response: cascade the five RBJ peaking biquads in dB.
+    // The single continuous curve and each permanent band node use this same transfer function.
+    const peqBandDbAt = (band, freq) => {
+      const bf = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
+      const bg = Math.max(-12, Math.min(12, Number(band.gain) || 0));
+      const bq = Math.max(0.1, Math.min(10, Number(band.q) || 1.4));
+      if (Math.abs(bg) < 1e-9) return 0;
+      const A = Math.pow(10, bg / 40), w0 = 2 * Math.PI * bf / 48000;
+      const alpha = Math.sin(w0) / (2 * bq), cw0 = Math.cos(w0);
+      const b0 = 1 + alpha * A, b1 = -2 * cw0, b2 = 1 - alpha * A;
+      const a0 = 1 + alpha / A, a1 = -2 * cw0, a2 = 1 - alpha / A;
+      const w = 2 * Math.PI * freq / 48000, cw = Math.cos(w), sw = Math.sin(w);
+      const nr = b0 + b1 * cw + b2 * Math.cos(2 * w);
+      const ni = -b1 * sw - b2 * Math.sin(2 * w);
+      const dr = a0 + a1 * cw + a2 * Math.cos(2 * w);
+      const di = -a1 * sw - a2 * Math.sin(2 * w);
+      const mag = Math.sqrt((nr * nr + ni * ni) / Math.max(1e-18, dr * dr + di * di));
+      return 20 * Math.log10(Math.max(1e-9, mag));
+    };
+    const totalPeqDbAt = freq => p.peq_bands.reduce((sum, band) => sum + peqBandDbAt(band, freq), 0);
     const peqPts = [];
-    const A = Math.pow(10, pg / 40), w0 = 2 * Math.PI * pf / 48000;
-    const alpha0 = Math.sin(w0) / (2 * pq), cw0 = Math.cos(w0);
-    const b0 = 1 + alpha0 * A, b1 = -2 * cw0, b2 = 1 - alpha0 * A;
-    const a0 = 1 + alpha0 / A, a1 = -2 * cw0, a2 = 1 - alpha0 / A;
-    for (let i = 0; i <= 240; i++) {
-      const x = 30 + 270 * i / 240;
-      const f = 20 * Math.pow(1000, i / 240);
-      const w = 2 * Math.PI * f / 48000, cw = Math.cos(w), sw = Math.sin(w);
-      const nr = b0 + b1 * cw + b2 * Math.cos(2*w);
-      const ni = -b1 * sw - b2 * Math.sin(2*w);
-      const dr = a0 + a1 * cw + a2 * Math.cos(2*w);
-      const di = -a1 * sw - a2 * Math.sin(2*w);
-      const mag = Math.sqrt((nr*nr + ni*ni) / Math.max(1e-18, dr*dr + di*di));
-      const db = Math.max(-18, Math.min(18, 20 * Math.log10(Math.max(1e-9, mag))));
+    for (let i = 0; i <= 360; i++) {
+      const x = 30 + 270 * i / 360;
+      const freq = 20 * Math.pow(1000, i / 360);
+      const db = Math.max(-18, Math.min(18, totalPeqDbAt(freq)));
       peqPts.push([x, Math.max(10, Math.min(190, 100 - db * 5))]);
     }
     const peqD = peqPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
     p.peq_bands.forEach((band, index) => {
       const node = document.getElementById("node-peq-band-" + (index + 1));
       if (!node) return;
-      const nodeX = 30 + 270 * Math.log(Math.max(20, Math.min(20000, Number(band.freq) || 1000)) / 20) / Math.log(1000);
-      const nodeY = 100 - Math.max(-12, Math.min(12, Number(band.gain) || 0)) * 5;
-      node.setAttribute("transform", `translate(${nodeX}, ${nodeY})`);
-      node.style.opacity = Number(p.peq_band) === index + 1 ? "1" : "0.72";
+      const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
+      const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
+      // Anchor Y to the *total* response at this band's own frequency, not to its gain alone.
+      const totalDb = Math.max(-18, Math.min(18, totalPeqDbAt(freq)));
+      const nodeY = Math.max(10, Math.min(190, 100 - totalDb * 5));
+      node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
+      node.style.opacity = Number(p.peq_band) === index + 1 ? "1" : "0.3";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
-    document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 100 L 30 100 Z");
+    document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'geq') {
     updateGeqUI();
   } else if (currentProcessorTab === 'comp') {
@@ -2332,41 +2341,49 @@ function initInteractiveGraphs() {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       const point = graphPoint(e);
       if (!point) return;
-      e.preventDefault();
-      isDragging = true;
-      activePointerId = e.pointerId;
-      try { box.setPointerCapture(e.pointerId); } catch (err) {}
-
-      if (tab === "preamp") {
-        activeDragNode = null; // No node exists; dragging the line itself adjusts global GAIN.
-      } else if (tab === "comp") {
-        // This app names the Compressor page "comp" internally (not "Compressor").
-        // Only start a threshold-node drag when the pointer is close to the node;
-        // dragging elsewhere on the graph still tracks the threshold for touch usability.
-        activeDragNode = "threshold";
+      // Graph interaction is node-only: tapping empty canvas never starts a drag
+      // and never teleports the curve/node to the touch position.
+      let pickedNode = null;
+      const hitRadius = 18;
+      if (tab === "preamp") return; // Preamp gain is controlled by its physical knob.
+      if (tab === "comp") {
+        const el = document.getElementById("node-thresh-group");
+        const m = el?.transform.baseVal.consolidate()?.matrix;
+        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "threshold";
+      } else if (tab === "gate") {
+        const el = document.getElementById("node-gate-group");
+        const m = el?.transform.baseVal.consolidate()?.matrix;
+        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "gate";
       } else if (tab === "hpf") {
         const markers = [
           { id: "hpf", el: document.getElementById("node-hpf-group") },
           { id: "lpf", el: document.getElementById("node-lpf-group") }
         ].filter(item => item.el && item.el.style.display !== "none");
-        activeDragNode = markers.reduce((best, item) => {
-          const matrix = item.el.transform.baseVal.consolidate()?.matrix;
-          const x = matrix ? matrix.e : (item.id === "hpf" ? 100 : 280);
-          return !best || Math.abs(x - point.x) < Math.abs(best.x - point.x)
-            ? { id: item.id, x } : best;
-        }, null)?.id || (point.x < 165 ? "hpf" : "lpf");
+        const nearest = markers.reduce((best, item) => {
+          const m = item.el.transform.baseVal.consolidate()?.matrix;
+          if (!m) return best;
+          const distance = Math.hypot(m.e - point.x, m.f - point.y);
+          return !best || distance < best.distance ? { id: item.id, distance } : best;
+        }, null);
+        if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
       } else if (tab === "peq") {
         const markers = Array.from(svg.querySelectorAll("[data-peq-band]"));
-        activeDragNode = markers.reduce((best, node) => {
-          const matrix = node.transform.baseVal.consolidate()?.matrix;
-          const x = matrix ? matrix.e : 160;
-          const y = matrix ? matrix.f : 100;
-          const distance = Math.hypot(x - point.x, y - point.y);
-          return !best || distance < best.distance
-            ? { id: node.dataset.peqBand, distance } : best;
-        }, null)?.id || "3";
+        const nearest = markers.reduce((best, node) => {
+          const m = node.transform.baseVal.consolidate()?.matrix;
+          if (!m) return best;
+          const distance = Math.hypot(m.e - point.x, m.f - point.y);
+          return !best || distance < best.distance ? { id: node.dataset.peqBand, distance } : best;
+        }, null);
+        if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
       }
-      handleGraphMove(e, tab, activeDragNode, box, svg);
+      if (!pickedNode) return;
+      e.preventDefault();
+      activeDragNode = pickedNode;
+      isDragging = true;
+      activePointerId = e.pointerId;
+      try { box.setPointerCapture(e.pointerId); } catch (err) {}
+      // Do not update on pointerdown; the first movement must move the selected node
+      // relative to its original position, not jump it under the user's finger.
     }
 
     function onPointerMove(e) {

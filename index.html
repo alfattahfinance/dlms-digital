@@ -312,24 +312,31 @@
     }
 
     .sq-grid-line {
-      stroke: #62676d;
-      stroke-width: 1;
-      opacity: .72;
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 0.75;
+      opacity: 1;
       vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
     }
 
     .zero-fixed-line {
-      stroke: #a0a6ad;
-      stroke-width: 1.35;
-      opacity: .92;
+      stroke: rgba(255, 255, 255, 0.42);
+      stroke-width: 1.25;
+      opacity: 1;
       vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
     }
 
     .sq-grid-text {
-      fill: rgba(255, 255, 255, 0.35);
-      font-size: 7.5px;
+      fill: rgba(255, 255, 255, 0.55);
+      font-size: 8px;
       font-weight: 400;
       font-family: Arial, sans-serif;
+      dominant-baseline: middle;
+      paint-order: stroke;
+      stroke: rgba(10, 15, 25, 0.75);
+      stroke-width: 0.7px;
+      stroke-linejoin: round;
     }
 
     .sq-curve-fill {
@@ -2100,9 +2107,11 @@ function updateKnobRotation(indicatorId, val, min, max) {
 }
 
 function updateGraphYAxisScale() {
-  const gainPages = new Set(["preamp", "hpf", "peq"]);
-  const gainTicks = [30, 15, 0, -10, -20, -30];
-  const levelTicks = [0, -10, -20, -30, -40, -60];
+  // Tick values are evenly spaced in the same linear dB scale used by the graph.
+  // HPF is an attenuation/level response, not a positive/negative gain graph.
+  const gainPages = new Set(["preamp", "peq"]);
+  const gainTicks = [30, 20, 10, 0, -10, -20, -30];
+  const levelTicks = [0, -10, -20, -30, -40, -50, -60];
   const graphIds = {
     preamp: "proc-page-preamp",
     hpf: "proc-page-hpf",
@@ -2532,10 +2541,18 @@ function applyResponsiveGraphScale(host) {
   svg.querySelectorAll(".sq-grid-line").forEach(line => {
     line.style.strokeWidth = (0.75 * scaleFactor).toFixed(3) + "px";
     line.style.stroke = "rgba(255,255,255,0.15)";
+    line.style.opacity = "1";
+  });
+  svg.querySelectorAll(".zero-fixed-line").forEach(line => {
+    line.style.strokeWidth = (1.25 * scaleFactor).toFixed(3) + "px";
+    line.style.stroke = "rgba(255,255,255,0.42)";
+    line.style.opacity = "1";
   });
   svg.querySelectorAll(".sq-grid-text").forEach(label => {
     label.style.fontSize = (11 * scaleFactor).toFixed(3) + "px";
-    label.style.fill = "rgba(255,255,255,0.4)";
+    label.style.fill = "rgba(255,255,255,0.55)";
+    label.style.stroke = "rgba(10,15,25,0.75)";
+    label.style.strokeWidth = "0.7px";
   });
 }
 

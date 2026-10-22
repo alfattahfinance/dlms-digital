@@ -1407,13 +1407,17 @@
     #gate-graph-box,
     #gate-graph-box *,
     #editor-graph-box,
-    #editor-graph-box *,
-    #geq-container-box,
-    #geq-container-box * {
+    #editor-graph-box * {
       touch-action: none;
       -ms-touch-action: none;
     }
-    /* Keep graph interaction local; do not disable zoom for the whole page. */
+    /* GEQ must retain horizontal swipe to reach all 31 bands.
+       pan-x blocks pinch initiation here without disabling the GEQ's own scrolling. */
+    #geq-container-box {
+      touch-action: pan-x;
+      -ms-touch-action: pan-x;
+    }
+    /* Keep zoom prevention local to graph editors, not the whole page. */
 
     /* GRAPH VIEWPORT RESPONSIVE: small/large phones, portrait/landscape, tablet. */
     .tc-center-graph {

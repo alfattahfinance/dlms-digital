@@ -2899,6 +2899,16 @@ function drawRTAGlowWave() {
   };
 
   Object.entries(rtaCanvases).forEach(([key, item]) => {
+    if (!["peq", "hpf", "geq"].includes(currentProcessorTab)) {
+      const blockedCtx = item?.canvas?.getContext("2d");
+      if (blockedCtx && item.canvas) {
+        blockedCtx.clearRect(0, 0, item.canvas.width, item.canvas.height);
+        blockedCtx.beginPath();
+      }
+      if (item?.canvas) item.canvas.style.visibility = "hidden";
+      return;
+    }
+    if (item?.canvas) item.canvas.style.visibility = "visible";
     const size = resizeRTACanvas(item);
     const canvas = item.canvas;
     const ctx = canvas.getContext("2d");
@@ -2991,7 +3001,28 @@ function drawRTAGlowWave() {
 }
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
-  if (["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave();
+
+  // RTA is allowed only on HPF, PEQ and GEQ. Gate, Compressor and Preamp
+  // must never render analyzer traces; clear and hide any RTA canvases there.
+  const rtaAllowed = ["peq", "hpf", "geq"].includes(currentProcessorTab);
+  if (rtaAllowed) {
+    drawRTAGlowWave();
+  } else {
+    Object.values(rtaCanvases).forEach(item => {
+      if (!item || !item.canvas) return;
+      const ctx = item.canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, item.canvas.width, item.canvas.height);
+        ctx.beginPath();
+      }
+      item.canvas.style.visibility = "hidden";
+    });
+  }
+  if (rtaAllowed) {
+    Object.values(rtaCanvases).forEach(item => {
+      if (item && item.canvas) item.canvas.style.visibility = "visible";
+    });
+  }
 
   const audioElement = document.getElementById("audio-player");
   const playable = !!audioCtx && !!audioElement && !audioElement.paused && !audioElement.ended;

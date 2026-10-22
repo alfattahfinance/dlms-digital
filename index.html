@@ -310,7 +310,7 @@
     }
 
     .sq-curve-fill {
-      opacity: .38;
+      opacity: 1;
       pointer-events: none;
       stroke: none;
     }
@@ -1379,9 +1379,8 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="preampGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.85"/>
-                    <stop offset="50%" stop-color="#00e5ff" stop-opacity="0.35"/>
-                    <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.05"/>
+                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="rgb(0,220,255)" stop-opacity="0"/>
                   </linearGradient>
 
                   <radialGradient id="knobBodyBlue" cx="35%" cy="35%" r="65%">
@@ -1434,6 +1433,12 @@
           <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="hpf-graph-box">
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="hpfGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="rgb(0,220,255)" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
                 <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
                 <line x1="170" y1="10" x2="170" y2="190" class="sq-grid-line"/>
                 <line x1="250" y1="10" x2="250" y2="190" class="sq-grid-line"/>
@@ -1459,6 +1464,12 @@
           <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="gate-graph-box">
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="rgb(0,255,150)" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
                 <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
                 <line x1="110" y1="10" x2="110" y2="190" class="sq-grid-line"/>
                 <line x1="210" y1="10" x2="210" y2="190" class="sq-grid-line"/>
@@ -1482,9 +1493,8 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#ff2a6d" stop-opacity="0.9"/>
-                    <stop offset="50%" stop-color="#ff2a6d" stop-opacity="0.4"/>
-                    <stop offset="100%" stop-color="#ff2a6d" stop-opacity="0.05"/>
+                    <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="rgb(255,0,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
                 <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
@@ -1523,8 +1533,8 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#ffbb00" stop-opacity="0.75"/>
-                    <stop offset="100%" stop-color="#ffbb00" stop-opacity="0.05"/>
+                    <stop offset="0%" stop-color="rgb(255,200,0)" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="rgb(255,200,0)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
                 <line x1="80" y1="10" x2="80" y2="190" class="sq-grid-line"/>
@@ -1980,7 +1990,7 @@ function updateActiveProcessorUI() {
     
     document.getElementById("node-preamp-group")?.setAttribute("transform", `translate(165, ${posY})`);
     document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} L 300 ${posY}`);
-    document.getElementById("preamp-fill-path")?.setAttribute("d", `M 30 100 L 300 100 L 300 ${posY} L 30 ${posY} Z`);
+    document.getElementById("preamp-fill-path")?.setAttribute("d", `M 30 ${posY} L 300 ${posY} L 300 190 L 30 190 Z`);
   } else if (currentProcessorTab === 'hpf') {
     setTxt("tc-val-hpffreq", Math.round(p.hpf_freq) + " Hz");
     setTxt("tc-val-hpfslope", p.hpf_slope + " dB/oct");

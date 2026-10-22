@@ -3111,7 +3111,7 @@ function resizeRTACanvas(item) {
   const cssWidth = Math.max(1, rect.width);
   // The host owns the fixed aspect ratio; read its final measured height rather
   // than stretching the canvas to the full available landscape viewport.
-  const cssHeight = Math.max(1, Math.min(rect.height || cssWidth * 0.6, cssWidth * 0.6));
+  const cssHeight = Math.max(1, rect.height);
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
   const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));

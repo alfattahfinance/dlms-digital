@@ -424,6 +424,35 @@
       box-shadow: none;
     }
 
+    /* Fixed 5:3 graph viewport: wide tablets must not stretch curves vertically. */
+    .sq-graph-box,
+    #gate-graph-box,
+    #editor-graph-box {
+      width: 100%;
+      height: auto !important;
+      aspect-ratio: 5 / 3;
+      max-height: 100%;
+      min-height: 0;
+      flex: 0 1 auto;
+      align-self: center;
+    }
+    .sq-graph-box > svg,
+    #gate-graph-box > svg,
+    #editor-graph-box > svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      .sq-graph-box,
+      #gate-graph-box,
+      #editor-graph-box {
+        max-height: 100%;
+        width: min(100%, calc(100dvh * 1.6667));
+      }
+    }
+
+
     .sq-graph-box svg {
       display: block;
       width: 100%;
@@ -2599,9 +2628,13 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 
 // Shared responsive graph styling. Width is measured from the live graph box,
 // so SVG curves, grid lines and axis labels keep consistent proportions on phones/tablets.
+// Keep curve graphs proportionate across phone and wide tablet layouts.
+// Scale against both dimensions so width alone cannot make labels/strokes oversized.
 function getGraphScaleFactor(host) {
-  const width = host?.getBoundingClientRect?.().width || 600;
-  return Math.max(0.35, Math.min(2.2, width / 600));
+  const rect = host?.getBoundingClientRect?.();
+  const width = Math.max(1, rect?.width || 600);
+  const height = Math.max(1, rect?.height || 400);
+  return Math.max(0.35, Math.min(1.25, width / 600, height / 400));
 }
 
 function applyResponsiveGraphScale(host) {
@@ -2624,13 +2657,12 @@ function applyResponsiveGraphScale(host) {
     line.style.opacity = "1";
   });
   svg.querySelectorAll(".sq-grid-text").forEach(label => {
-    label.style.fontSize = Math.max(8, Math.min(12, 11 * scaleFactor)).toFixed(3) + "px";
+    label.style.fontSize = Math.max(8, Math.min(11, 11 * scaleFactor)).toFixed(3) + "px";
     label.style.fill = "rgba(255,255,255,0.55)";
     label.style.stroke = "rgba(10,15,25,0.75)";
     label.style.strokeWidth = "0.7px";
   });
 }
-
 function initResponsiveGraphScaling() {
   const hosts = Array.from(document.querySelectorAll(".sq-graph-box, #geq-container-box"));
   hosts.forEach(applyResponsiveGraphScale);
@@ -3077,7 +3109,9 @@ function resizeRTACanvas(item) {
   const canvas = item.canvas;
   const rect = item.host.getBoundingClientRect();
   const cssWidth = Math.max(1, rect.width);
-  const cssHeight = Math.max(1, rect.height);
+  // The host owns the fixed aspect ratio; read its final measured height rather
+  // than stretching the canvas to the full available landscape viewport.
+  const cssHeight = Math.max(1, Math.min(rect.height || cssWidth * 0.6, cssWidth * 0.6));
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
   const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
@@ -3128,8 +3162,8 @@ function drawRTAGlowWave() {
     if (!Object.prototype.hasOwnProperty.call(rtaColorByPage, key) ||
         !playable || w <= 1 || h <= 1) return;
 
-    // Base scale is derived from displayed CSS width; DPR is handled separately.
-    const baseScale = getGraphScaleFactor(item.host);
+    // Scale against width and height; DPR only controls raster resolution.
+    const baseScale = Math.max(0.35, Math.min(1.25, w / 600, h / 400));
     const sampleRate = audioCtx.sampleRate;
     const binHz = sampleRate / rtaAnalyser.fftSize;
     const minHz = 20;

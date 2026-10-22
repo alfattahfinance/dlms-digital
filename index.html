@@ -335,7 +335,7 @@
     }
 
     .sq-curve-fill {
-      opacity: 1;
+      opacity: .28;
       pointer-events: none;
       stroke: none;
     }
@@ -408,8 +408,8 @@
       height: 100%;
       overflow: hidden;
       clip-path: none;
-      /* Opaque graph backing reduces stale transparent-tile artifacts on mobile. */
-      background-color: #03070d;
+      /* Transparent SVG lets the RTA canvas behind it remain visible. */
+      background-color: transparent;
       shape-rendering: geometricPrecision;
       transform: none;
       -webkit-transform: none;
@@ -2694,7 +2694,7 @@ function resizeRTACanvas(item) {
   }
 }
 
-function renderRTA() {
+function drawRTAGlowWave() {
   // Read the FFT globally on every animation frame, before checking which
   // processor page is visible. All three canvases share this live spectrum.
   const audioElement = document.getElementById("audio-player");
@@ -2744,7 +2744,12 @@ function renderRTA() {
     ctx.lineTo(right, bottom);
     ctx.lineTo(left, bottom);
     ctx.closePath();
-    ctx.fillStyle = item.color;
+    const rtaColorByPage = {
+      peq: "rgba(255, 0, 150, 0.2)",
+      hpf: "rgba(0, 220, 255, 0.2)",
+      geq: "rgba(0, 255, 120, 0.2)"
+    };
+    ctx.fillStyle = rtaColorByPage[key] || item.color;
     ctx.fill();
 
     // Draw a smooth neon spectrum line with the requested glow.
@@ -2757,11 +2762,6 @@ function renderRTA() {
     }
     ctx.lineTo(last.x, last.y);
     // Explicitly set the glow color by processor page.
-    const rtaColorByPage = {
-      peq: "rgba(255, 0, 150, 0.25)",
-      hpf: "rgba(0, 220, 255, 0.25)",
-      geq: "rgba(0, 255, 200, 0.25)"
-    };
     ctx.strokeStyle = rtaColorByPage[key] || item.color;
     ctx.shadowBlur = 12;
     ctx.shadowColor = ctx.strokeStyle;
@@ -2773,7 +2773,8 @@ function renderRTA() {
 
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
-  renderRTA();
+  // Draw the live spectrum before the rest of the processor UI is repainted.
+  if (["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave();
 
   const audioElement = document.getElementById("audio-player");
   const playable = !!audioCtx && !!audioElement && !audioElement.paused && !audioElement.ended;

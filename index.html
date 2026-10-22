@@ -945,9 +945,14 @@
     .sq-meter-fill {
       width: 100%;
       height: 0%;
-      background: linear-gradient(to top, #00e676 0%, #00e676 65%, #ffea00 80%, #ff1744 100%);
-      transition: height 0.03s linear;
+      background: #00e676;
+      box-shadow: 0 0 5px currentColor;
+      transition: height 0.035s linear, background-color 0.035s linear;
+      will-change: height;
     }
+    .sq-meter-fill.meter-green { background: #00e676; color: #00e676; }
+    .sq-meter-fill.meter-yellow { background: #ffea00; color: #ffea00; }
+    .sq-meter-fill.meter-red { background: #ff1744; color: #ff1744; box-shadow: 0 0 8px #ff1744; }
 
     .fader-right-indicator {
       position: relative;
@@ -2685,7 +2690,10 @@ function setupAudioDSPNodes(audioElement) {
     analysers[id] = analyser;
   });
 
+  // This demo music player is the available input source. Feed both input
+  // meters from it; separate physical input capture is not configured here.
   audioSourceNode.connect(analysers.ina);
+  audioSourceNode.connect(analysers.inb);
 
   const makeOutputMeterPath = (id, type, frequency, q = 1) => {
     const filter = audioCtx.createBiquadFilter();
@@ -2711,21 +2719,42 @@ function setupAudioDSPNodes(audioElement) {
   makeOutputMeterPath("out4", "highpass", 3500);
 }
 
-function getMeterPercent(analyser) {
-  const samples = new Uint8Array(analyser.fftSize);
-  analyser.getByteTimeDomainData(samples);
+const meterSamples = {};
+const meterDbState = Object.fromEntries(channelIds.map(id => [id, -60]));
 
+function getMeterDb(analyser, channelId) {
+  if (!analyser) return -60;
+  let samples = meterSamples[channelId];
+  if (!samples || samples.length !== analyser.fftSize) {
+    samples = new Uint8Array(analyser.fftSize);
+    meterSamples[channelId] = samples;
+  }
+  analyser.getByteTimeDomainData(samples);
   let sumSquares = 0;
   for (let i = 0; i < samples.length; i++) {
-    const sample = (samples[i] - 128) / 128;
-    sumSquares += sample * sample;
+    const amplitude = (samples[i] - 128) / 128;
+    sumSquares += amplitude * amplitude;
   }
-
   const rms = Math.sqrt(sumSquares / samples.length);
-  if (!Number.isFinite(rms) || rms < 0.0005) return 0;
+  if (!Number.isFinite(rms) || rms <= 0.000001) return -60;
+  return Math.max(-60, Math.min(0, 20 * Math.log10(rms)));
+}
 
-  const dbfs = 20 * Math.log10(rms);
-  return Math.max(0, Math.min(100, ((dbfs + 60) / 60) * 100));
+function updateVUMeter(id, analyser, active) {
+  const meterEl = document.getElementById("meter-" + id);
+  if (!meterEl) return;
+  const targetDb = active ? getMeterDb(analyser, id) : -60;
+  // Light smoothing reduces jitter while retaining quick attack on musical peaks.
+  const previousDb = Number.isFinite(meterDbState[id]) ? meterDbState[id] : -60;
+  const smoothing = targetDb > previousDb ? 0.62 : 0.24;
+  const db = previousDb + (targetDb - previousDb) * smoothing;
+  meterDbState[id] = db;
+  const clampedDb = Math.max(-60, Math.min(0, db));
+  const percent = ((clampedDb + 60) / 60) * 100;
+  meterEl.style.height = percent.toFixed(1) + "%";
+  meterEl.classList.toggle("meter-green", clampedDb < -9);
+  meterEl.classList.toggle("meter-yellow", clampedDb >= -9 && clampedDb < 0);
+  meterEl.classList.toggle("meter-red", clampedDb >= -0.5);
 }
 
 function initRTACanvases() {
@@ -2877,35 +2906,27 @@ function drawRTAGlowWave() {
 }
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
-  // Draw the live spectrum before the rest of the processor UI is repainted.
   if (["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave();
 
   const audioElement = document.getElementById("audio-player");
   const playable = !!audioCtx && !!audioElement && !audioElement.paused && !audioElement.ended;
 
   channelIds.forEach(id => {
-    const meterEl = document.getElementById("meter-" + id);
-    if (!meterEl) return;
-
     const analyser = analysers[id];
     const outputGain = outputMeterGains && outputMeterGains[id];
+    const faderEl = document.getElementById("gain-" + id);
+    const faderDb = Number.parseFloat(faderEl?.value ?? "0");
 
-    if (!playable || !analyser || muteStates[id] || onStates[id]) {
-      meterEl.style.height = "0%";
-      return;
-    }
-
-    if (outputGain) {
-      const faderDb = parseFloat(document.getElementById("gain-" + id)?.value || "0");
-      const gain = Math.pow(10, faderDb / 20);
+    if (outputGain && Number.isFinite(faderDb)) {
       outputGain.gain.setTargetAtTime(
-        muteStates[id] || onStates[id] ? 0 : gain,
+        (muteStates[id] || onStates[id]) ? 0 : Math.pow(10, faderDb / 20),
         audioCtx.currentTime,
         0.015
       );
     }
 
-    meterEl.style.height = getMeterPercent(analyser).toFixed(1) + "%";
+    // Render every channel's meter every animation frame, never from fader position.
+    updateVUMeter(id, analyser, playable && !!analyser && !muteStates[id] && !onStates[id]);
   });
 }
 

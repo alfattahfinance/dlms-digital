@@ -1401,6 +1401,20 @@
       .channel-strip { flex: 0 0 clamp(78px, 15vw, 112px); }
     }
 
+    /* Prevent page/pinch zoom from starting inside DSP curve editors on touch devices. */
+    .sq-graph-box,
+    .sq-graph-box *,
+    #gate-graph-box,
+    #gate-graph-box *,
+    #editor-graph-box,
+    #editor-graph-box *,
+    #geq-container-box,
+    #geq-container-box * {
+      touch-action: none;
+      -ms-touch-action: none;
+    }
+    /* Keep graph interaction local; do not disable zoom for the whole page. */
+
     /* GRAPH VIEWPORT RESPONSIVE: small/large phones, portrait/landscape, tablet. */
     .tc-center-graph {
       flex: 1 1 0;
@@ -2628,6 +2642,21 @@ function initResponsiveGraphScaling() {
   }
 }
 
+// iOS Safari can dispatch proprietary gesture events even when the graph uses
+// Pointer Events. Cancel pinch gestures only when they originate inside a DSP graph;
+// the rest of the page keeps its normal browser zoom/accessibility behavior.
+function preventDSPGraphPinchZoom() {
+  const graphSelector = ".sq-graph-box, #gate-graph-box, #editor-graph-box, #geq-container-box";
+  ["gesturestart", "gesturechange", "gestureend"].forEach(type => {
+    document.addEventListener(type, event => {
+      const target = event.target;
+      if (target instanceof Element && target.closest(graphSelector)) {
+        event.preventDefault();
+      }
+    }, { passive: false, capture: true });
+  });
+}
+
 function initInteractiveGraphs() {
   ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
     const box = document.getElementById(tab === "comp" ? "editor-graph-box" : tab + "-graph-box");
@@ -3274,7 +3303,7 @@ function initDLMD() {
 
   try { initializePermanentDSPNodes(); }
   catch (err) { console.error("DSP node initialization failed.", err); }
-  try { initInteractiveGraphs(); }
+  try { preventDSPGraphPinchZoom(); }\n  catch (err) { console.error("DSP graph zoom guard failed.", err); }\n  try { initInteractiveGraphs(); }
   catch (err) { console.error("Interactive graph initialization failed.", err); }
   try { initResponsiveGraphScaling(); }
   catch (err) { console.error("Responsive graph scaling initialization failed.", err); }

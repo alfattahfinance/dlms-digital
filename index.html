@@ -1992,7 +1992,7 @@ function initializePermanentDSPNodes() {
 }
 
 function enforceDSPNodePolicy(pageName) {
-  initFaderThumbHitTesting();
+  // Kebijakan node grafik hanya mengatur node SVG; tidak memasang listener fader.
   initializePermanentDSPNodes();
   const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
   Object.keys(DSP_NODE_POLICY).forEach(page => {
@@ -2887,6 +2887,11 @@ function initDLMD() {
   updateSidebarForChannel(currentFocusedChannel || "ina");
   buildGeqSliders();
 
+  // Listener kontrol dipasang hanya pada range fader yang sudah dibangun.
+  // Jika setup kontrol gagal, menu dan layout tetap tersedia.
+  try { initFaderThumbHitTesting(); }
+  catch (err) { console.error("Fader interaction setup failed; UI remains available.", err); }
+
   // Setiap subsistem non-inti diisolasi agar error pada grafik/audio tidak
   // menghentikan pembuatan menu dan fader mixer.
   try {
@@ -2968,12 +2973,20 @@ let isDraggingFader = false;
 let activeFaderPointerId = null;
 
 function initFaderThumbHitTesting() {
-  const selectors = ['input.vertical-fader', 'input.geq-range'];
-  document.querySelectorAll(selectors.join(',')).forEach(fader => {
-    if (fader.dataset.thumbDragReady === '1') return;
-    fader.dataset.thumbDragReady = '1';
+  // Isolasi: fader mixer dan fader GEQ dipilih sebagai dua kelompok terpisah.
+  // Tidak memasang listener pada canvas, tombol menu, strip induk, atau seluruh dokumen.
+  const groups = [
+    { selector: '#mixer-bank-container input.vertical-fader', kind: 'mixer' },
+    { selector: '#geq-sliders-wrapper input.geq-range', kind: 'geq' }
+  ];
 
-    fader.addEventListener('pointerdown', event => {
+  groups.forEach(group => {
+    document.querySelectorAll(group.selector).forEach(fader => {
+      if (!(fader instanceof HTMLInputElement) || fader.dataset.thumbDragReady === '1') return;
+      fader.dataset.thumbDragReady = '1';
+      fader.dataset.thumbDragKind = group.kind;
+
+      fader.addEventListener('pointerdown', event => {
       // Selalu cegah perilaku native range yang melompat saat track disentuh.
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       const rect = fader.getBoundingClientRect();
@@ -3003,9 +3016,9 @@ function initFaderThumbHitTesting() {
       activeFaderIndex = fader;
       activeFaderPointerId = event.pointerId;
       try { fader.setPointerCapture(event.pointerId); } catch (err) {}
-    }, { passive: false });
+      }, { passive: false });
 
-    fader.addEventListener('pointermove', event => {
+      fader.addEventListener('pointermove', event => {
       if (!isDraggingFader || activeFaderIndex !== fader ||
           activeFaderPointerId !== event.pointerId) return;
       event.preventDefault();
@@ -3031,18 +3044,19 @@ function initFaderThumbHitTesting() {
         updateParam(id, fader.value);
         if (id === currentFocusedChannel) updateActiveProcessorUI();
       }
-    }, { passive: false });
+      }, { passive: false });
 
-    const resetDrag = event => {
-      if (activeFaderIndex !== fader ||
-          (event && activeFaderPointerId !== event.pointerId)) return;
-      isDraggingFader = false;
-      activeFaderIndex = null;
-      activeFaderPointerId = null;
-    };
-    fader.addEventListener('pointerup', resetDrag);
-    fader.addEventListener('pointercancel', resetDrag);
-    fader.addEventListener('lostpointercapture', resetDrag);
+      const resetDrag = event => {
+        if (activeFaderIndex !== fader ||
+            (event && activeFaderPointerId !== event.pointerId)) return;
+        isDraggingFader = false;
+        activeFaderIndex = null;
+        activeFaderPointerId = null;
+      };
+      fader.addEventListener('pointerup', resetDrag);
+      fader.addEventListener('pointercancel', resetDrag);
+      fader.addEventListener('lostpointercapture', resetDrag);
+    });
   });
 }
 

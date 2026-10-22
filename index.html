@@ -8,16 +8,17 @@
 
   <style>
     :root {
-      --dark-chassis: linear-gradient(145deg, #2b2b2b, #191919);
-      --strip-bg: linear-gradient(135deg, #222222, #161616);
-      --screen-bg: #0b0f17;
-      --text-light: #e2e8f0;
+      --dark-chassis: linear-gradient(145deg, #454545, #292929);
+      --strip-bg: linear-gradient(135deg, #3c3c3c, #242424);
+      --screen-bg: #080808;
+      --text-light: #f1f1f1;
       --amber: #ffbb00;
       --amber-glow: 0 0 14px rgba(255, 187, 0, 0.8), 0 0 25px rgba(255, 187, 0, 0.3);
       --sq-green: #00ff55;
       --neon-blue: #00e5ff;
       --neon-rose: #ff2a6d;
       --neon-emerald: #00ffaa;
+      --panel-shadow: inset 0 1px 1px rgba(255,255,255,.12), 0 2px 5px rgba(0,0,0,.55);
     }
 
     * {
@@ -31,7 +32,7 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #121212;
+      background: #303030;
       color: var(--text-light);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
@@ -45,11 +46,17 @@
       flex-direction: column;
       padding: 4px;
       gap: 3px;
-      background: #1a1a1a;
-      border: 2px solid #333;
+      background: linear-gradient(180deg, #383838 0%, #262626 100%);
+      border: 2px solid #555;
       overflow: hidden;
       position: relative;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.7);
+      box-shadow: inset 0 0 18px rgba(0,0,0,.7), 0 5px 18px rgba(0,0,0,.65);
+    }
+
+    .chassis-rack, .player-bar, .nav-tabs, .app-footer {
+      background: linear-gradient(180deg, #414141 0%, #252525 100%);
+      border: 1px solid #5b5b5b;
+      position: relative;
     }
 
     .chassis-rack {
@@ -59,10 +66,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 2px 12px;
-      background: var(--dark-chassis);
-      border: 1px solid #444;
       box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 4px 6px rgba(0,0,0,0.6);
-      position: relative;
     }
 
     .screw {
@@ -105,12 +109,10 @@
       box-shadow: 0 0 6px #00ff55;
     }
 
-    /* PLAYER BAR STYLING */
     .player-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #161a22;
       padding: 2px 8px;
       border-bottom: 1px solid #333;
       font-size: .55rem;
@@ -143,17 +145,15 @@
       flex-shrink: 0;
       gap: 3px;
       padding: 2px 5px;
-      background: #111;
-      border-bottom: 1px solid #333;
       overflow-x: auto;
     }
 
     .tab-btn {
       flex-shrink: 0;
       padding: 3px 8px;
-      color: #ccc;
-      background: #222;
-      border: 1px solid #444;
+      color: #f4f4f4;
+      background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%);
+      border: 1px solid #777;
       border-radius: 3px;
       font-size: .55rem;
       font-weight: 700;
@@ -163,10 +163,10 @@
     }
 
     .tab-btn.active {
-      color: #111;
-      background: var(--amber);
-      border-color: #cca600;
-      box-shadow: var(--amber-glow);
+      color: #171717;
+      background: linear-gradient(180deg, #f3f3f3 0%, #cfcfcf 100%);
+      border-color: #fff;
+      box-shadow: inset 0 1px 0 #fff, 0 0 5px rgba(255,255,255,.2);
     }
 
     .fader-workspace {
@@ -174,39 +174,32 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      justify-content: stretch;
       width: 100%;
       padding: 2px;
       overflow: hidden;
     }
 
-    .touchscreen-console, .mixer-bank {
-      width: 100%;
-    }
-
-    /* KONTROL TOUCHSCREEN KONSOL UTAMA (DIOPTIMALKAN UNTUK LANDSCAPE) */
     .touchscreen-console {
       flex: 0 0 auto;
-      height: 195px;
-      max-height: 48vh;
-      background: radial-gradient(circle at center, #111a26 0%, #05080e 100%);
-      border: 1px solid #2563eb;
-      border-radius: 4px;
+      height: clamp(132px, 32dvh, 220px);
+      max-height: 42dvh;
+      background: linear-gradient(145deg, #414141 0%, #292929 70%, #222 100%);
+      border: 1px solid #666;
+      border-radius: 5px;
       display: flex;
       padding: 4px;
       gap: 6px;
-      box-shadow: inset 0 0 20px rgba(0,149,255,0.15), 0 0 12px rgba(0,0,0,0.8);
+      box-shadow: var(--panel-shadow);
       margin-bottom: 2px;
     }
 
     .tc-sidebar {
-      width: 95px;
+      width: clamp(58px, 16vw, 95px);
       display: flex;
       flex-direction: column;
       gap: 2px;
-      background: #090d16;
-      border: 1px solid #1e293b;
+      background-color: #303030;
+      border: 1px solid #606060;
       padding: 2px;
       border-radius: 3px;
       overflow-y: auto;
@@ -214,42 +207,34 @@
     }
 
     .tc-side-btn {
-      background: #131d31;
-      color: #94a3b8;
-      border: 1px solid #334155;
+      background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%);
+      color: #f4f4f4;
+      border: 1px solid #777;
       padding: 4px;
       font-size: .52rem;
       font-weight: bold;
       text-align: center;
       border-radius: 2px;
       cursor: pointer;
-      transition: all 0.2s;
       flex-shrink: 0;
     }
 
-    .tc-side-btn:hover {
-      border-color: var(--neon-blue);
-      color: #fff;
-    }
-
     .tc-side-btn.active {
-      background: linear-gradient(135deg, #c2410c, #ea580c);
-      color: #fff;
-      border-color: #fb923c;
-      box-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
+      background: linear-gradient(180deg, #f3f3f3 0%, #cfcfcf 100%);
+      color: #171717;
+      border-color: #fff;
     }
 
     .tc-center-graph {
-      flex: 1;
+      flex: 1 1 0;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      background: var(--screen-bg);
-      border: 1px solid #1e293b;
-      border-radius: 3px;
+      background-color: #303030;
+      border: 1px solid #606060;
+      border-radius: 5px;
       padding: 4px;
       position: relative;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
       overflow: hidden;
     }
 
@@ -259,25 +244,21 @@
       position: relative;
       touch-action: none;
       cursor: crosshair;
-      box-sizing: border-box;
-      min-width: 0;
-      min-height: 0;
       overflow: hidden;
-      border: 1px solid rgba(71, 85, 105, .55);
+      border: 1px solid #565656;
       border-radius: 4px;
-      background: transparent; /* Transparan: tanpa panel/latar belakang di area skala dB. */
+      background: #080808 !important;
     }
 
     .sq-graph-box svg {
       width: 100%;
       height: 100%;
-      min-width: 0;
-      min-height: 0;
       display: block;
       overflow: hidden;
+      background-color: transparent;
+      shape-rendering: geometricPrecision;
     }
 
-    /* RTA canvas sits behind the SVG tuning curve and its draggable nodes. */
     .rta-canvas {
       position: absolute;
       inset: 0;
@@ -285,56 +266,41 @@
       height: 100%;
       z-index: 1;
       pointer-events: none;
-      opacity: 1;
     }
-    /* Keep the live spectrum above the graph background but visible through
-       the translucent tuning fill; curve lines and draggable nodes stay on top. */
+
     .sq-graph-box > svg {
       position: relative;
       z-index: 2;
-      background: transparent;
     }
-    .sq-curve-fill {
-      opacity: .28;
-    }
-    #geq-container-box { position: relative; }
-    #geq-container-box > .rta-canvas { z-index: 0; }
-    #geq-container-box .geq-scale-side,
-    #geq-container-box .geq-sliders-wrapper { position: relative; z-index: 1; }
 
     .processor-subpage {
       box-sizing: border-box;
-      min-width: 0;
-      min-height: 0;
-      overflow: hidden;
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
 
     .sq-grid-line {
-      stroke: #62676d;
-      stroke-width: 1;
-      opacity: .72;
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 0.75px;
       vector-effect: non-scaling-stroke;
     }
 
     .zero-fixed-line {
       stroke: #a0a6ad;
-      stroke-width: 1.35;
-      opacity: .92;
+      stroke-width: 1.2px;
+      opacity: .9;
       vector-effect: non-scaling-stroke;
     }
 
     .sq-grid-text {
-      fill: rgba(255, 255, 255, 0.35);
-      font-size: 7.5px;
-      font-weight: 400;
+      fill: rgba(255, 255, 255, 0.4);
+      font-size: 10px;
       font-family: Arial, sans-serif;
     }
 
     .sq-curve-fill {
-      /* Keep SVG gradient fills vivid beneath the curve stroke on mobile browsers. */
-      opacity: 1;
+      opacity: 0.28;
       pointer-events: none;
       stroke: none;
     }
@@ -347,113 +313,21 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
-      stroke-dasharray: none !important;
-      stroke-dashoffset: 0 !important;
-      opacity: 1;
-    }
-
-    .sq-curve-line {
-      stroke: #ffd15c;
-      stroke-width: 2.8;
-      /* Avoid SVG filter layers: iOS Safari can leave stale pixels after transforms. */
       filter: none !important;
     }
 
-    .neon-line-blue {
-      stroke: #36f4ff;
-      stroke-width: 2.8;
-      filter: none !important;
-    }
-
-    .neon-line-emerald {
-      stroke: #3dffd0;
-      stroke-width: 2.8;
-      filter: none !important;
-    }
-
-    .neon-line-peq {
-      stroke: #ff559e;
-      stroke-width: 3;
-      filter: none !important;
-    }
+    .sq-curve-line { stroke: #ffd15c; stroke-width: 2.5px; }
+    .neon-line-blue { stroke: #36f4ff; stroke-width: 2.5px; }
+    .neon-line-emerald { stroke: #3dffd0; stroke-width: 2.5px; }
+    .neon-line-peq { stroke: #ff559e; stroke-width: 2.5px; }
 
     .screen-real-knob {
       cursor: grab;
       touch-action: none;
-      filter: none !important;
     }
+    .screen-real-knob:active { cursor: grabbing; }
 
-    /*
-     * Keep SVG repainting on the normal document layer.
-     * Forced GPU layers (translateZ), paint containment and clip-path can
-     * leave stale tiles on some iOS Safari/WebKit sizes during SVG path edits.
-     * The graph box itself clips all content at its responsive border box.
-     */
-    .sq-graph-box {
-      /* Transparent graph viewport: no extra card/panel behind the Gate SVG. */
-      overflow: hidden;
-      contain: none;
-      isolation: auto;
-      transform: none;
-      -webkit-transform: none;
-      backface-visibility: visible;
-      -webkit-backface-visibility: visible;
-      background: transparent !important;
-      background-color: transparent !important;
-      box-shadow: none;
-      outline: none;
-    }
-    #gate-graph-box {
-      background: transparent !important;
-      background-color: transparent !important;
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    #gate-graph-box > svg {
-      background: transparent !important;
-      background-color: transparent !important;
-      border: 0;
-      box-shadow: none;
-    }
-
-    .sq-graph-box svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      clip-path: none;
-      /* Transparent SVG lets the RTA canvas behind it remain visible. */
-      background-color: transparent;
-      shape-rendering: geometricPrecision;
-      transform: none;
-      -webkit-transform: none;
-      backface-visibility: visible;
-      -webkit-backface-visibility: visible;
-    }
-
-    .screen-real-knob:hover, .screen-real-knob:active {
-      cursor: grabbing;
-    }
-
-    /*
-     * Mobile Safari/WebKit can leave stale pixels when SVG paths with CSS
-     * drop-shadow filters are repeatedly changed during touch drags.
-     * The graph is SVG (not canvas), so clearRect() is not applicable here.
-     * Disable filter compositing on touch-first devices to prevent ghost trails;
-     * keep the neon stroke colors and rounded line joins intact.
-     */
-    @media (hover: none) and (pointer: coarse) {
-      .sq-curve-line,
-      .neon-line-blue,
-      .neon-line-emerald,
-      .neon-line-peq,
-      .screen-real-knob {
-        filter: none !important;
-      }
-    }
-
-    /* 31-BAND GEQ CONTAINER */
+    /* 31-BAND GEQ */
     .geq-container {
       width: 100%;
       height: 100%;
@@ -465,10 +339,6 @@
       padding: 3px;
       overflow-x: auto;
       overflow-y: hidden;
-      overscroll-behavior-x: contain;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-      scrollbar-color: #46515e #101318;
       touch-action: pan-x pan-y;
     }
 
@@ -479,7 +349,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 4.5px;
+      font-size: 5px;
       color: #64748b;
       font-family: monospace;
       text-align: right;
@@ -491,12 +361,8 @@
       position: relative;
       height: 100%;
       flex: 0 0 max(700px, calc(100% - 26px));
-      width: max(700px, calc(100% - 26px));
       min-width: 700px;
-      height: 100%;
-      min-height: 0;
       overflow: hidden;
-      padding: 0;
       --geq-band-width: 22px;
     }
 
@@ -508,9 +374,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 0;
-      max-width: none;
-      flex-shrink: 0;
       transform: translateX(-50%);
     }
 
@@ -521,7 +384,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 0;
     }
 
     input[type="range"].geq-range {
@@ -532,7 +394,6 @@
       left: 50%;
       width: min(23vh, 155px);
       height: 22px;
-      /* Biarkan swipe horizontal diteruskan ke container scroll; drag fader tetap vertikal. */
       touch-action: pan-y;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
@@ -553,69 +414,53 @@
       width: 18px;
       height: 12px;
       margin-top: -4.5px;
-      box-sizing: border-box;
-      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(30, 30, 30, 0.9);
+      background: rgba(30, 30, 30, 0.9);
       border: 1.2px solid rgba(255, 255, 255, 0.55);
       border-radius: 3px;
-      box-shadow: inset 0 1px 2px rgba(255,255,255,.35), 0 2px 4px rgba(0,0,0,.65);
       cursor: grab;
     }
 
     .geq-val-label {
-      font-size: 3.5px;
+      font-size: 4px;
       color: #34d399;
       font-family: monospace;
       text-align: center;
-      white-space: nowrap;
-      height: 9px;
-      line-height: 9px;
       font-weight: bold;
-      flex-shrink: 0;
     }
 
     .geq-freq-label-wrapper {
       height: 18px;
       width: 100%;
-      overflow: visible;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
     }
 
     .geq-freq-label {
-      font-size: 4.5px;
-      color: rgba(255, 255, 255, 0.35);
+      font-size: 5px;
+      color: rgba(255, 255, 255, 0.4);
       font-family: monospace;
-      text-align: center;
-      white-space: nowrap;
       transform: rotate(-90deg);
-      transform-origin: center center;
-      font-weight: 400;
-      background: transparent;
-      border: 0;
     }
 
-    /* PANEL KANAN TOUCHSCREEN (UKURAN KOMPAK KHUSUS HORIZONTAL) */
+    /* RIGHT KNOBS PANEL */
     .tc-right-knobs-panel {
-      width: 165px;
+      width: clamp(88px, 25vw, 165px);
       display: flex;
       flex-direction: column;
-      background: #090d16;
-      border: 1px solid #1e293b;
+      background-color: #303030;
+      border: 1px solid #606060;
       border-radius: 3px;
       padding: 4px;
-      justify-content: space-between;
-      flex-shrink: 0;
+      justify-content: flex-start;
+      gap: 6px;
+      overflow-y: auto;
     }
 
     .knobs-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 4px;
-      overflow-y: auto;
-      max-height: 135px;
-      padding-right: 2px;
       align-content: start;
     }
 
@@ -635,50 +480,32 @@
       font-size: .45rem;
       color: #94a3b8;
       text-transform: uppercase;
-      margin-bottom: 1px;
       font-weight: bold;
     }
 
     .physical-knob {
-      --knob-size: 32px;
+      --knob-size: 30px;
       width: var(--knob-size);
       height: var(--knob-size);
-      flex: 0 0 var(--knob-size);
       border-radius: 50%;
       position: relative;
-      isolation: isolate;
       display: flex;
       align-items: center;
       justify-content: center;
       border: 1px solid #05070b;
-      background:
-        repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #657080 4deg 5deg, #252c37 5deg 9deg),
-        #202733;
-      box-shadow: 0 2px 2px #02040a, inset 0 1px 1px rgba(255,255,255,.32);
-    }
-
-    .physical-knob::before {
-      content: "";
-      position: absolute;
-      inset: 2.5px;
-      border-radius: 50%;
-      z-index: -1;
-      background: radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
-      border: 1px solid #87909c;
+      background: repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #657080 4deg 5deg, #252c37 5deg 9deg), #202733;
     }
 
     .knob-indicator {
       position: absolute;
-      top: 4px;
+      top: 3px;
       left: 50%;
       width: 2.5px;
-      height: 9px;
-      background: linear-gradient(to right, #d8dde4 0%, #ffffff 48%, #9ca3af 100%);
-      border: 1px solid #202630;
+      height: 8px;
+      background: #fff;
       transform: translateX(-50%);
       transform-origin: 50% 12px;
       border-radius: 2px;
-      z-index: 2;
       pointer-events: none;
     }
 
@@ -687,7 +514,6 @@
       color: var(--amber);
       font-family: monospace;
       font-weight: bold;
-      margin-top: 1px;
     }
 
     .tc-master-strip {
@@ -699,21 +525,6 @@
       padding: 2px 4px;
       border-radius: 3px;
       margin-top: 2px;
-      cursor: grab;
-      touch-action: none;
-    }
-
-    .tc-master-strip label {
-      font-size: .45rem;
-      color: #94a3b8;
-      font-weight: bold;
-    }
-
-    .tc-master-strip span {
-      font-size: .48rem;
-      color: var(--sq-green);
-      font-family: monospace;
-      font-weight: bold;
     }
 
     .tc-power-btn {
@@ -733,201 +544,132 @@
     .tc-power-btn.off {
       background: linear-gradient(to bottom, #334155, #0f172a);
       color: #64748b;
-      border-color: #475569;
     }
 
     .section-group-title {
-      flex-shrink: 0;
-      width: 100%;
-      margin: 1px 0 2px;
-      color: #aaa;
+      color: #c5c5c5;
       font-size: .52rem;
       font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
-      padding-left: 2px;
+      margin: 1px 0 2px;
     }
 
-    /* BANK MIXER / CHANNEL STRIPS BAWAH (DISESUAIKAN AGAR TIDAK TERPOTONG SECARA VERTIKAL) */
+    /* MIXER BANK */
     .mixer-bank {
-      flex: 1;
-      min-height: 0;
+      flex: 1 1 0;
+      min-height: 170px;
       display: flex;
       align-items: stretch;
       justify-content: space-between;
-      flex-wrap: nowrap;
       gap: 4px;
       width: 100%;
-      padding: 2px 0;
       overflow-x: auto;
       overflow-y: hidden;
+      background-color: #303030;
+      border: 1px solid #606060;
+      padding: 2px;
+      border-radius: 4px;
     }
 
     .channel-strip {
-      flex: 1;
-      min-width: 0;
-      min-height: 0;
+      flex: 1 0 clamp(76px, 12vw, 150px);
+      height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
       gap: 3px;
       padding: 4px;
       background: var(--strip-bg);
       border: 1px solid #333;
       border-radius: 4px;
-      box-shadow: inset 0 0 8px rgba(255,255,255,0.03), 0 4px 12px rgba(0,0,0,0.6);
       cursor: pointer;
     }
 
     .channel-strip.focused {
       border: 1px solid var(--neon-blue);
-      box-shadow: inset 0 0 12px rgba(0,229,255,0.25), 0 4px 12px rgba(0,0,0,0.7);
+      box-shadow: inset 0 0 12px rgba(0,229,255,0.25);
     }
 
     .ch-header-sq {
-      background: linear-gradient(to bottom, #15803d, #14532d);
-      border: 1px solid var(--sq-green);
+      background: linear-gradient(180deg, #087c32 0%, #075421 100%);
+      border: 1px solid #16b84a;
       border-radius: 3px;
       padding: 2px;
       text-align: center;
-      flex-shrink: 0;
     }
 
     .ch-header-sq.out-header {
-      background: linear-gradient(to bottom, #b45309, #78350f);
-      border-color: #fbbf24;
+      background: linear-gradient(180deg, #a94c0b 0%, #713007 100%);
+      border-color: #e17a22;
     }
 
-    .ch-name {
-      color: #ffffff;
-      font-size: .58rem;
-      font-weight: 800;
-    }
-
-    .ch-sublabel {
-      color: #bbf7d0;
-      font-size: .42rem;
-      margin-top: 0px;
-    }
+    .ch-name { color: #fff; font-size: .58rem; font-weight: 800; }
+    .ch-sublabel { color: #bbf7d0; font-size: .42rem; }
 
     .eq-curve-box {
       width: 100%;
       height: 22px;
-      background: #09090b;
-      border: 1px solid #27272a;
+      background: #080808;
+      border: 1px solid #565656;
       border-radius: 2px;
       position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
     }
 
-    .eq-curve-box svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      pointer-events: none;
-    }
-
-    .mini-grid {
-      stroke: #27272a;
-      stroke-width: 0.9;
-      stroke-dasharray: 2 2;
-    }
-
-    .mini-path {
-      fill: none;
-      stroke: var(--amber);
-      stroke-width: 1.5;
-    }
+    .mini-grid { stroke: #27272a; stroke-width: 0.9; stroke-dasharray: 2 2; }
+    .mini-path { fill: none; stroke: var(--amber); stroke-width: 1.5; }
 
     .db-value {
       color: var(--amber);
-      font-family: "Courier New", monospace;
+      font-family: monospace;
       font-size: .52rem;
       font-weight: bold;
       text-align: center;
       background: #0f0f12;
-      padding: 1px 0;
-      border-radius: 2px;
       border: 1px solid #333;
-      flex-shrink: 0;
+      border-radius: 2px;
     }
 
     .sq-btn {
       width: 100%;
       padding: 2px 0;
-      background: linear-gradient(to bottom, #333, #222);
-      color: #ccc;
-      border: 1px solid #555;
+      background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%);
+      color: #f4f4f4;
+      border: 1px solid #777;
       border-radius: 2px;
       font-size: .5rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
-      flex-shrink: 0;
     }
 
-    .sq-btn.on-btn {
-      background: linear-gradient(to bottom, #16a34a, #15803d);
-      color: #fff;
-      border-color: #4ade80;
-    }
-
-    .sq-btn.on-btn.off {
-      background: linear-gradient(to bottom, #334155, #1e293b) !important;
-      color: #64748b !important;
-      border-color: #475569 !important;
-    }
-
-    .sq-btn.muted {
-      background: linear-gradient(to bottom, #dc2626, #991b1b) !important;
-      color: #fff !important;
-      border-color: #f87171 !important;
-    }
+    .sq-btn.on-btn { background: linear-gradient(to bottom, #16a34a, #15803d); color: #fff; border-color: #4ade80; }
+    .sq-btn.on-btn.off { background: linear-gradient(to bottom, #334155, #1e293b) !important; color: #64748b !important; border-color: #475569 !important; }
+    .sq-btn.muted { background: linear-gradient(to bottom, #dc2626, #991b1b) !important; color: #fff !important; }
 
     .fader-meter-area {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      position: relative;
+      flex: 1 1 0;
+      min-height: 95px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #090c10;
-      border: 1px solid #27272a;
+      background-color: #303030;
+      border: 1px solid #606060;
       border-radius: 3px;
       padding: 2px 1px;
-      overflow: hidden;
       gap: 1px;
+      position: relative;
     }
 
-    .fader-scale {
-      position: relative;
+    .fader-scale, .fader-right-indicator {
       width: 15px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
       font-size: 4.5px;
       color: #888;
       font-family: monospace;
-      text-align: right;
-      z-index: 1;
-      padding: 1px 0;
-      pointer-events: none;
       font-weight: bold;
-    }
-
-    .fader-scale span {
-      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      width: 100%;
-      padding-right: 1px;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .vertical-slider-container {
@@ -937,7 +679,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto;
     }
 
     .sq-led-meter {
@@ -954,52 +695,12 @@
       flex-direction: column;
       justify-content: flex-end;
       border: 1px solid #1a2332;
-      pointer-events: none;
-      z-index: 1;
     }
 
-    .sq-meter-fill {
-      width: 100%;
-      height: 0%;
-      background: #00e676;
-      box-shadow: 0 0 5px currentColor;
-      transition: height 0.035s linear, background-color 0.035s linear;
-      will-change: height;
-    }
-    .sq-meter-fill.meter-green { background: #00e676; color: #00e676; }
-    .sq-meter-fill.meter-yellow { background: #ffea00; color: #ffea00; }
-    .sq-meter-fill.meter-red { background: #ff1744; color: #ff1744; box-shadow: 0 0 8px #ff1744; }
-
-    .fader-right-indicator {
-      position: relative;
-      width: 14px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      font-size: 4.5px;
-      color: #888;
-      font-family: monospace;
-      z-index: 1;
-      padding: 2px 0;
-      pointer-events: none;
-      font-weight: bold;
-    }
-
-    .fader-right-indicator span:first-child {
-      font-weight: bold;
-      color: #aaa;
-      margin-bottom: auto;
-    }
-
-    .tick-right {
-      position: relative;
-      width: 2px;
-      height: 1px;
-      background: #555;
-      margin: auto 0;
-    }
+    .sq-meter-fill { width: 100%; height: 0%; background: #00e676; }
+    .sq-meter-fill.meter-green { background: #00e676; }
+    .sq-meter-fill.meter-yellow { background: #ffea00; }
+    .sq-meter-fill.meter-red { background: #ff1744; }
 
     input[type="range"].vertical-fader {
       -webkit-appearance: none;
@@ -1011,113 +712,40 @@
       height: 26px;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
-      border: none;
       outline: none;
       cursor: pointer;
-      touch-action: none; 
       z-index: 3;
-      margin: 0;
-      padding: 0;
     }
 
     input[type="range"].vertical-fader::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 36px;  
-      height: 22px; 
-      margin-top: -1px; 
-      box-sizing: border-box;
+      width: 36px;
+      height: 22px;
       border: 1.2px solid rgba(255, 255, 255, 0.45);
       border-radius: 3px;
-      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(30, 30, 30, 0.65);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.8);
+      background: rgba(30, 30, 30, 0.65);
       cursor: grab;
     }
 
     .feature-panel {
       display: none;
       flex-direction: column;
-      justify-content: flex-start;
       width: 100%;
       height: 100%;
-      min-height: 0;
       padding: 6px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: linear-gradient(145deg, #414141 0%, #292929 70%, #222 100%);
+      border: 1px solid #666;
       border-radius: 3px;
       overflow-y: auto;
     }
+    .feature-panel.active-panel { display: flex; flex: 1; }
 
-    .feature-panel.active-panel {
-      display: flex;
-      flex: 1;
-    }
-
-    #panel-mixer {
-      justify-content: flex-start;
-      align-items: stretch;
-      padding: 0;
-      background: transparent;
-      border: none;
-      overflow: hidden;
-    }
-
-    .param-grid {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 6px;
-      width: 100%;
-    }
-
-    .param-card {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 6px;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 2px;
-    }
-
-    .param-card label {
-      display: flex;
-      justify-content: space-between;
-      gap: 5px;
-      color: #ccc;
-      font-size: .55rem;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .param-card span {
-      color: var(--neon-blue);
-      font-family: "Courier New", monospace;
-    }
-
-    .param-card select,
-    .param-card input[type="text"],
-    .param-card input[type="range"] {
-      width: 100%;
-      min-width: 0;
-      padding: 3px;
-      color: #fff;
-      background: #111;
-      border: 1px solid #444;
-      border-radius: 2px;
-      font-size: .6rem;
-    }
-
-    .action-btn {
-      padding: 6px;
-      color: #111;
-      background: var(--amber);
-      border: none;
-      border-radius: 2px;
-      font-size: .6rem;
-      font-weight: 800;
-      cursor: pointer;
-    }
+    .param-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; width: 100%; }
+    .param-card { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: #222; border: 1px solid #444; border-radius: 2px; }
+    .param-card label { display: flex; justify-content: space-between; color: #ccc; font-size: .55rem; text-transform: uppercase; font-weight: bold; }
+    .param-card input[type="text"] { width: 100%; padding: 3px; color: #fff; background: #111; border: 1px solid #444; border-radius: 2px; font-size: .6rem; }
+    .action-btn { padding: 6px; color: #111; background: var(--amber); border: none; border-radius: 2px; font-size: .6rem; font-weight: 800; cursor: pointer; }
 
     .app-footer {
       flex-shrink: 0;
@@ -1125,271 +753,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
       padding: 2px 6px;
       color: #aaa;
-      border-top: 1px solid #333;
       font-size: .48rem;
       font-weight: bold;
-      background: var(--dark-chassis);
     }
-
-
-
-    /* FIX SCROLL PANEL KNOB KANAN: panel dapat digulir, knob tetap bisa disentuh/drag */
-    .tc-right-knobs-panel {
-      min-height: 0;
-      max-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      overscroll-behavior-y: contain;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
-      scrollbar-width: thin;
-      scrollbar-color: #777 #252525;
-      justify-content: flex-start;
-      gap: 6px;
-    }
-    .tc-right-knobs-panel::-webkit-scrollbar { width: 6px; }
-    .tc-right-knobs-panel::-webkit-scrollbar-track { background: #252525; border-radius: 4px; }
-    .tc-right-knobs-panel::-webkit-scrollbar-thumb { background: #777; border-radius: 4px; }
-    .tc-right-knobs-panel > .knobs-grid {
-      flex: 0 0 auto;
-      min-height: 0;
-      max-height: none;
-      overflow: visible;
-      padding: 0 1px 3px;
-      align-content: start;
-    }
-    .tc-right-knobs-panel > .knobs-grid[style*="display: none"] { display: none !important; }
-    .tc-right-knobs-panel > div:last-child { flex: 0 0 auto; }
-    .tc-right-knobs-panel .physical-knob-container { touch-action: none; }
-    @media (orientation: landscape) and (max-height: 600px) {
-      .tc-right-knobs-panel { gap: 4px; padding: 3px; }
-      .tc-right-knobs-panel .knobs-grid { gap: 3px; }
-    }
-
-    /* THEME UPDATE: bodi graphite/charcoal seperti mixer digital profesional */
-    :root {
-      --dark-chassis: linear-gradient(145deg, #454545, #292929);
-      --strip-bg: linear-gradient(135deg, #3c3c3c, #242424);
-      --screen-bg: #080808;
-      --text-light: #f1f1f1;
-      --panel-metal: #3a3a3a;
-      --panel-edge: #666;
-      --panel-shadow: inset 0 1px 1px rgba(255,255,255,.12), 0 2px 5px rgba(0,0,0,.55);
-    }
-    html, body { background: #303030; }
-    .app-container {
-      background: linear-gradient(180deg, #383838 0%, #262626 100%);
-      border-color: #555;
-      box-shadow: inset 0 0 18px rgba(0,0,0,.7), 0 5px 18px rgba(0,0,0,.65);
-    }
-    .chassis-rack, .player-bar, .nav-tabs, .app-footer {
-      background: linear-gradient(180deg, #414141 0%, #252525 100%);
-      border-color: #5b5b5b;
-    }
-    .touchscreen-console, .feature-panel, .channel-strip, .param-card {
-      background: linear-gradient(145deg, #414141 0%, #292929 70%, #222 100%);
-      border-color: #666;
-      box-shadow: var(--panel-shadow);
-    }
-    .tc-sidebar, .tc-right-knobs-panel, .tc-center-graph,
-    .mixer-bank, .fader-meter-area {
-      background-color: #303030;
-      border-color: #606060;
-    }
-    .tc-side-btn, .tab-btn, .sq-btn, .action-btn,
-    .tc-power-btn, .player-bar label {
-      background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%);
-      color: #f4f4f4;
-      border-color: #777;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 1px 2px rgba(0,0,0,.6);
-    }
-    .tc-side-btn.active, .tab-btn.active {
-      background: linear-gradient(180deg, #f3f3f3 0%, #cfcfcf 100%);
-      color: #171717;
-      border-color: #fff;
-      box-shadow: inset 0 1px 0 #fff, 0 0 5px rgba(255,255,255,.2);
-    }
-    .ch-header-sq {
-      background: linear-gradient(180deg, #087c32 0%, #075421 100%);
-      border-color: #16b84a;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
-    }
-    .ch-header-sq.out-header {
-      background: linear-gradient(180deg, #a94c0b 0%, #713007 100%);
-      border-color: #e17a22;
-    }
-    .channel-strip.focused .ch-header-sq {
-      background: linear-gradient(180deg, #76228c 0%, #451052 100%);
-      border-color: #c44be3;
-    }
-    .eq-curve-box, .sq-graph-box {
-      background: #080808;
-      border-color: #565656;
-    }
-    .tc-center-graph, .sq-graph-box {
-      border-radius: 5px;
-    }
-    .physical-knob, .fader-thumb {
-      box-shadow: inset 0 1px 2px rgba(255,255,255,.35), 0 2px 4px rgba(0,0,0,.65);
-    }
-    .section-group-title { color: #c5c5c5; }
-
-    /* RESPONSIVE LAYOUT: ponsel kecil, tablet, desktop, portrait & landscape */
-    html { -webkit-text-size-adjust: 100%; }
-    body, .app-container, .fader-workspace, .feature-panel,
-    .touchscreen-console, .tc-center-graph, .mixer-bank { min-width: 0; }
-    .app-container { max-width: 100vw; }
-    .fader-workspace { min-width: 0; min-height: 0; }
-    .touchscreen-console {
-      height: clamp(132px, 32dvh, 220px);
-      max-height: 42dvh;
-      min-height: 0;
-    }
-    .tc-sidebar { width: clamp(58px, 16vw, 95px); }
-    .tc-right-knobs-panel { width: clamp(88px, 25vw, 165px); }
-    .tc-center-graph { flex: 1 1 0; }
-    .knobs-grid { max-height: min(20dvh, 135px); }
-    .mixer-bank { overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
-    .channel-strip { flex: 1 0 clamp(76px, 12vw, 150px); }
-    .feature-panel { overscroll-behavior: contain; }
-    .geq-container { overflow-x: auto; overflow-y: hidden; }
-    .geq-sliders-wrapper { flex: 0 0 max(700px, calc(100% - 26px)); min-width: 700px; }
-    .geq-slider-col { width: 22px; }
-    button, input, select, label { touch-action: manipulation; }
-    input[type="range"] { accent-color: var(--neon-emerald); }
-
-    /* Ponsel kecil dan portrait: semua kontrol tetap dapat dijangkau */
-    @media (max-width: 520px) {
-      .app-container { padding: 3px; gap: 3px; border-width: 1px; }
-      .chassis-rack { min-height: 25px; padding: 2px 6px; }
-      .chassis-title { margin-left: 5px; font-size: clamp(8px, 2.3vw, 10px); letter-spacing: .4px; }
-      .chassis-status { font-size: clamp(7px, 1.8vw, 9px); gap: 3px; }
-      .player-bar { gap: 5px; padding: 3px 4px; flex-wrap: wrap; }
-      .player-bar label { font-size: 9px; }
-      .player-bar audio { min-width: 90px; height: 24px; }
-      #now-playing { max-width: 100%; font-size: 9px; }
-      .nav-tabs { gap: 3px; padding: 3px; }
-      .tab-btn { padding: 5px 7px; font-size: 10px; }
-      .fader-workspace { padding: 1px; }
-      .touchscreen-console { gap: 3px; padding: 3px; height: clamp(145px, 29dvh, 210px); max-height: 36dvh; }
-      .tc-sidebar { width: clamp(54px, 17vw, 76px); }
-      .tc-side-btn { font-size: 8px; padding: 5px 2px; overflow-wrap: anywhere; }
-      .tc-right-knobs-panel { width: clamp(76px, 23vw, 110px); padding: 3px; }
-      .physical-knob { --knob-size: clamp(24px, 7vw, 32px); }
-      .physical-knob-container label, .physical-knob-container span,
-      .tc-master-strip label, .tc-master-strip span, .tc-power-btn { font-size: 8px; }
-      .knobs-grid { gap: 3px; max-height: min(17dvh, 105px); }
-      .section-group-title { font-size: 9px; }
-      .channel-strip { flex: 0 0 clamp(76px, 22vw, 100px); padding: 3px; gap: 3px; }
-      .ch-name { font-size: 10px; }
-      .ch-sublabel { font-size: 8px; }
-      .sq-btn { font-size: 9px; padding: 4px 1px; }
-      .db-value { font-size: 9px; }
-      .fader-scale, .fader-right-indicator { font-size: 8px; }
-      .fader-scale { width: 18px; }
-      .fader-right-indicator { width: 17px; }
-      .app-footer { font-size: 8px; flex-wrap: wrap; }
-      .param-grid { grid-template-columns: minmax(0, 1fr); }
-      .param-card label, .param-card select, .param-card input, .action-btn { font-size: 12px; }
-    }
-
-    /* Landscape: kurangi tinggi panel atas dan sisakan ruang untuk fader */
-    @media (orientation: landscape) and (max-height: 600px) {
-      .app-container { padding: 2px; gap: 2px; }
-      .chassis-rack { min-height: 22px; }
-      .player-bar { padding: 1px 5px; gap: 5px; }
-      .player-bar audio { height: 20px; }
-      .nav-tabs { padding: 1px 3px; }
-      .tab-btn { padding: 3px 7px; }
-      .touchscreen-console { height: clamp(112px, 34dvh, 185px); max-height: 38dvh; margin-bottom: 1px; }
-      .tc-sidebar { width: clamp(56px, 12vw, 82px); }
-      .tc-right-knobs-panel { width: clamp(88px, 17vw, 135px); padding: 3px; }
-      .knobs-grid { max-height: 18dvh; }
-      .physical-knob { --knob-size: clamp(22px, 5.5dvh, 30px); }
-      .channel-strip { flex-basis: clamp(72px, 11vw, 118px); padding: 2px; gap: 2px; }
-      .eq-curve-box { height: 18px; }
-      .app-footer { min-height: 13px; padding: 1px 4px; }
-    }
-
-    /* Tablet dan desktop: gunakan ruang ekstra tanpa memperbesar berlebihan */
-    @media (min-width: 760px) {
-      .app-container { padding: 6px; gap: 5px; }
-      .touchscreen-console { height: clamp(180px, 34dvh, 280px); max-height: 44dvh; gap: 8px; padding: 6px; }
-      .tc-sidebar { width: clamp(100px, 13vw, 150px); }
-      .tc-right-knobs-panel { width: clamp(165px, 19vw, 220px); }
-      .channel-strip { flex-basis: 0; min-width: 0; }
-      .ch-name { font-size: .72rem; }
-      .sq-btn { font-size: .62rem; padding: 4px 1px; }
-      .fader-scale, .fader-right-indicator { font-size: 7px; }
-    }
-
-
-    /* FIX: pastikan jalur fader channel tidak terpotong di tablet landscape */
-    .fader-workspace, #panel-mixer {
-      min-height: 0;
-      min-width: 0;
-    }
-    #panel-mixer {
-      display: flex;
-      flex-direction: column;
-    }
-    .mixer-bank {
-      flex: 1 1 0;
-      min-height: 190px;
-      height: auto;
-      align-items: stretch;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 4px;
-    }
-    .channel-strip {
-      height: 100%;
-      min-height: 0;
-      overflow: visible;
-    }
-    .fader-meter-area {
-      flex: 1 1 0;
-      min-height: 120px;
-      height: auto;
-    }
-    .vertical-slider-container,
-    input[type="range"].vertical-fader {
-      min-height: 0;
-    }
-    .section-group-title {
-      flex: 0 0 auto;
-    }
-    @media (orientation: landscape) and (max-height: 700px) {
-      .touchscreen-console {
-        height: clamp(100px, 22dvh, 155px);
-        max-height: 25dvh;
-      }
-      .mixer-bank {
-        min-height: 155px;
-      }
-      .fader-meter-area {
-        min-height: 95px;
-      }
-      .channel-strip {
-        gap: 2px;
-        padding: 2px;
-      }
-      .ch-header-sq { padding: 1px; }
-      .eq-curve-box { height: 16px; }
-      .db-value { padding: 0; }
-      .sq-btn { padding-top: 2px; padding-bottom: 2px; }
-    }
-    @media (max-width: 760px) and (orientation: landscape) {
-      .channel-strip { flex: 0 0 clamp(78px, 15vw, 112px); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
-    }
-
   </style>
 </head>
 <body>
@@ -1400,18 +768,13 @@
     <div class="screw screw-tr"></div>
     <div class="screw screw-bl"></div>
     <div class="screw screw-br"></div>
-
-    <div class="chassis-title">
-      DLMD DLMS DSP &bull; PROCESSOR CONSOLE
-    </div>
-
+    <div class="chassis-title">DLMD DLMS DSP &bull; PROCESSOR CONSOLE</div>
     <div class="chassis-status">
       <span class="status-dot" id="connection-dot"></span>
       <span id="ip-display">Localhost / Direct</span>
     </div>
   </div>
 
-  <!-- PLAYER PEMUTAR MUSIK FILE -->
   <div class="player-bar">
     <label for="audio-file-input">🎵 Pilih File Musik</label>
     <input type="file" id="audio-file-input" accept="audio/*">
@@ -1425,20 +788,15 @@
   </div>
 
   <div class="fader-workspace">
-
-    <!-- PANEL MIXER / DLMS CHANNEL BANK -->
-    <div id="panel-mixer" class="feature-panel active-panel" style="position:relative;">
+    <div id="panel-mixer" class="feature-panel active-panel" style="position:relative; background:transparent; border:none; padding:0;">
       
-      <!-- TOUCHSCREEN PROCESSOR CONSOLE -->
       <div class="touchscreen-console">
-        <!-- Sidebar Menu Prosesor Dinamis -->
         <div class="tc-sidebar" id="processor-sidebar"></div>
 
-        <!-- Area Grafik / GEQ Interaktif -->
         <div class="tc-center-graph">
           
-          <!-- HALAMAN 1: PREAMP / GAIN -->
-          <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <!-- PREAMP -->
+          <div id="proc-page-preamp" class="processor-subpage" style="display:none;">
             <div class="sq-graph-box" id="preamp-graph-box">
               <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
@@ -1446,55 +804,25 @@
                     <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(0,220,255)" stop-opacity="0"/>
                   </linearGradient>
-
-                  <radialGradient id="knobBodyBlue" cx="35%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#38bdf8"/>
-                    <stop offset="40%" stop-color="#0284c7"/>
-                    <stop offset="85%" stop-color="#0f172a"/>
-                    <stop offset="100%" stop-color="#020617"/>
-                  </radialGradient>
-                  
-                  <radialGradient id="knobBodyEmerald" cx="35%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#34d399"/>
-                    <stop offset="40%" stop-color="#059669"/>
-                    <stop offset="85%" stop-color="#064e3b"/>
-                    <stop offset="100%" stop-color="#022c22"/>
-                  </radialGradient>
-
-                  <radialGradient id="knobBodyRose" cx="35%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#fb7185"/>
-                    <stop offset="40%" stop-color="#e11d48"/>
-                    <stop offset="85%" stop-color="#881337"/>
-                    <stop offset="100%" stop-color="#4c0519"/>
-                  </radialGradient>
-
-                  <radialGradient id="knobBodyAmber" cx="35%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#fde047"/>
-                    <stop offset="40%" stop-color="#d97706"/>
-                    <stop offset="85%" stop-color="#78350f"/>
-                    <stop offset="100%" stop-color="#451a03"/>
-                  </radialGradient>
                 </defs>
-
                 <line x1="40" y1="10" x2="40" y2="190" class="sq-grid-line"/>
                 <line x1="140" y1="10" x2="140" y2="190" class="sq-grid-line"/>
                 <line x1="240" y1="10" x2="240" y2="190" class="sq-grid-line"/>
                 <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
                 <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
-                <text x="33" y="53" class="sq-grid-text">+30</text>
-                <text x="33" y="103" class="sq-grid-text">0</text>
-                <text x="33" y="153" class="sq-grid-text">-10</text>
-                
-                <path id="preamp-fill-path" class="sq-curve-fill" style="fill:url(#preampGrad);" d="M 30 100 L 300 100 L 300 100 L 30 100 Z"/>
-                <path id="preamp-curve-path" class="neon-line-blue" d="M 30 100 L 300 100"/>
-                
+                <path id="preamp-fill-path" class="sq-curve-fill" fill="url(#preampGrad)" d=""/>
+                <path id="preamp-curve-path" class="neon-line-blue" d=""/>
+                <g id="node-preamp-group" class="screen-real-knob" transform="translate(165, 100)">
+                  <circle r="9" fill="#0284c7" stroke="#38bdf8" stroke-width="1.8"/>
+                  <circle r="2" fill="#ffffff"/>
+                </g>
               </svg>
             </div>
           </div>
 
-          <!-- HALAMAN 2: HPF / CROSSOVER -->
-          <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <!-- HPF / CROSSOVER -->
+          <div id="proc-page-hpf" class="processor-subpage" style="display:none;">
             <div class="sq-graph-box" id="hpf-graph-box">
               <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
@@ -1509,50 +837,43 @@
                 <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
                 <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
-                <text x="33" y="53" class="sq-grid-text">0</text>
-                <text x="33" y="123" class="sq-grid-text">-24</text>
-                <path id="hpf-fill-path" class="sq-curve-fill" style="fill:url(#hpfGrad);" d="M 30 100 L 100 100 L 230 40 L 300 40 Z"/>
-                <path id="hpf-curve-path" class="neon-line-blue" d="M 30 150 L 100 150 L 230 40 L 300 40"/>
-                
+                <path id="hpf-fill-path" class="sq-curve-fill" fill="url(#hpfGrad)" d=""/>
+                <path id="hpf-curve-path" class="neon-line-blue" d=""/>
                 <g id="node-hpf-group" class="screen-real-knob" transform="translate(100, 150)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
+                  <circle r="9" fill="#0284c7" stroke="#00e5ff" stroke-width="1.8"/>
                   <circle r="2" fill="#ffffff"/>
                 </g>
               </svg>
             </div>
           </div>
 
-          <!-- HALAMAN 3: GATE -->
-          <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <!-- GATE (Diperbaiki agar bersih tanpa ghost trailing) -->
+          <div id="proc-page-gate" class="processor-subpage" style="display:none;">
             <div class="sq-graph-box" id="gate-graph-box">
               <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.68"/>
+                    <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.35"/>
                     <stop offset="100%" stop-color="rgb(0,255,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
                 <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="110" y1="10" x2="110" y2="190" class="sq-grid-line"/>
                 <line x1="210" y1="10" x2="210" y2="190" class="sq-grid-line"/>
-                <text x="33" y="103" class="sq-grid-text">Thr</text>
-                <path id="gate-fill-path" class="sq-curve-fill" style="fill:url(#gateGrad);" d="M 30 100 L 130 100 L 130 40 L 300 40 Z"/>
-                <path id="gate-curve-path" class="neon-line-emerald" d="M 30 170 L 130 170 L 130 40 L 300 40"/>
+                
+                <path id="gate-fill-path" fill="url(#gateGrad)" stroke="none" d=""/>
+                <path id="gate-curve-path" class="neon-line-emerald" fill="none" d=""/>
                 
                 <g id="node-gate-group" class="screen-real-knob" transform="translate(130, 170)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyEmerald)" stroke="#00ffaa" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
+                  <circle r="9" fill="#059669" stroke="#00ffaa" stroke-width="1.8"/>
                   <circle r="2" fill="#ffffff"/>
                 </g>
               </svg>
             </div>
           </div>
 
-          <!-- HALAMAN 4: PEQ -->
-          <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <!-- PEQ -->
+          <div id="proc-page-peq" class="processor-subpage" style="display:none;">
             <div class="sq-graph-box" id="peq-graph-box">
               <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
@@ -1565,34 +886,24 @@
                 <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
                 <line x1="165" y1="10" x2="165" y2="190" class="sq-grid-line"/>
                 <line x1="240" y1="10" x2="240" y2="190" class="sq-grid-line"/>
-                <text x="33" y="103" class="sq-grid-text">0</text>
-                <path id="peq-fill-path" class="sq-curve-fill" style="fill:url(#peqGrad);" d="M 30 100 Q 165 40 300 100 Z"/>
-                <path id="peq-curve-path" class="neon-line-peq" d="M 30 100 Q 165 40 300 100"/>
-                
-                <g id="node-peq-group" class="screen-real-knob" transform="translate(165, 40)">
-                  <circle r="10" fill="#000" opacity="0.6"/>
-                  <circle r="9" fill="url(#knobBodyRose)" stroke="#ff2a6d" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
-                </g>
+                <path id="peq-fill-path" class="sq-curve-fill" fill="url(#peqGrad)" d=""/>
+                <path id="peq-curve-path" class="neon-line-peq" d=""/>
               </svg>
             </div>
           </div>
 
-          <!-- HALAMAN 5: 31-BAND GEQ -->
-          <div id="proc-page-geq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <!-- 31-BAND GEQ -->
+          <div id="proc-page-geq" class="processor-subpage" style="display:none;">
             <div class="geq-container" id="geq-container-box">
               <div class="geq-scale-side">
-                <span>+12</span>
-                <span>0</span>
-                <span>-12</span>
+                <span>+12</span><span>0</span><span>-12</span>
               </div>
               <div class="geq-sliders-wrapper" id="geq-sliders-wrapper"></div>
             </div>
           </div>
 
-          <!-- HALAMAN 6: COMPRESSOR / LIMITER -->
-          <div id="proc-page-comp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
+          <!-- COMPRESSOR / LIMITER -->
+          <div id="proc-page-comp" class="processor-subpage" style="display:block;">
             <div class="sq-graph-box" id="editor-graph-box">
               <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
@@ -1607,29 +918,20 @@
                 <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
                 <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
-                <text x="33" y="53" class="sq-grid-text">0</text>
-                <text x="33" y="103" class="sq-grid-text">-30</text>
-                <text x="33" y="153" class="sq-grid-text">-60</text>
-
-                <path id="sq-fill-path" class="sq-curve-fill" style="fill:url(#sqCurveGrad);" d="M 30 100 L 190 105 L 300 105 Z"/>
-                <path id="sq-curve-path" class="sq-curve-line" d="M 30 190 L 190 105 L 300 105"/>
-
+                <path id="sq-fill-path" class="sq-curve-fill" fill="url(#sqCurveGrad)" d=""/>
+                <path id="sq-curve-path" class="sq-curve-line" d=""/>
                 <g id="node-thresh-group" class="screen-real-knob" transform="translate(190, 105)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyAmber)" stroke="#ffbb00" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
+                  <circle r="9" fill="#d97706" stroke="#ffbb00" stroke-width="1.8"/>
                   <circle r="2" fill="#ffffff"/>
                 </g>
-
               </svg>
             </div>
           </div>
 
         </div>
 
-        <!-- PANEL KANAN: KENOP PUTAR & MASTER -->
+        <!-- RIGHT KNOBS PANEL -->
         <div class="tc-right-knobs-panel">
-          
           <div id="knobs-group-preamp" class="knobs-grid" style="display:none;">
             <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-gain', -10, 60, 0.5)">
               <label>Gain</label>
@@ -1748,7 +1050,7 @@
             <div class="tc-master-strip" onpointerdown="initKnobDrag(event, 'master-gain', -40, 20, 0.5)">
               <label id="active-ch-label">In A</label>
               <div style="display:flex; align-items:center; gap:4px;">
-                <div class="physical-knob" style="width:24px; height:24px;"><div class="knob-indicator" id="ind-master-gain" style="height:6px;"></div></div>
+                <div class="physical-knob" style="width:24px; height:24px;"><div class="knob-indicator" id="ind-master-gain"></div></div>
                 <span id="tc-val-mastergain">0.0 dB</span>
               </div>
             </div>
@@ -1759,11 +1061,10 @@
       </div>
 
       <div class="section-group-title">Input Master &amp; Speaker Outputs (Sub, Low, Mid, High)</div>
-
       <div class="mixer-bank" id="mixer-bank-container"></div>
     </div>
 
-    <!-- TAB SETTINGS / KONEKSI WI-FI -->
+    <!-- SETTINGS -->
     <div id="panel-settings" class="feature-panel">
       <div class="section-group-title">Konfigurasi Perangkat Wi-Fi</div>
       <div class="param-grid" style="grid-template-columns:minmax(0,350px);justify-content:center;">
@@ -1774,16 +1075,13 @@
         <button class="action-btn" type="button" onclick="saveConnectionSettings()">Simpan &amp; Terapkan Nama</button>
       </div>
     </div>
-
   </div>
 
   <div class="app-footer">
     <span id="connection-status-text">Kontrol web siap</span>
     <span>DLMS DSP v3.0</span>
   </div>
-
 </div>
-
 
 <script>
 let sendTimers = {};
@@ -1793,7 +1091,6 @@ let currentProcessorTab = "preamp";
 const channelIds = ["ina", "inb", "out1", "out2", "out3", "out4"];
 const channelNames = { "ina": "In A", "inb": "In B", "out1": "Out 1 (Sub)", "out2": "Out 2 (Low)", "out3": "Out 3 (Mid)", "out4": "Out 4 (High)" };
 
-// ISO 31-band center frequencies, Hz labels from 20 Hz to 20 kHz.
 const geqFrequencies = [
   "20", "25", "31.5", "40", "50", "63", "80", "100", "125", "160",
   "200", "250", "315", "400", "500", "630", "800", "1k", "1k25", "1k6",
@@ -1814,8 +1111,6 @@ let analysers = {};
 let rtaAnalyser = null;
 let rtaFrequencyData = null;
 let rtaCanvases = {};
-let rtaAnimationReady = false;
-let filters = {};
 let outputMeterGains = {};
 
 channelIds.forEach(id => {
@@ -1839,13 +1134,16 @@ const dlmsState = {
     compressor: channelCompressors[id], geq: channelGeqValues[id]
   }]))
 };
+
 function getChannelState(id = dlmsState.activeChannel) {
   return channelIds.includes(id) ? dlmsState.channels[id] : null;
 }
+
 function redrawActiveVisuals() {
   try { updateActiveProcessorUI(); } catch (err) { console.error("Processor redraw failed", err); }
   try { if (typeof drawRTAGlowWave === "function" && ["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave(); } catch (err) {}
 }
+
 function setChannelGain(id, value) {
   const state = getChannelState(id), num = Number(value);
   if (!state || !Number.isFinite(num)) return;
@@ -1856,9 +1154,7 @@ function setChannelGain(id, value) {
   if (id === dlmsState.activeChannel) redrawActiveVisuals();
 }
 
-function isInputChannel(id) {
-  return id.startsWith("in");
-}
+function isInputChannel(id) { return id.startsWith("in"); }
 
 function buildMixerStrips() {
   const container = document.getElementById("mixer-bank-container");
@@ -1917,7 +1213,6 @@ function buildMixerStrips() {
 function updateSidebarForChannel(id) {
   const sidebar = document.getElementById("processor-sidebar");
   if (!sidebar) return;
-
   let html = '';
   if (isInputChannel(id)) {
     html += `<div class="tc-side-btn" id="side-preamp" onclick="switchProcessorPage('preamp')">Preamp</div>`;
@@ -1949,8 +1244,6 @@ function buildGeqSliders() {
   const maxLog = Math.log10(20000);
   wrapper.innerHTML = geqFrequencies.map((freq, idx) => {
     const hz = geqFrequencyHz(freq);
-    // Sisakan ruang di kedua ujung agar kepala fader pertama dan terakhir
-    // tidak terpotong oleh batas wrapper saat digeser sampai ujung scroll.
     const logPosition = (Math.log10(hz) - minLog) / (maxLog - minLog);
     const xPercent = 2 + (Math.max(0, Math.min(1, logPosition)) * 96);
     return `
@@ -1986,12 +1279,8 @@ function onGeqSliderChange(index, val, channelId = dlmsState.activeChannel) {
   let numVal = parseFloat(val);
   if (!Number.isFinite(numVal)) return;
   state.geq[index] = numVal;
-  
   const valLbl = document.getElementById(`geq-val-${index}`);
-  if (valLbl) {
-    let formatted = numVal.toFixed(1);
-    valLbl.textContent = (numVal > 0 ? "+" : "") + formatted;
-  }
+  if (valLbl) valLbl.textContent = (numVal > 0 ? "+" : "") + numVal.toFixed(1);
   updateParam(`geq_${channelId}_${index}`, numVal);
   if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
 }
@@ -2041,7 +1330,6 @@ function initializePermanentDSPNodes() {
 }
 
 function enforceDSPNodePolicy(pageName) {
-  // Kebijakan node grafik hanya mengatur node SVG; tidak memasang listener fader.
   initializePermanentDSPNodes();
   const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
   Object.keys(DSP_NODE_POLICY).forEach(page => {
@@ -2050,34 +1338,17 @@ function enforceDSPNodePolicy(pageName) {
       if (node) node.style.display = allowed.has(id) ? "" : "none";
     });
   });
-  ["node-preamp-group", "node-output-group", "node-peq-group"].forEach(id => {
-    const legacy = document.getElementById(id);
-    if (legacy) legacy.style.display = "none";
-  });
 }
 
 function switchProcessorPage(pageName) {
   currentProcessorTab = pageName;
   enforceDSPNodePolicy(pageName);
 
-  // RTA canvases exist only for HPF, PEQ and GEQ. Toggle their actual
-  // display state on every tab change so they cannot remain layered behind Gate SVG.
   const rtaAllowed = ["peq", "hpf", "geq"].includes(pageName);
   Object.values(rtaCanvases).forEach(item => {
     if (!item || !item.canvas) return;
     item.canvas.style.display = rtaAllowed ? "block" : "none";
-    if (!rtaAllowed) {
-      const ctx = item.canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, item.canvas.width, item.canvas.height);
-        ctx.beginPath();
-      }
-    }
   });
-
-  // Gate uses SVG exclusively; keep it visible only while Gate is active.
-  const gateSvg = document.querySelector("#gate-graph-box > svg");
-  if (gateSvg) gateSvg.style.display = pageName === "gate" ? "block" : "none";
 
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
@@ -2103,13 +1374,7 @@ function updateGraphYAxisScale() {
   const gainPages = new Set(["preamp", "hpf", "peq"]);
   const gainTicks = [30, 15, 0, -10, -20, -30];
   const levelTicks = [0, -10, -20, -30, -40, -60];
-  const graphIds = {
-    preamp: "proc-page-preamp",
-    hpf: "proc-page-hpf",
-    gate: "proc-page-gate",
-    peq: "proc-page-peq",
-    comp: "proc-page-comp"
-  };
+  const graphIds = { preamp: "proc-page-preamp", hpf: "proc-page-hpf", gate: "proc-page-gate", peq: "proc-page-peq", comp: "proc-page-comp" };
   const page = currentProcessorTab === "limiter" ? "comp" : currentProcessorTab;
   const hostId = graphIds[page];
   if (!hostId) return;
@@ -2123,35 +1388,20 @@ function updateGraphYAxisScale() {
   const maxDb = gainPages.has(page) ? 30 : 0;
   const yForDb = db => bottom - ((db - minDb) / (maxDb - minDb)) * (bottom - top);
 
-  // Rebuild only horizontal grid lines and Y-axis labels; keep vertical grid lines intact.
   svg.querySelectorAll("[data-y-axis-generated='true']").forEach(node => node.remove());
-  svg.querySelectorAll("line").forEach(line => {
-    if (Number(line.getAttribute("x1")) === 30 &&
-        Number(line.getAttribute("x2")) === 300 &&
-        line.hasAttribute("y1") && line.hasAttribute("y2")) line.remove();
-  });
-  svg.querySelectorAll(".sq-grid-text").forEach(label => label.remove());
 
   ticks.forEach(db => {
     const y = yForDb(db);
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", "30");
-    line.setAttribute("x2", "300");
-    line.setAttribute("y1", y.toFixed(2));
-    line.setAttribute("y2", y.toFixed(2));
+    line.setAttribute("x1", "30"); line.setAttribute("x2", "300");
+    line.setAttribute("y1", y.toFixed(2)); line.setAttribute("y2", y.toFixed(2));
     line.setAttribute("class", db === 0 ? "zero-fixed-line" : "sq-grid-line");
     line.setAttribute("data-y-axis-generated", "true");
     svg.insertBefore(line, svg.querySelector("path"));
 
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", "33");
-    label.setAttribute("y", (y + 3).toFixed(2));
+    label.setAttribute("x", "33"); label.setAttribute("y", (y + 3).toFixed(2));
     label.setAttribute("class", "sq-grid-text");
-    label.setAttribute("fill", "rgba(255, 255, 255, 0.4)");
-    label.setAttribute("font-family", "Arial, sans-serif");
-    label.setAttribute("font-size", (11 * getGraphScaleFactor(host)).toFixed(2) + "px");
-    label.setAttribute("font-weight", "400");
-    label.setAttribute("style", "fill:rgba(255,255,255,0.4);font-family:Arial,sans-serif");
     label.setAttribute("data-y-axis-generated", "true");
     label.textContent = db > 0 ? "+" + db : String(db);
     svg.insertBefore(label, svg.querySelector("path"));
@@ -2191,7 +1441,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-lpf-freq", p.lpf_freq, 100, 20000);
     updateKnobRotation("ind-lpf-slope", p.lpf_slope, 6, 48);
 
-    // HPF Butterworth magnitude: high frequencies approach 0 dB; lows are attenuated.
     const hpfFreq = Math.max(20, Number(p.hpf_freq) || 20);
     const hpfOrder = Math.max(1, Math.round((Number(p.hpf_slope) || 12) / 6));
     const hpfDb = f => {
@@ -2199,19 +1448,7 @@ function updateActiveProcessorUI() {
       const mag = 1 / Math.sqrt(1 + Math.pow(1 / ratio, 2 * hpfOrder));
       return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
     };
-    const hpfPts = [];
-    for (let i = 0; i <= 180; i++) {
-      const x = 30 + 270 * i / 180;
-      const f = 20 * Math.pow(1000, i / 180); // 20 Hz .. 20 kHz, logarithmic
-      const db = hpfDb(f);
-      hpfPts.push([x, Math.max(10, Math.min(190, 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180))]);
-    }
-    const hpfD = hpfPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
-    const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
     const lpfFreq = Math.max(100, Number(p.lpf_freq) || 18000);
-    const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
-    const hpfY = 190 - ((Math.max(-30, Math.min(30, hpfDb(hpfFreq))) + 30) / 60) * 180;
-    const lpfY = 100;
     const lpfDb = f => {
       const ratio = Math.max(1e-6, f / lpfFreq);
       const order = Math.max(1, Math.round((Number(p.lpf_slope) || 24) / 6));
@@ -2226,8 +1463,12 @@ function updateActiveProcessorUI() {
       combinedPts.push([x, Math.max(10, Math.min(190, 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180))]);
     }
     const combinedD = combinedPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
+    const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
+    const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
+    const hpfY = 190 - ((Math.max(-30, Math.min(30, hpfDb(hpfFreq))) + 30) / 60) * 180;
+
     document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX}, ${hpfY})`);
-    document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX}, ${lpfY})`);
+    document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX}, 100)`);
     document.getElementById("hpf-curve-path")?.setAttribute("d", combinedD);
     document.getElementById("hpf-fill-path")?.setAttribute("d", combinedD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'gate' && !isOut) {
@@ -2240,60 +1481,29 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-gate-atk", p.gate_atk, 0.1, 100);
     updateKnobRotation("ind-gate-rel", p.gate_rel, 10, 1000);
 
-    // Gate transfer curve: X=input dB (-80..0), Y=output dB (-80..0).
-    // Preserve exact zero values: using || here incorrectly replaced 0 dB with defaults.
-    const gateThrRaw = Number(p.gate_thr);
-    const gateRangeRaw = Number(p.gate_rng);
-    const gateThr = Math.max(-80, Math.min(0, Number.isFinite(gateThrRaw) ? gateThrRaw : -45));
-    const gateRange = Math.max(-60, Math.min(0, Number.isFinite(gateRangeRaw) ? gateRangeRaw : -40));
+    const gateThr = Math.max(-80, Math.min(0, Number(p.gate_thr) || -45));
+    const gateRange = Math.max(-60, Math.min(0, Number(p.gate_rng) || -40));
     const gx = v => 30 + (v + 80) / 80 * 270;
     const gy = v => 10 + (0 - Math.max(-60, Math.min(0, v))) / 60 * 180;
     const gX = gx(gateThr), gY = gy(Math.max(-80, gateThr + gateRange));
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
-    // Keep the neon transfer curve and its translucent area as independent SVG paths.
-    // The fill path closes only along the bottom edge and is never stroked.
-    // Keep the Gate transfer line continuous and inside the SVG viewBox.
-    // The previous bottom-edge segment sat exactly on the clipped boundary and
-    // could leave stale-looking fragments in iOS Safari during pointer dragging.
-    const gateBaseY = 188;
-    const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(12, Math.min(188, gY)).toFixed(2)} L 298 12`;
-    // Recreate only the two Gate SVG paths on each update. Safari/WebView can
-    // retain stale raster tiles when the same SVG path is repeatedly mutated
-    // during touch dragging; replacing the path node forces a clean repaint
-    // without accumulating old paths or changing the SVG stacking order.
-    const replaceGatePath = (id, d, configure) => {
-      const oldPath = document.getElementById(id);
-      if (!oldPath) return;
-      const newPath = oldPath.cloneNode(false);
-      newPath.setAttribute("d", d);
-      if (typeof configure === "function") configure(newPath);
-      oldPath.replaceWith(newPath);
+
+    const gateBaseY = 190;
+    const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(10, Math.min(190, gY)).toFixed(2)} L 300 10`;
+    
+    // Perbaikan anti-ghost trailing menggunakan pembaruan elemen path secara bersih
+    const updatePathAttr = (id, d, isFill) => {
+      let el = document.getElementById(id);
+      if (el) {
+        el.setAttribute("d", d);
+        if (isFill) {
+          el.setAttribute("fill", "url(#gateGrad)");
+          el.setAttribute("stroke", "none");
+        }
+      }
     };
-
-    // Fill first; it stays un-stroked so the polygon's closing edges never
-    // create stray neon lines.
-    replaceGatePath(
-      "gate-fill-path",
-      `${gateCurveD} L 298 188 L 30 188 Z`,
-      path => {
-        path.setAttribute("fill", "url(#gateGrad)");
-        path.setAttribute("fill-rule", "nonzero");
-        path.setAttribute("stroke", "none");
-        path.style.fill = "url(#gateGrad)";
-        path.style.stroke = "none";
-        path.style.opacity = "0.28";
-        path.style.pointerEvents = "none";
-      }
-    );
-
-    replaceGatePath(
-      "gate-curve-path",
-      gateCurveD,
-      path => {
-        path.setAttribute("fill", "none");
-        path.style.fill = "none";
-      }
-    );
+    updatePathAttr("gate-fill-path", `${gateCurveD} L 300 ${gateBaseY} L 30 ${gateBaseY} Z`, true);
+    updatePathAttr("gate-curve-path", gateCurveD, false);
   } else if (currentProcessorTab === 'peq') {
     const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
     if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }
@@ -2306,8 +1516,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
-    // Total PEQ response: cascade the five RBJ peaking biquads in dB.
-    // The single continuous curve and each permanent band node use this same transfer function.
     const peqBandDbAt = (band, freq) => {
       const bf = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const bg = Math.max(-12, Math.min(12, Number(band.gain) || 0));
@@ -2340,10 +1548,8 @@ function updateActiveProcessorUI() {
       if (!node) return;
       const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
-      // Anchor Y to the *total* response at this band's own frequency, not to its gain alone.
       const totalDb = Math.max(-18, Math.min(18, totalPeqDbAt(freq)));
-      const nodeY = peqY(totalDb);
-      node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
+      node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${peqY(totalDb).toFixed(2)})`);
       node.style.opacity = Number(p.peq_band) === index + 1 ? "1" : "0.3";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
@@ -2351,15 +1557,6 @@ function updateActiveProcessorUI() {
   } else if (currentProcessorTab === 'geq') {
     updateGeqUI();
   } else if (currentProcessorTab === 'comp') {
-    document.getElementById("lbl-atk").textContent = isOut ? "Hold" : "Attack";
-    document.getElementById("lbl-rel").textContent = isOut ? "Decay" : "Release";
-    document.getElementById("lbl-ratio").textContent = isOut ? "Over" : "Ratio";
-    document.getElementById("lbl-thr").textContent = isOut ? "Limit" : "Thr";
-    // Gain/Mix controls were intentionally removed from the 4-knob Compressor UI.
-    // Keep this legacy container optional so a missing element cannot abort all knob/graph updates.
-    const legacyMixContainer = document.getElementById("container-mix");
-    if (legacyMixContainer) legacyMixContainer.style.display = isOut ? "none" : "flex";
-
     setTxt("tc-val-atk", Number(c.atk).toFixed(1) + " ms");
     setTxt("tc-val-rel", Math.round(c.rel) + " ms");
     setTxt("tc-val-ratio", Number(c.ratio).toFixed(1) + (isOut ? "" : ":1"));
@@ -2369,13 +1566,8 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-active-ratio", c.ratio, 1, 20);
     updateKnobRotation("ind-active-thr", c.thr, -60, 0);
 
-    // Compressor transfer curve: one permanent threshold node; ratio alone sets
-    // the post-threshold slope. Keep legacy gain/mix values out of this graph.
-    // Preserve a true 0.0 dB threshold; logical-OR would incorrectly reset it to -30 dB.
-    const compThrRaw = Number(c.thr);
-    const compRatioRaw = Number(c.ratio);
-    const compThr = Math.max(-60, Math.min(0, Number.isFinite(compThrRaw) ? compThrRaw : -30));
-    const compRatio = Math.max(1, Number.isFinite(compRatioRaw) ? compRatioRaw : 1);
+    const compThr = Math.max(-60, Math.min(0, Number(c.thr) || -30));
+    const compRatio = Math.max(1, Number(c.ratio) || 1);
     const cx = v => 30 + (v + 60) / 60 * 270;
     const cy = v => 10 + (0 - Math.max(-60, Math.min(0, v))) / 60 * 180;
     const thrX = cx(compThr), threshY = cy(compThr);
@@ -2385,15 +1577,6 @@ function updateActiveProcessorUI() {
     document.getElementById("sq-curve-path")?.setAttribute("d", compD);
     document.getElementById("sq-fill-path")?.setAttribute("d", compD + " L 300 190 L 30 190 Z");
     document.getElementById("node-thresh-group")?.setAttribute("transform", `translate(${thrX}, ${threshY})`);
-
-    updateThumbnailCurve(currentFocusedChannel, thrX, threshY, endY);
-  }
-
-  let mainFader = document.getElementById("gain-" + currentFocusedChannel);
-  if (mainFader) {
-    let val = parseFloat(mainFader.value);
-    setTxt("tc-val-mastergain", Number(val).toFixed(1) + " dB");
-    updateKnobRotation("ind-master-gain", val, -40, isInputChannel(currentFocusedChannel) ? 20 : 12);
   }
 }
 
@@ -2406,10 +1589,8 @@ function initKnobDrag(e, paramKey, min, max, step) {
   function onPointerMove(moveEvent) {
     let deltaY = startY - moveEvent.clientY;
     let range = max - min;
-    let sensitivity = range / 100;
-    let newVal = startVal + (deltaY * sensitivity);
+    let newVal = startVal + (deltaY * (range / 100));
     newVal = Math.max(min, Math.min(max, newVal));
-    
     if (step >= 1) newVal = Math.round(newVal);
     else newVal = Number(newVal.toFixed(1));
 
@@ -2422,7 +1603,6 @@ function initKnobDrag(e, paramKey, min, max, step) {
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerup", onPointerUp);
   }
-
   window.addEventListener("pointermove", onPointerMove);
   window.addEventListener("pointerup", onPointerUp);
 }
@@ -2430,14 +1610,11 @@ function initKnobDrag(e, paramKey, min, max, step) {
 function getParamValue(key, channelId = dlmsState.activeChannel) {
   const state = getChannelState(channelId);
   if (!state) return 0;
-  let c = state.compressor;
-  let p = state.processor;
+  let c = state.compressor, p = state.processor;
   if (key === 'active-atk') return c.atk;
   if (key === 'active-rel') return c.rel;
   if (key === 'active-ratio') return c.ratio;
   if (key === 'active-thr') return c.thr;
-  if (key === 'active-gain') return c.gain;
-  if (key === 'active-mix') return c.mix;
   if (key === 'pre-gain') return p.pre_gain;
   if (key === 'pre-pad') return p.pre_pad;
   if (key === 'pre-phase') return p.pre_phase;
@@ -2460,14 +1637,11 @@ function getParamValue(key, channelId = dlmsState.activeChannel) {
 function setParamValue(key, val, channelId = dlmsState.activeChannel) {
   const state = getChannelState(channelId);
   if (!state) return;
-  let c = state.compressor;
-  let p = state.processor;
+  let c = state.compressor, p = state.processor;
   if (key === 'active-atk') c.atk = val;
   else if (key === 'active-rel') c.rel = val;
   else if (key === 'active-ratio') c.ratio = val;
   else if (key === 'active-thr') c.thr = val;
-  else if (key === 'active-gain') c.gain = val;
-  else if (key === 'active-mix') c.mix = val;
   else if (key === 'pre-gain') p.pre_gain = val;
   else if (key === 'pre-pad') p.pre_pad = val;
   else if (key === 'pre-phase') p.pre_phase = val;
@@ -2484,18 +1658,9 @@ function setParamValue(key, val, channelId = dlmsState.activeChannel) {
     const band = p.peq_bands[p.peq_band - 1];
     if (band) { p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q; }
   }
-  else if (key === 'peq-freq') {
-    p.peq_freq = Number(val);
-    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].freq = p.peq_freq;
-  }
-  else if (key === 'peq-gain') {
-    p.peq_gain = Number(val);
-    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].gain = p.peq_gain;
-  }
-  else if (key === 'peq-q') {
-    p.peq_q = Number(val);
-    if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].q = p.peq_q;
-  }
+  else if (key === 'peq-freq') { p.peq_freq = Number(val); if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].freq = p.peq_freq; }
+  else if (key === 'peq-gain') { p.peq_gain = Number(val); if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].gain = p.peq_gain; }
+  else if (key === 'peq-q') { p.peq_q = Number(val); if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].q = p.peq_q; }
   else if (key === 'master-gain') {
     state.gain = Number(val);
     const mainFader = document.getElementById("gain-" + channelId);
@@ -2504,153 +1669,43 @@ function setParamValue(key, val, channelId = dlmsState.activeChannel) {
   }
 }
 
-function updateThumbnailCurve(id, tx, ty, ey) {
-  const miniPath = document.getElementById("mini-curve-" + id);
-  if (!miniPath) return;
-  let pThreshX = (tx / 320) * 100;
-  let pThreshY = (ty / 210) * 40;
-  let pEndY = (ey / 210) * 40;
-  miniPath.setAttribute("d", `M 0 40 L ${pThreshX} ${pThreshY} L 100 ${pEndY}`);
-}
-
-// Shared responsive graph styling. Width is measured from the live graph box,
-// so SVG curves, grid lines and axis labels keep consistent proportions on phones/tablets.
-function getGraphScaleFactor(host) {
-  const width = host?.getBoundingClientRect?.().width || 600;
-  return Math.max(0.35, Math.min(2.2, width / 600));
-}
-
-function applyResponsiveGraphScale(host) {
-  if (!host) return;
-  const scaleFactor = getGraphScaleFactor(host);
-  host.style.setProperty("--graph-scale", String(scaleFactor));
-  const svg = host.matches("svg") ? host : host.querySelector("svg");
-  if (!svg) return;
-  svg.querySelectorAll(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq").forEach(path => {
-    path.style.strokeWidth = (2.5 * scaleFactor).toFixed(3) + "px";
-  });
-  svg.querySelectorAll(".sq-grid-line").forEach(line => {
-    line.style.strokeWidth = (0.75 * scaleFactor).toFixed(3) + "px";
-    line.style.stroke = "rgba(255,255,255,0.15)";
-  });
-  svg.querySelectorAll(".sq-grid-text").forEach(label => {
-    label.style.fontSize = (11 * scaleFactor).toFixed(3) + "px";
-    label.style.fill = "rgba(255,255,255,0.4)";
-  });
-}
-
-function initResponsiveGraphScaling() {
-  const hosts = Array.from(document.querySelectorAll(".sq-graph-box, #geq-container-box"));
-  hosts.forEach(applyResponsiveGraphScale);
-  if (typeof ResizeObserver !== "undefined" && !window.__dlmsGraphScaleObserver) {
-    window.__dlmsGraphScaleObserver = new ResizeObserver(entries => {
-      entries.forEach(entry => applyResponsiveGraphScale(entry.target));
-    });
-    hosts.forEach(host => window.__dlmsGraphScaleObserver.observe(host));
-  }
-}
-
 function initInteractiveGraphs() {
   ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
     const box = document.getElementById(tab === "comp" ? "editor-graph-box" : tab + "-graph-box");
     if (!box || box.dataset.graphPointerReady === "1") return;
-
     const svg = box.querySelector("svg");
     if (!svg) return;
     box.dataset.graphPointerReady = "1";
-
-    // Pointer Events cover mouse, touch and pen. Disable browser pan/zoom only
-    // while interacting with the graph, and use SVG's own coordinate transform.
     box.style.touchAction = "none";
-    box.style.userSelect = "none";
-    box.style.webkitUserSelect = "none";
 
-    let isDragging = false;
-    let activeDragNode = null;
-    let activePointerId = null;
-    let activeChannelId = null;
-    let pendingMove = null;
-    let graphFrame = 0;
+    let isDragging = false, activeDragNode = null, activePointerId = null, activeChannelId = null;
 
     function graphPoint(event) {
-      // SVG coordinates are CSS-pixel independent; getScreenCTM maps the
-      // actual screen point into viewBox space (including mobile scaling).
       const matrix = svg.getScreenCTM();
       if (!matrix || typeof svg.createSVGPoint !== "function") return null;
       const point = svg.createSVGPoint();
-      point.x = event.clientX;
-      point.y = event.clientY;
-      let local;
-      try { local = point.matrixTransform(matrix.inverse()); } catch (err) { return null; }
-      if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) return null;
-      const viewBox = svg.viewBox && svg.viewBox.baseVal;
-      const width = viewBox && viewBox.width ? viewBox.width : 320;
-      const height = viewBox && viewBox.height ? viewBox.height : 210;
-      return {
-        x: Math.max(30, Math.min(300, local.x)),
-        y: Math.max(0, Math.min(height, local.y)),
-        width, height
-      };
-    }
-
-    function scheduleGraphMove(e) {
-      // Keep only the newest pointer position and draw at most once per frame.
-      pendingMove = { clientX: e.clientX, clientY: e.clientY, pointerId: e.pointerId };
-      if (graphFrame) return;
-      graphFrame = requestAnimationFrame(() => {
-        graphFrame = 0;
-        const latest = pendingMove;
-        pendingMove = null;
-        if (isDragging && latest && latest.pointerId === activePointerId) {
-          handleGraphMove(latest, tab, activeDragNode, box, svg, activeChannelId);
-        }
-      });
-    }
-
-    function flushGraphMove(e) {
-      if (graphFrame) cancelAnimationFrame(graphFrame);
-      graphFrame = 0;
-      pendingMove = null;
-      if (e && isDragging) handleGraphMove(e, tab, activeDragNode, box, svg, activeChannelId);
+      point.x = event.clientX; point.y = event.clientY;
+      let local = point.matrixTransform(matrix.inverse());
+      return { x: Math.max(30, Math.min(300, local.x)), y: Math.max(0, Math.min(210, local.y)) };
     }
 
     function onPointerDown(e) {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       const point = graphPoint(e);
       if (!point) return;
-      // Graph interaction is node-only: tapping empty canvas never starts a drag
-      // and never teleports the curve/node to the touch position.
       let pickedNode = null;
-      // Hitbox is specified in screen CSS pixels, then converted to SVG coordinates.
-      const ctm = svg.getScreenCTM();
-      const screenScale = ctm ? Math.sqrt(Math.abs(ctm.a * ctm.d)) : 1;
-      const hitRadius = Math.max(15, Math.min(30, 18 / Math.max(0.01, screenScale)));
-      if (tab === "preamp") {
-        // Preamp has no draggable node: grab the visible horizontal curve itself.
-        const path = document.getElementById("preamp-curve-path");
-        const nearCurve = path && Math.abs(point.y - (() => {
-          const match = (path.getAttribute("d") || "").match(/M\\s*30\\s*([\\d.]+)/);
-          return match ? Number(match[1]) : NaN;
-        })()) <= hitRadius;
-        if (nearCurve && point.x >= 30 && point.x <= 300) pickedNode = "preamp";
-      } else if (tab === "comp") {
-        const el = document.getElementById("node-thresh-group");
-        const m = el?.transform.baseVal.consolidate()?.matrix;
-        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "threshold";
-      } else if (tab === "gate") {
-        const el = document.getElementById("node-gate-group");
-        const m = el?.transform.baseVal.consolidate()?.matrix;
-        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "gate";
-      } else if (tab === "hpf") {
-        const markers = [
-          { id: "hpf", el: document.getElementById("node-hpf-group") },
-          { id: "lpf", el: document.getElementById("node-lpf-group") }
-        ].filter(item => item.el && item.el.style.display !== "none");
+      const hitRadius = 22;
+
+      if (tab === "preamp") pickedNode = "preamp";
+      else if (tab === "comp") pickedNode = "threshold";
+      else if (tab === "gate") pickedNode = "gate";
+      else if (tab === "hpf") {
+        const markers = [{ id: "hpf", el: document.getElementById("node-hpf-group") }, { id: "lpf", el: document.getElementById("node-lpf-group") }];
         const nearest = markers.reduce((best, item) => {
-          const m = item.el.transform.baseVal.consolidate()?.matrix;
+          const m = item.el?.transform.baseVal.consolidate()?.matrix;
           if (!m) return best;
-          const distance = Math.hypot(m.e - point.x, m.f - point.y);
-          return !best || distance < best.distance ? { id: item.id, distance } : best;
+          const dist = Math.hypot(m.e - point.x, m.f - point.y);
+          return !best || dist < best.distance ? { id: item.id, distance: dist } : best;
         }, null);
         if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
       } else if (tab === "peq") {
@@ -2658,8 +1713,8 @@ function initInteractiveGraphs() {
         const nearest = markers.reduce((best, node) => {
           const m = node.transform.baseVal.consolidate()?.matrix;
           if (!m) return best;
-          const distance = Math.hypot(m.e - point.x, m.f - point.y);
-          return !best || distance < best.distance ? { id: node.dataset.peqBand, distance } : best;
+          const dist = Math.hypot(m.e - point.x, m.f - point.y);
+          return !best || dist < best.distance ? { id: node.dataset.peqBand, distance: dist } : best;
         }, null);
         if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
       }
@@ -2670,25 +1725,19 @@ function initInteractiveGraphs() {
       isDragging = true;
       activePointerId = e.pointerId;
       try { box.setPointerCapture(e.pointerId); } catch (err) {}
-      // Do not update on pointerdown; the first movement must move the selected node
-      // relative to its original position, not jump it under the user's finger.
     }
 
     function onPointerMove(e) {
       if (!isDragging || e.pointerId !== activePointerId) return;
       e.preventDefault();
-      scheduleGraphMove(e);
+      handleGraphMove(e, tab, activeDragNode, box, svg, activeChannelId);
     }
 
     function onPointerEnd(e) {
       if (e.pointerId !== activePointerId) return;
-      // Apply the final touch position before releasing capture to avoid a
-      // one-frame visual jump or a stale-looking curve at the end of a drag.
-      flushGraphMove(e);
       isDragging = false;
       activeDragNode = null;
       activePointerId = null;
-      activeChannelId = null;
       try { if (box.hasPointerCapture(e.pointerId)) box.releasePointerCapture(e.pointerId); } catch (err) {}
     }
 
@@ -2696,87 +1745,45 @@ function initInteractiveGraphs() {
     box.addEventListener("pointermove", onPointerMove, { passive: false });
     box.addEventListener("pointerup", onPointerEnd);
     box.addEventListener("pointercancel", onPointerEnd);
-    box.addEventListener("lostpointercapture", onPointerEnd);
   });
 }
 
 function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activeChannel) {
-  const graph = svg || (box && box.querySelector("svg"));
-  if (!graph) return;
-
-  // Convert screen coordinates into the SVG viewBox coordinate system. This
-  // accounts for mobile viewport scaling, borders, Retina DPR and SVG layout.
-  const matrix = graph.getScreenCTM();
-  if (!matrix || typeof graph.createSVGPoint !== "function") return;
-  const point = graph.createSVGPoint();
-  point.x = e.clientX;
-  point.y = e.clientY;
+  const matrix = svg.getScreenCTM();
+  if (!matrix) return;
+  const point = svg.createSVGPoint();
+  point.x = e.clientX; point.y = e.clientY;
   const local = point.matrixTransform(matrix.inverse());
-  if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) return;
-
-  const vb = graph.viewBox && graph.viewBox.baseVal;
-  const width = vb && vb.width ? vb.width : 320;
-  const height = vb && vb.height ? vb.height : 210;
   const svgX = Math.max(30, Math.min(300, local.x));
-  const svgY = Math.max(0, Math.min(height, local.y));
-  const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
+  const svgY = Math.max(0, Math.min(210, local.y));
+  const normalizedX = (svgX - 30) / 270;
 
   const state = getChannelState(channelId);
   if (!state) return;
-  const p = state.processor;
-  const c = state.compressor;
+  const p = state.processor, c = state.compressor;
 
-  if (tab === "preamp" && currentProcessorTab === "preamp") {
-    // Dragging the horizontal preamp line changes gain directly; redraw from the same state.
-    const mappedGain = -10 + (1 - svgY / height) * 70;
-    p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
+  if (tab === "preamp") {
+    p.pre_gain = Number(Math.max(-10, Math.min(60, -10 + (1 - svgY / 200) * 70)).toFixed(1));
     updateParam("pre-gain_" + channelId, p.pre_gain);
-  } else if (tab === "comp" && currentProcessorTab === "comp") {
-    // X controls Threshold (-60..0 dB); Y is intentionally free to move without
-    // creating a second node. Redraw updates the node and THR knob immediately.
-    const mappedThr = -60 + normalizedX * 60;
-    c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
+  } else if (tab === "comp") {
+    c.thr = Number(Math.max(-60, Math.min(0, -60 + normalizedX * 60)).toFixed(1));
     updateParam("active-thr_" + channelId, c.thr);
-    if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
-  } else if (tab === "preamp") {
-    const mappedGain = -10 + (1 - svgY / height) * 70;
-    p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
-    updateParam("pre-gain_" + channelId, p.pre_gain);
   } else if (tab === "hpf") {
     const isLPF = dragNode === "lpf";
-    const minFreq = isLPF ? 100 : 20;
-    const maxFreq = isLPF ? 20000 : 1000;
-    const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
-    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0) return;
-    if (isLPF) {
-      p.lpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-      updateParam("lpf-freq_" + channelId, p.lpf_freq);
-    } else {
-      p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-      updateParam("hpf-freq_" + channelId, p.hpf_freq);
-    }
+    const mappedFreq = (isLPF ? 100 : 20) * Math.pow((isLPF ? 20000 : 1000) / (isLPF ? 100 : 20), normalizedX);
+    if (isLPF) { p.lpf_freq = Math.round(mappedFreq); updateParam("lpf-freq_" + channelId, p.lpf_freq); }
+    else { p.hpf_freq = Math.round(mappedFreq); updateParam("hpf-freq_" + channelId, p.hpf_freq); }
   } else if (tab === "gate") {
-    // Free/diagonal drag: combine horizontal input-level and vertical output-level coordinates.
-    const normalizedY = Math.max(0, Math.min(1, 1 - (svgY / height)));
-    const mappedThr = -80 + (((normalizedX + normalizedY) / 2) * 80);
-    p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
+    p.gate_thr = Number(Math.max(-80, Math.min(0, -80 + normalizedX * 80)).toFixed(1));
     updateParam("gate-thr_" + channelId, p.gate_thr);
   } else if (tab === "peq") {
     const bandIndex = Math.max(0, Math.min(4, (Number(dragNode) || p.peq_band) - 1));
     p.peq_band = bandIndex + 1;
     const band = p.peq_bands[bandIndex];
-    const minFreq = 20, maxFreq = 20000;
-    const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
-    const mappedGain = 12 - (svgY / height) * 24;
-    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0 || !Number.isFinite(mappedGain)) return;
-    band.freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-    band.gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
-    p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q;
-    updateParam("peq-band_" + channelId, p.peq_band);
-    updateParam("peq-freq_" + channelId, p.peq_freq);
-    updateParam("peq-gain_" + channelId, p.peq_gain);
+    band.freq = Math.round(20 * Math.pow(1000, normalizedX));
+    band.gain = Number(Math.max(-12, Math.min(12, 12 - (svgY / 200) * 24)).toFixed(1));
+    p.peq_freq = band.freq; p.peq_gain = band.gain;
   }
-
   if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
 }
 
@@ -2784,42 +1791,16 @@ function focusChannel(id) {
   if (!channelIds.includes(id)) return;
   currentFocusedChannel = id;
   dlmsState.activeChannel = id;
-  channelIds.forEach(ch => {
-    document.getElementById("strip-" + ch)?.classList.remove("focused");
-  });
+  channelIds.forEach(ch => document.getElementById("strip-" + ch)?.classList.remove("focused"));
   document.getElementById("strip-" + id)?.classList.add("focused");
-
-  const chLabel = document.getElementById("active-ch-label");
-  if (chLabel) chLabel.textContent = channelNames[id];
-
-  const mainFader = document.getElementById("gain-" + id);
-  if (mainFader) {
-    mainFader.max = isInputChannel(id) ? "20" : "12";
-  }
-
+  document.getElementById("active-ch-label").textContent = channelNames[id];
   updateSidebarForChannel(id);
   switchProcessorPage('preamp');
-
-  const btnOn = document.getElementById("on-" + id);
-  const tcPower = document.getElementById("tc-power-btn");
-  if (btnOn && tcPower) {
-    let isOn = !btnOn.classList.contains("off");
-    tcPower.classList.toggle("off", !isOn);
-    tcPower.textContent = isOn ? "IN (ACTIVE)" : "BYPASS";
-  }
-
   updateActiveProcessorUI();
 }
 
 function toggleActivePower() {
   toggleOn(currentFocusedChannel);
-  const btnOn = document.getElementById("on-" + currentFocusedChannel);
-  const tcPower = document.getElementById("tc-power-btn");
-  if (btnOn && tcPower) {
-    let isOn = !btnOn.classList.contains("off");
-    tcPower.classList.toggle("off", !isOn);
-    tcPower.textContent = isOn ? "IN (ACTIVE)" : "BYPASS";
-  }
 }
 
 function initAudioPlayer() {
@@ -2830,20 +1811,14 @@ function initAudioPlayer() {
   fileInput.addEventListener("change", function(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     nowPlaying.textContent = file.name;
-    const fileURL = URL.createObjectURL(file);
-    audioElement.src = fileURL;
+    audioElement.src = URL.createObjectURL(file);
     audioElement.play();
-
     if (!isAudioInitialized) {
       setupAudioDSPNodes(audioElement);
       isAudioInitialized = true;
-    } else if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
     }
   });
-
   requestAnimationFrame(renderRealtimeMeters);
 }
 
@@ -2851,541 +1826,104 @@ function setupAudioDSPNodes(audioElement) {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   audioCtx = new AudioContextClass();
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
-
   audioSourceNode.connect(audioCtx.destination);
-  // Dedicated full-spectrum analyser for the RTA overlay. It observes the same
-  // selected music file without changing the audible playback route.
   rtaAnalyser = audioCtx.createAnalyser();
   rtaAnalyser.fftSize = 4096;
-  rtaAnalyser.smoothingTimeConstant = 0.84;
   rtaFrequencyData = new Uint8Array(rtaAnalyser.frequencyBinCount);
   audioSourceNode.connect(rtaAnalyser);
 
   channelIds.forEach(id => {
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 1024;
-    analyser.smoothingTimeConstant = 0.84;
     analysers[id] = analyser;
+    audioSourceNode.connect(analyser);
   });
-
-  // This demo music player is the available input source. Feed both input
-  // meters from it; separate physical input capture is not configured here.
-  audioSourceNode.connect(analysers.ina);
-  audioSourceNode.connect(analysers.inb);
-
-  const makeOutputMeterPath = (id, type, frequency, q = 1) => {
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = type;
-    filter.frequency.value = frequency;
-    filter.Q.value = q;
-
-    const gain = audioCtx.createGain();
-    gain.gain.value = 1;
-
-    audioSourceNode.connect(filter);
-    filter.connect(gain);
-    gain.connect(analysers[id]);
-
-    filters[id] = filter;
-    outputMeterGains[id] = gain;
-  };
-
-  outputMeterGains = {};
-  makeOutputMeterPath("out1", "lowpass", 130);
-  makeOutputMeterPath("out2", "bandpass", 350, 0.8);
-  makeOutputMeterPath("out3", "bandpass", 1800, 0.8);
-  makeOutputMeterPath("out4", "highpass", 3500);
 }
 
-const meterSamples = {};
-const meterDbState = Object.fromEntries(channelIds.map(id => [id, -60]));
-
-function getMeterDb(analyser, channelId) {
+function getMeterDb(analyser) {
   if (!analyser) return -60;
-  let samples = meterSamples[channelId];
-  if (!samples || samples.length !== analyser.fftSize) {
-    samples = new Uint8Array(analyser.fftSize);
-    meterSamples[channelId] = samples;
-  }
+  let samples = new Uint8Array(analyser.fftSize);
   analyser.getByteTimeDomainData(samples);
-  let sumSquares = 0;
+  let sum = 0;
   for (let i = 0; i < samples.length; i++) {
-    const amplitude = (samples[i] - 128) / 128;
-    sumSquares += amplitude * amplitude;
+    let amp = (samples[i] - 128) / 128;
+    sum += amp * amp;
   }
-  const rms = Math.sqrt(sumSquares / samples.length);
-  if (!Number.isFinite(rms) || rms <= 0.000001) return -60;
-  return Math.max(-60, Math.min(0, 20 * Math.log10(rms)));
+  let rms = Math.sqrt(sum / samples.length);
+  return rms > 0.000001 ? Math.max(-60, Math.min(0, 20 * Math.log10(rms))) : -60;
 }
 
-function updateVUMeter(id, analyser, active) {
+function updateVUMeter(id, analyser) {
   const meterEl = document.getElementById("meter-" + id);
   if (!meterEl) return;
-  const targetDb = active ? getMeterDb(analyser, id) : -60;
-  // Light smoothing reduces jitter while retaining quick attack on musical peaks.
-  const previousDb = Number.isFinite(meterDbState[id]) ? meterDbState[id] : -60;
-  const smoothing = targetDb > previousDb ? 0.62 : 0.24;
-  const db = previousDb + (targetDb - previousDb) * smoothing;
-  meterDbState[id] = db;
-  const clampedDb = Math.max(-60, Math.min(0, db));
-  const percent = ((clampedDb + 60) / 60) * 100;
-  meterEl.style.height = percent.toFixed(1) + "%";
-  meterEl.classList.toggle("meter-green", clampedDb < -9);
-  meterEl.classList.toggle("meter-yellow", clampedDb >= -9 && clampedDb < 0);
-  meterEl.classList.toggle("meter-red", clampedDb >= -0.5);
+  let db = getMeterDb(analyser);
+  let pct = ((db + 60) / 60) * 100;
+  meterEl.style.height = pct.toFixed(1) + "%";
 }
 
 function initRTACanvases() {
-  const targets = [
-    { key: "hpf", id: "hpf-graph-box", color: "rgba(0, 220, 255, 0.25)" },
-    { key: "peq", id: "peq-graph-box", color: "rgba(255, 0, 150, 0.25)" },
-    { key: "geq", id: "geq-container-box", color: "rgba(0, 255, 200, 0.25)" }
-  ];
-  targets.forEach(target => {
-    const host = document.getElementById(target.id);
+  ["hpf", "peq", "geq"].forEach(key => {
+    const host = document.getElementById(key === "geq" ? "geq-container-box" : key + "-graph-box");
     if (!host) return;
-    let canvas = host.querySelector("canvas.rta-canvas");
-    if (!canvas) {
-      canvas = document.createElement("canvas");
-      canvas.className = "rta-canvas";
-      canvas.setAttribute("aria-hidden", "true");
-      host.insertBefore(canvas, host.firstChild);
-    }
-    rtaCanvases[target.key] = { canvas, color: target.color, host };
-    resizeRTACanvas(rtaCanvases[target.key]);
+    let canvas = document.createElement("canvas");
+    canvas.className = "rta-canvas";
+    host.insertBefore(canvas, host.firstChild);
+    rtaCanvases[key] = { canvas, host };
   });
 }
 
-function resizeRTACanvas(item) {
-  if (!item || !item.canvas || !item.host) return null;
-  const canvas = item.canvas;
-  const rect = item.host.getBoundingClientRect();
-  const cssWidth = Math.max(1, rect.width);
-  const cssHeight = Math.max(1, rect.height);
-  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
-  const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
-  const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
-  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-    canvas.width = pixelWidth;
-    canvas.height = pixelHeight;
-  }
-  canvas.style.width = "100%";
-  canvas.style.height = "100%";
-  const ctx = canvas.getContext("2d");
-  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  item.cssWidth = cssWidth;
-  item.cssHeight = cssHeight;
-  item.dpr = dpr;
-  return { width: cssWidth, height: cssHeight, dpr };
-}
-
-function drawRTAGlowWave() {
-  const audioElement = document.getElementById("audio-player");
-  const playable = !!audioCtx && audioCtx.state === "running" && !!audioElement &&
-    !audioElement.paused && !audioElement.ended && !!rtaAnalyser && !!rtaFrequencyData;
-  if (playable) rtaAnalyser.getByteFrequencyData(rtaFrequencyData);
-
-  const rtaColorByPage = {
-    peq: "rgba(255, 0, 150, 0.2)",
-    hpf: "rgba(0, 220, 255, 0.2)",
-    geq: "rgba(0, 255, 120, 0.2)"
-  };
-
-  Object.entries(rtaCanvases).forEach(([key, item]) => {
-    if (!["peq", "hpf", "geq"].includes(currentProcessorTab)) {
-      const blockedCtx = item?.canvas?.getContext("2d");
-      if (blockedCtx && item.canvas) {
-        blockedCtx.clearRect(0, 0, item.canvas.width, item.canvas.height);
-        blockedCtx.beginPath();
-      }
-      if (item?.canvas) item.canvas.style.visibility = "hidden";
-      return;
-    }
-    if (item?.canvas) item.canvas.style.visibility = "visible";
-    const size = resizeRTACanvas(item);
-    const canvas = item.canvas;
-    const ctx = canvas.getContext("2d");
-    if (!ctx || !size) return;
-    const w = size.width;
-    const h = size.height;
-    ctx.clearRect(0, 0, w, h);
-    if (!Object.prototype.hasOwnProperty.call(rtaColorByPage, key) ||
-        !playable || w <= 1 || h <= 1) return;
-
-    // Base scale is derived from displayed CSS width; DPR is handled separately.
-    const baseScale = getGraphScaleFactor(item.host);
-    const sampleRate = audioCtx.sampleRate;
-    const binHz = sampleRate / rtaAnalyser.fftSize;
-    const minHz = 20;
-    const maxHz = Math.max(minHz, Math.min(20000, sampleRate / 2));
-    const plotLeft = 0;
-    const plotRight = w;
-    const plotTop = 0;
-    const plotBottom = h;
-    const plotWidth = Math.max(1, plotRight - plotLeft);
-    const plotHeight = Math.max(1, plotBottom - plotTop);
-    const points = [];
-    const count = Math.max(48, Math.min(160, Math.round(w / (5 * baseScale))));
-
-    for (let i = 0; i < count; i++) {
-      const t = i / (count - 1);
-      const hz = minHz * Math.pow(maxHz / minHz, t);
-      const bin = Math.max(0, Math.min(rtaFrequencyData.length - 1, Math.round(hz / binHz)));
-      const magnitude = rtaFrequencyData[bin] / 255;
-      points.push({
-        x: plotLeft + plotWidth * t,
-        y: plotBottom - magnitude * plotHeight
-      });
-    }
-
-    const color = rtaColorByPage[key];
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length - 1; i++) {
-      const midX = (points[i].x + points[i + 1].x) / 2;
-      const midY = (points[i].y + points[i + 1].y) / 2;
-      ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
-    }
-    const last = points[points.length - 1];
-    ctx.lineTo(last.x, last.y);
-    ctx.lineTo(plotRight, plotBottom);
-    ctx.lineTo(plotLeft, plotBottom);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    // Relative grid spacing scales with the current plot width and height.
-    ctx.shadowBlur = 0;
-    ctx.lineWidth = 0.75 * baseScale;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-    for (let i = 1; i < 4; i++) {
-      const x = plotLeft + plotWidth * (i / 4);
-      ctx.beginPath();
-      ctx.moveTo(x, plotTop);
-      ctx.lineTo(x, plotBottom);
-      ctx.stroke();
-    }
-    for (let i = 1; i < 4; i++) {
-      const y = plotTop + plotHeight * (i / 4);
-      ctx.beginPath();
-      ctx.moveTo(plotLeft, y);
-      ctx.lineTo(plotRight, y);
-      ctx.stroke();
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length - 1; i++) {
-      const midX = (points[i].x + points[i + 1].x) / 2;
-      const midY = (points[i].y + points[i + 1].y) / 2;
-      ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
-    }
-    ctx.lineTo(last.x, last.y);
-    ctx.strokeStyle = color;
-    ctx.shadowBlur = 12 * baseScale;
-    ctx.shadowColor = color;
-    ctx.lineWidth = 2.5 * baseScale;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.stroke();
-    ctx.restore();
-  });
-}
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
-
-  // RTA is allowed only on HPF, PEQ and GEQ. Gate, Compressor and Preamp
-  // must never render analyzer traces; clear and hide any RTA canvases there.
-  const rtaAllowed = ["peq", "hpf", "geq"].includes(currentProcessorTab);
-  if (rtaAllowed) {
-    drawRTAGlowWave();
-  } else {
-    Object.values(rtaCanvases).forEach(item => {
-      if (!item || !item.canvas) return;
-      const ctx = item.canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, item.canvas.width, item.canvas.height);
-        ctx.beginPath();
-      }
-      item.canvas.style.visibility = "hidden";
-    });
-  }
-  if (rtaAllowed) {
-    Object.values(rtaCanvases).forEach(item => {
-      if (item && item.canvas) item.canvas.style.visibility = "visible";
-    });
-  }
-
-  const audioElement = document.getElementById("audio-player");
-  const playable = !!audioCtx && !!audioElement && !audioElement.paused && !audioElement.ended;
-
-  channelIds.forEach(id => {
-    const analyser = analysers[id];
-    const outputGain = outputMeterGains && outputMeterGains[id];
-    const faderEl = document.getElementById("gain-" + id);
-    const faderDb = Number.parseFloat(faderEl?.value ?? "0");
-
-    if (outputGain && Number.isFinite(faderDb)) {
-      outputGain.gain.setTargetAtTime(
-        (muteStates[id] || onStates[id]) ? 0 : Math.pow(10, faderDb / 20),
-        audioCtx.currentTime,
-        0.015
-      );
-    }
-
-    // Render every channel's meter every animation frame, never from fader position.
-    updateVUMeter(id, analyser, playable && !!analyser && !muteStates[id] && !onStates[id]);
-  });
+  channelIds.forEach(id => updateVUMeter(id, analysers[id]));
 }
 
 function initDLMD() {
-  try {
-    let savedName = localStorage.getItem("dlmd_name") || "DCX2496-PRO";
-    document.getElementById("dlmd-name").value = savedName;
-    document.getElementById("ip-display").textContent = savedName;
-  } catch (err) {}
-
-  // Bangun kontrol utama lebih dahulu. UI inti tidak boleh bergantung pada
-  // keberhasilan inisialisasi Canvas/RTA atau audio.
   buildMixerStrips();
-  updateSidebarForChannel(currentFocusedChannel || "ina");
+  updateSidebarForChannel("ina");
   buildGeqSliders();
-
-  // Listener kontrol dipasang hanya pada range fader yang sudah dibangun.
-  // Jika setup kontrol gagal, menu dan layout tetap tersedia.
-  try { initFaderThumbHitTesting(); }
-  catch (err) { console.error("Fader interaction setup failed; UI remains available.", err); }
-
-  // Setiap subsistem non-inti diisolasi agar error pada grafik/audio tidak
-  // menghentikan pembuatan menu dan fader mixer.
-  try {
-    initRTACanvases();
-    window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas), { passive: true });
-    if ("ResizeObserver" in window) {
-      const rtaResizeObserver = new ResizeObserver(() => {
-        Object.values(rtaCanvases).forEach(resizeRTACanvas);
-      });
-      Object.values(rtaCanvases).forEach(item => {
-        if (item.host) rtaResizeObserver.observe(item.host);
-      });
-    }
-  } catch (err) {
-    console.error("RTA/Canvas initialization failed; mixer UI remains available.", err);
-  }
-
-  try { initAudioPlayer(); }
-  catch (err) { console.error("Audio player initialization failed.", err); }
-
-  channelIds.forEach(id => {
-    const fader = document.getElementById("gain-" + id);
-    if (fader) {
-      dlmsState.channels[id].gain = Number(fader.value);
-      updateFaderLabel(id, fader.value);
-    }
-  });
-
-  try { initializePermanentDSPNodes(); }
-  catch (err) { console.error("DSP node initialization failed.", err); }
-  try { initInteractiveGraphs(); }
-  catch (err) { console.error("Interactive graph initialization failed.", err); }
-  try { initResponsiveGraphScaling(); }
-  catch (err) { console.error("Responsive graph scaling initialization failed.", err); }
-  try { enforceDSPNodePolicy("preamp"); }
-  catch (err) { console.error("DSP policy initialization failed.", err); }
-  try { focusChannel("ina"); }
-  catch (err) {
-    console.error("Initial channel focus failed; restoring processor menu.", err);
-    updateSidebarForChannel("ina");
-  }
-  setTimeout(syncFaderDimensions, 50);
-}
-
-function syncFaderDimensions() {
-  document.querySelectorAll('.vertical-fader').forEach(fader => {
-    const parentContainer = fader.closest('.vertical-slider-container');
-    if (parentContainer) {
-      const h = parentContainer.clientHeight;
-      if (h > 0) fader.style.width = h + 'px';
-    }
-  });
-}
-
-// Ukuran fader diselaraskan semula apabila orientasi/viewport berubah.
-let faderResizeFrame = 0;
-function scheduleResponsiveLayout() {
-  if (faderResizeFrame) cancelAnimationFrame(faderResizeFrame);
-  faderResizeFrame = requestAnimationFrame(() => {
-    faderResizeFrame = 0;
-    syncFaderDimensions();
-    document.querySelectorAll(".sq-graph-box svg, .eq-curve-box svg").forEach(svg => {
-      svg.style.width = "100%";
-      svg.style.height = "100%";
-    });
-  });
-}
-window.addEventListener("resize", scheduleResponsiveLayout, { passive: true });
-window.addEventListener("orientationchange", () => {
-  setTimeout(scheduleResponsiveLayout, 80);
-}, { passive: true });
-if ("ResizeObserver" in window) {
-  const responsiveObserver = new ResizeObserver(scheduleResponsiveLayout);
-  window.addEventListener("DOMContentLoaded", () => {
-    const target = document.querySelector(".app-container");
-    if (target) responsiveObserver.observe(target);
-  }, { once: true });
-}
-
-// Drag fader hanya boleh dimulai dari kepala/thumb yang sedang terlihat.
-// Pointer Events menyatukan mouse, sentuhan HP, dan stylus.
-let activeFaderIndex = null;
-let isDraggingFader = false;
-let activeFaderPointerId = null;
-
-function initFaderThumbHitTesting() {
-  // Isolasi: fader mixer dan fader GEQ dipilih sebagai dua kelompok terpisah.
-  // Tidak memasang listener pada canvas, tombol menu, strip induk, atau seluruh dokumen.
-  const groups = [
-    { selector: '#mixer-bank-container input.vertical-fader', kind: 'mixer' },
-    { selector: '#geq-sliders-wrapper input.geq-range', kind: 'geq' }
-  ];
-
-  groups.forEach(group => {
-    document.querySelectorAll(group.selector).forEach(fader => {
-      if (!(fader instanceof HTMLInputElement) || fader.dataset.thumbDragReady === '1') return;
-      fader.dataset.thumbDragReady = '1';
-      fader.dataset.thumbDragKind = group.kind;
-
-      fader.addEventListener('pointerdown', event => {
-      // Selalu cegah perilaku native range yang melompat saat track disentuh.
-      if (event.pointerType === 'mouse' && event.button !== 0) return;
-      const rect = fader.getBoundingClientRect();
-      const min = Number(fader.min || 0);
-      const max = Number(fader.max || 100);
-      const value = Number(fader.value);
-      const ratio = max > min ? (value - min) / (max - min) : 0;
-      // Range diputar -90deg: min berada di bawah, max di atas.
-      const thumbX = rect.left + rect.width / 2;
-      const thumbY = rect.bottom - ratio * rect.height;
-      const isGeq = fader.classList.contains('geq-range');
-      const hitX = isGeq ? 13 : 19;
-      const hitY = isGeq ? 13 : 19;
-      const onThumb = Math.abs(event.clientX - thumbX) <= hitX &&
-                      Math.abs(event.clientY - thumbY) <= hitY;
-
-      if (!onThumb) {
-        isDraggingFader = false;
-        activeFaderIndex = null;
-        activeFaderPointerId = null;
-        event.preventDefault();
-        return;
-      }
-
-      event.preventDefault();
-      isDraggingFader = true;
-      activeFaderIndex = fader;
-      activeFaderPointerId = event.pointerId;
-      try { fader.setPointerCapture(event.pointerId); } catch (err) {}
-      }, { passive: false });
-
-      fader.addEventListener('pointermove', event => {
-      if (!isDraggingFader || activeFaderIndex !== fader ||
-          activeFaderPointerId !== event.pointerId) return;
-      event.preventDefault();
-      const rect = fader.getBoundingClientRect();
-      if (!rect.height) return;
-      const min = Number(fader.min || 0);
-      const max = Number(fader.max || 100);
-      // Jaga jari di rentang track; tidak ada perubahan ketika drag belum aktif.
-      const ratio = Math.max(0, Math.min(1, (rect.bottom - event.clientY) / rect.height));
-      const step = Number(fader.step || 1);
-      let nextValue = min + ratio * (max - min);
-      if (Number.isFinite(step) && step > 0) nextValue = min + Math.round((nextValue - min) / step) * step;
-      nextValue = Math.max(min, Math.min(max, nextValue));
-      nextValue = Number(nextValue.toFixed(3));
-      if (Number(fader.value) === nextValue) return;
-      fader.value = String(nextValue);
-      if (fader.classList.contains('geq-range')) {
-        const match = fader.id.match(/^geq-slider-(\d+)$/);
-        if (match) onGeqSliderChange(Number(match[1]), fader.value);
-      } else {
-        const id = fader.id.replace(/^gain-/, '');
-        setChannelGain(id, fader.value);
-        updateParam(id, fader.value);
-      }
-      }, { passive: false });
-
-      const resetDrag = event => {
-        if (activeFaderIndex !== fader ||
-            (event && activeFaderPointerId !== event.pointerId)) return;
-        isDraggingFader = false;
-        activeFaderIndex = null;
-        activeFaderPointerId = null;
-      };
-      fader.addEventListener('pointerup', resetDrag);
-      fader.addEventListener('pointercancel', resetDrag);
-      fader.addEventListener('lostpointercapture', resetDrag);
-    });
-  });
-}
-
-function updateFaderLabel(id, value) {
-  const label = document.getElementById("val-" + id);
-  if (label) label.textContent = Number(value).toFixed(1) + " dB";
-}
-
-function getEsp32BaseUrl() {
-  let ip = "192.168.4.1";
-  try { ip = (localStorage.getItem("dlmd_esp32_ip") || ip).trim(); } catch (err) {}
-  ip = ip.replace(/^https?:\/\//i, "").replace(/\/$/, "");
-  return "http://" + ip;
-}
-
-function updateParam(id, value) {
-  const url = getEsp32BaseUrl() + "/update?ch=" + encodeURIComponent(id) + "&val=" + encodeURIComponent(value);
-  clearTimeout(sendTimers[id]);
-  sendTimers[id] = setTimeout(() => { sendDeviceCommand(url); }, 20);
-}
-
-function sendDeviceCommand(pathOrUrl) {
-  const url = /^https?:\/\//i.test(pathOrUrl) ? pathOrUrl : getEsp32BaseUrl() + pathOrUrl;
-  fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(() => {});
-}
-
-function toggleMute(id, evt) {
-  if (evt) evt.stopPropagation();
-  muteStates[id] = !muteStates[id];
-  const muted = muteStates[id];
-  document.getElementById("mute-" + id)?.classList.toggle("muted", muted);
-  sendDeviceCommand("/mute?ch=" + encodeURIComponent(id) + "&state=" + (muted ? "1" : "0"));
-}
-
-function toggleOn(id, evt) {
-  if (evt) evt.stopPropagation();
-  onStates[id] = !onStates[id];
-  const isOff = onStates[id];
-  document.getElementById("on-" + id)?.classList.toggle("off", isOff);
-  sendDeviceCommand("/power?ch=" + encodeURIComponent(id) + "&state=" + (isOff ? "0" : "1"));
+  initRTACanvases();
+  initAudioPlayer();
+  initializePermanentDSPNodes();
+  initInteractiveGraphs();
+  focusChannel("ina");
 }
 
 function switchTab(tabName, clickedButton) {
   ["mixer", "settings"].forEach(name => {
     const panel = document.getElementById("panel-" + name);
-    if (panel) {
-      panel.classList.toggle("active-panel", name === tabName);
-      panel.style.display = (name === tabName) ? "flex" : "none";
-    }
+    if (panel) panel.classList.toggle("active-panel", name === tabName);
   });
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   if (clickedButton) clickedButton.classList.add("active");
-  if (tabName === 'mixer') setTimeout(syncFaderDimensions, 20);
 }
 
 function saveConnectionSettings() {
-  const deviceName = document.getElementById("dlmd-name")?.value.trim() || "DCX2496-PRO";
-  localStorage.setItem("dlmd_name", deviceName);
-  document.getElementById("ip-display").textContent = deviceName;
-  alert("Pengaturan Berhasil Disimpan!\nNama Perangkat/SSID Baru: " + deviceName);
+  const name = document.getElementById("dlmd-name")?.value.trim() || "DCX2496-PRO";
+  localStorage.setItem("dlmd_name", name);
+  document.getElementById("ip-display").textContent = name;
+  alert("Pengaturan Berhasil Disimpan!");
+}
+
+function updateFaderLabel(id, val) {
+  const lbl = document.getElementById("val-" + id);
+  if (lbl) lbl.textContent = Number(val).toFixed(1) + " dB";
+}
+
+function updateParam(id, val) {
+  clearTimeout(sendTimers[id]);
+  sendTimers[id] = setTimeout(() => {}, 20);
+}
+
+function toggleMute(id, evt) {
+  if (evt) evt.stopPropagation();
+  muteStates[id] = !muteStates[id];
+  document.getElementById("mute-" + id)?.classList.toggle("muted", muteStates[id]);
+}
+
+function toggleOn(id, evt) {
+  if (evt) evt.stopPropagation();
+  onStates[id] = !onStates[id];
+  document.getElementById("on-" + id)?.classList.toggle("off", onStates[id]);
 }
 
 if (document.readyState === "loading") {

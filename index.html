@@ -1811,6 +1811,30 @@ channelIds.forEach(id => {
   channelGeqValues[id] = new Array(geqFrequencies.length).fill(0);
 });
 
+const dlmsState = {
+  activeChannel: "ina",
+  channels: Object.fromEntries(channelIds.map(id => [id, {
+    id, gain: 0, processor: channelProcessors[id],
+    compressor: channelCompressors[id], geq: channelGeqValues[id]
+  }]))
+};
+function getChannelState(id = dlmsState.activeChannel) {
+  return channelIds.includes(id) ? dlmsState.channels[id] : null;
+}
+function redrawActiveVisuals() {
+  try { updateActiveProcessorUI(); } catch (err) { console.error("Processor redraw failed", err); }
+  try { if (typeof drawRTAGlowWave === "function" && ["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave(); } catch (err) {}
+}
+function setChannelGain(id, value) {
+  const state = getChannelState(id), num = Number(value);
+  if (!state || !Number.isFinite(num)) return;
+  state.gain = num;
+  const fader = document.getElementById("gain-" + id);
+  if (fader && Number(fader.value) !== num) fader.value = String(num);
+  updateFaderLabel(id, num);
+  if (id === dlmsState.activeChannel) redrawActiveVisuals();
+}
+
 function isInputChannel(id) {
   return id.startsWith("in");
 }
@@ -1862,9 +1886,8 @@ function buildMixerStrips() {
     const fader = document.getElementById("gain-" + id);
     if (fader) {
       fader.addEventListener("input", () => {
-        updateFaderLabel(id, fader.value);
+        setChannelGain(id, fader.value);
         updateParam(id, fader.value);
-        if (id === currentFocusedChannel) updateActiveProcessorUI();
       });
     }
   });
@@ -1936,25 +1959,30 @@ function updateGeqUI() {
   });
 }
 
-function onGeqSliderChange(index, val) {
-  if (!channelGeqValues[currentFocusedChannel]) {
-    channelGeqValues[currentFocusedChannel] = new Array(geqFrequencies.length).fill(0);
-  }
+function onGeqSliderChange(index, val, channelId = dlmsState.activeChannel) {
+  const state = getChannelState(channelId);
+  if (!state || index < 0 || index >= geqFrequencies.length) return;
   let numVal = parseFloat(val);
-  channelGeqValues[currentFocusedChannel][index] = numVal;
+  if (!Number.isFinite(numVal)) return;
+  state.geq[index] = numVal;
   
   const valLbl = document.getElementById(`geq-val-${index}`);
   if (valLbl) {
     let formatted = numVal.toFixed(1);
     valLbl.textContent = (numVal > 0 ? "+" : "") + formatted;
   }
-  updateParam(`geq_${index}`, val);
+  updateParam(`geq_${channelId}_${index}`, numVal);
+  if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
 }
 
 function resetGEQ() {
-  channelGeqValues[currentFocusedChannel] = new Array(geqFrequencies.length).fill(0);
+  const channelId = dlmsState.activeChannel, state = getChannelState(channelId);
+  if (!state) return;
+  state.geq = new Array(geqFrequencies.length).fill(0);
+  channelGeqValues[channelId] = state.geq;
   updateGeqUI();
-  updateParam('geq_reset', '0');
+  updateParam(`geq_${channelId}_reset`, '0');
+  redrawActiveVisuals();
 }
 
 const DSP_NODE_POLICY = Object.freeze({
@@ -2228,8 +2256,9 @@ function updateActiveProcessorUI() {
 
 function initKnobDrag(e, paramKey, min, max, step) {
   e.preventDefault();
+  const channelId = dlmsState.activeChannel;
   let startY = e.clientY;
-  let startVal = getParamValue(paramKey);
+  let startVal = getParamValue(paramKey, channelId);
 
   function onPointerMove(moveEvent) {
     let deltaY = startY - moveEvent.clientY;
@@ -2241,9 +2270,9 @@ function initKnobDrag(e, paramKey, min, max, step) {
     if (step >= 1) newVal = Math.round(newVal);
     else newVal = Number(newVal.toFixed(1));
 
-    setParamValue(paramKey, newVal);
-    updateActiveProcessorUI();
-    updateParam(paramKey + "_" + currentFocusedChannel, newVal);
+    setParamValue(paramKey, newVal, channelId);
+    if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
+    updateParam(paramKey + "_" + channelId, newVal);
   }
 
   function onPointerUp() {
@@ -2255,9 +2284,11 @@ function initKnobDrag(e, paramKey, min, max, step) {
   window.addEventListener("pointerup", onPointerUp);
 }
 
-function getParamValue(key) {
-  let c = channelCompressors[currentFocusedChannel];
-  let p = channelProcessors[currentFocusedChannel];
+function getParamValue(key, channelId = dlmsState.activeChannel) {
+  const state = getChannelState(channelId);
+  if (!state) return 0;
+  let c = state.compressor;
+  let p = state.processor;
   if (key === 'active-atk') return c.atk;
   if (key === 'active-rel') return c.rel;
   if (key === 'active-ratio') return c.ratio;
@@ -2279,16 +2310,15 @@ function getParamValue(key) {
   if (key === 'peq-freq') return p.peq_freq;
   if (key === 'peq-gain') return p.peq_gain;
   if (key === 'peq-q') return p.peq_q;
-  if (key === 'master-gain') {
-    const f = document.getElementById("gain-" + currentFocusedChannel);
-    return f ? parseFloat(f.value) : 0;
-  }
+  if (key === 'master-gain') return state.gain;
   return 0;
 }
 
-function setParamValue(key, val) {
-  let c = channelCompressors[currentFocusedChannel];
-  let p = channelProcessors[currentFocusedChannel];
+function setParamValue(key, val, channelId = dlmsState.activeChannel) {
+  const state = getChannelState(channelId);
+  if (!state) return;
+  let c = state.compressor;
+  let p = state.processor;
   if (key === 'active-atk') c.atk = val;
   else if (key === 'active-rel') c.rel = val;
   else if (key === 'active-ratio') c.ratio = val;
@@ -2324,11 +2354,10 @@ function setParamValue(key, val) {
     if (p.peq_bands[p.peq_band - 1]) p.peq_bands[p.peq_band - 1].q = p.peq_q;
   }
   else if (key === 'master-gain') {
-    const mainFader = document.getElementById("gain-" + currentFocusedChannel);
-    if (mainFader) {
-      mainFader.value = val;
-      updateFaderLabel(currentFocusedChannel, val);
-    }
+    state.gain = Number(val);
+    const mainFader = document.getElementById("gain-" + channelId);
+    if (mainFader) mainFader.value = String(val);
+    updateFaderLabel(channelId, val);
   }
 }
 
@@ -2359,6 +2388,7 @@ function initInteractiveGraphs() {
     let isDragging = false;
     let activeDragNode = null;
     let activePointerId = null;
+    let activeChannelId = null;
     let pendingMove = null;
     let graphFrame = 0;
 
@@ -2392,7 +2422,7 @@ function initInteractiveGraphs() {
         const latest = pendingMove;
         pendingMove = null;
         if (isDragging && latest && latest.pointerId === activePointerId) {
-          handleGraphMove(latest, tab, activeDragNode, box, svg);
+          handleGraphMove(latest, tab, activeDragNode, box, svg, activeChannelId);
         }
       });
     }
@@ -2401,7 +2431,7 @@ function initInteractiveGraphs() {
       if (graphFrame) cancelAnimationFrame(graphFrame);
       graphFrame = 0;
       pendingMove = null;
-      if (e && isDragging) handleGraphMove(e, tab, activeDragNode, box, svg);
+      if (e && isDragging) handleGraphMove(e, tab, activeDragNode, box, svg, activeChannelId);
     }
 
     function onPointerDown(e) {
@@ -2453,6 +2483,7 @@ function initInteractiveGraphs() {
       if (!pickedNode) return;
       e.preventDefault();
       activeDragNode = pickedNode;
+      activeChannelId = dlmsState.activeChannel;
       isDragging = true;
       activePointerId = e.pointerId;
       try { box.setPointerCapture(e.pointerId); } catch (err) {}
@@ -2474,6 +2505,7 @@ function initInteractiveGraphs() {
       isDragging = false;
       activeDragNode = null;
       activePointerId = null;
+      activeChannelId = null;
       try { if (box.hasPointerCapture(e.pointerId)) box.releasePointerCapture(e.pointerId); } catch (err) {}
     }
 
@@ -2485,7 +2517,7 @@ function initInteractiveGraphs() {
   });
 }
 
-function handleGraphMove(e, tab, dragNode, box, svg) {
+function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activeChannel) {
   const graph = svg || (box && box.querySelector("svg"));
   if (!graph) return;
 
@@ -2506,26 +2538,27 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
   const svgY = Math.max(0, Math.min(height, local.y));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
 
-  const p = channelProcessors[currentFocusedChannel];
-  const c = channelCompressors[currentFocusedChannel];
-  if (!p || !c) return;
+  const state = getChannelState(channelId);
+  if (!state) return;
+  const p = state.processor;
+  const c = state.compressor;
 
   if (tab === "preamp" && currentProcessorTab === "preamp") {
     // Dragging the horizontal preamp line changes gain directly; redraw from the same state.
     const mappedGain = -10 + (1 - svgY / height) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
-    updateParam("pre-gain_" + currentFocusedChannel, p.pre_gain);
+    updateParam("pre-gain_" + channelId, p.pre_gain);
   } else if (tab === "comp" && currentProcessorTab === "comp") {
     // X controls Threshold (-60..0 dB); Y is intentionally free to move without
     // creating a second node. Redraw updates the node and THR knob immediately.
     const mappedThr = -60 + normalizedX * 60;
     c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
-    updateParam("active-thr_" + currentFocusedChannel, c.thr);
-    updateActiveProcessorUI();
+    updateParam("active-thr_" + channelId, c.thr);
+    if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
   } else if (tab === "preamp") {
     const mappedGain = -10 + (1 - svgY / height) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
-    updateParam("pre-gain_" + currentFocusedChannel, p.pre_gain);
+    updateParam("pre-gain_" + channelId, p.pre_gain);
   } else if (tab === "hpf") {
     const isLPF = dragNode === "lpf";
     const minFreq = isLPF ? 100 : 20;
@@ -2534,17 +2567,17 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
     if (!Number.isFinite(mappedFreq) || mappedFreq <= 0) return;
     if (isLPF) {
       p.lpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-      updateParam("lpf-freq_" + currentFocusedChannel, p.lpf_freq);
+      updateParam("lpf-freq_" + channelId, p.lpf_freq);
     } else {
       p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-      updateParam("hpf-freq_" + currentFocusedChannel, p.hpf_freq);
+      updateParam("hpf-freq_" + channelId, p.hpf_freq);
     }
   } else if (tab === "gate") {
     // Free/diagonal drag: combine horizontal input-level and vertical output-level coordinates.
     const normalizedY = Math.max(0, Math.min(1, 1 - (svgY / height)));
     const mappedThr = -80 + (((normalizedX + normalizedY) / 2) * 80);
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
-    updateParam("gate-thr_" + currentFocusedChannel, p.gate_thr);
+    updateParam("gate-thr_" + channelId, p.gate_thr);
   } else if (tab === "peq") {
     const bandIndex = Math.max(0, Math.min(4, (Number(dragNode) || p.peq_band) - 1));
     p.peq_band = bandIndex + 1;
@@ -2556,16 +2589,18 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
     band.freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
     band.gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
     p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q;
-    updateParam("peq-band_" + currentFocusedChannel, p.peq_band);
-    updateParam("peq-freq_" + currentFocusedChannel, p.peq_freq);
-    updateParam("peq-gain_" + currentFocusedChannel, p.peq_gain);
+    updateParam("peq-band_" + channelId, p.peq_band);
+    updateParam("peq-freq_" + channelId, p.peq_freq);
+    updateParam("peq-gain_" + channelId, p.peq_gain);
   }
 
   updateActiveProcessorUI();
 }
 
 function focusChannel(id) {
+  if (!channelIds.includes(id)) return;
   currentFocusedChannel = id;
+  dlmsState.activeChannel = id;
   channelIds.forEach(ch => {
     document.getElementById("strip-" + ch)?.classList.remove("focused");
   });
@@ -2914,7 +2949,10 @@ function initDLMD() {
 
   channelIds.forEach(id => {
     const fader = document.getElementById("gain-" + id);
-    if (fader) updateFaderLabel(id, fader.value);
+    if (fader) {
+      dlmsState.channels[id].gain = Number(fader.value);
+      updateFaderLabel(id, fader.value);
+    }
   });
 
   try { initializePermanentDSPNodes(); }
@@ -3040,9 +3078,8 @@ function initFaderThumbHitTesting() {
         if (match) onGeqSliderChange(Number(match[1]), fader.value);
       } else {
         const id = fader.id.replace(/^gain-/, '');
-        updateFaderLabel(id, fader.value);
+        setChannelGain(id, fader.value);
         updateParam(id, fader.value);
-        if (id === currentFocusedChannel) updateActiveProcessorUI();
       }
       }, { passive: false });
 

@@ -424,14 +424,16 @@
       box-shadow: none;
     }
 
-    /* Fixed 5:3 graph viewport: wide tablets must not stretch curves vertically. */
+    /* Match the graph SVG viewBox (270:180 = 3:2) to prevent wide-screen flattening. */
     .sq-graph-box,
     #gate-graph-box,
     #editor-graph-box {
+      box-sizing: border-box;
+      position: relative;
       width: 100%;
       height: auto !important;
-      aspect-ratio: 5 / 3;
-      max-height: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: min(380px, 100%);
       min-height: 0;
       flex: 0 1 auto;
       align-self: center;
@@ -1569,7 +1571,7 @@
           <!-- HALAMAN 1: PREAMP / GAIN -->
           <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="preamp-graph-box">
-              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="preampGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
@@ -1625,7 +1627,7 @@
           <!-- HALAMAN 2: HPF / CROSSOVER -->
           <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="hpf-graph-box">
-              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="hpfGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
@@ -1656,7 +1658,7 @@
           <!-- HALAMAN 3: GATE -->
           <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="gate-graph-box">
-              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.68"/>
@@ -1683,7 +1685,7 @@
           <!-- HALAMAN 4: PEQ -->
           <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="peq-graph-box">
-              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.68"/>
@@ -1723,7 +1725,7 @@
           <!-- HALAMAN 6: COMPRESSOR / LIMITER -->
           <div id="proc-page-comp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="editor-graph-box">
-              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(255,200,0)" stop-opacity="0.68"/>
@@ -2005,7 +2007,7 @@ function buildMixerStrips() {
           <div class="ch-sublabel" ${isOut ? 'style="color:#fef08a;"' : ''}>${sub}</div>
         </div>
         <div class="eq-curve-box">
-          <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+          <svg viewBox="0 0 100 40" preserveAspectRatio="xMidYMid meet">
             <line x1="0" y1="20" x2="100" y2="20" class="mini-grid"/>
             <path id="mini-curve-${id}" class="mini-path" d="M 0 35 L 60 20 L 100 20"/>
           </svg>
@@ -3109,20 +3111,26 @@ function resizeRTACanvas(item) {
   const canvas = item.canvas;
   const rect = item.host.getBoundingClientRect();
   const cssWidth = Math.max(1, rect.width);
-  // The host owns the fixed aspect ratio; read its final measured height rather
-  // than stretching the canvas to the full available landscape viewport.
+  // Read the final measured host dimensions; never derive height from viewport width.
   const cssHeight = Math.max(1, rect.height);
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
   const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
-  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-    canvas.width = pixelWidth;
-    canvas.height = pixelHeight;
-  }
+
+  // Assigning canvas.width/height clears its buffer and resets the context transform.
+  // Only resize when needed, then synchronize the drawing transform with the actual
+  // backing-buffer/CSS-size ratio so fractional CSS pixels cannot stretch the RTA.
+  if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+  if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
   canvas.style.width = "100%";
   canvas.style.height = "100%";
+
   const ctx = canvas.getContext("2d");
-  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (ctx) {
+    ctx.resetTransform();
+    ctx.setTransform(pixelWidth / cssWidth, 0, 0, pixelHeight / cssHeight, 0, 0);
+    ctx.beginPath();
+  }
   item.cssWidth = cssWidth;
   item.cssHeight = cssHeight;
   item.dpr = dpr;

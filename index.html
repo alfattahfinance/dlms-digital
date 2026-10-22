@@ -3303,7 +3303,8 @@ function initDLMD() {
 
   try { initializePermanentDSPNodes(); }
   catch (err) { console.error("DSP node initialization failed.", err); }
-  try { preventDSPGraphPinchZoom(); }\n  catch (err) { console.error("DSP graph zoom guard failed.", err); }\n  try { initInteractiveGraphs(); }
+  try { preventDSPGraphPinchZoom(); }
+  catch (err) { console.error("DSP graph zoom guard failed.", err); }\n  try { initInteractiveGraphs(); }
   catch (err) { console.error("Interactive graph initialization failed.", err); }
   try { initResponsiveGraphScaling(); }
   catch (err) { console.error("Responsive graph scaling initialization failed.", err); }

@@ -3004,7 +3004,7 @@ function initFaderThumbHitTesting() {
       if (Number(fader.value) === nextValue) return;
       fader.value = String(nextValue);
       if (fader.classList.contains('geq-range')) {
-        const match = fader.id.match(/^geq-slider-(\\d+)$/);
+        const match = fader.id.match(/^geq-slider-(\d+)$/);
         if (match) onGeqSliderChange(Number(match[1]), fader.value);
       } else {
         const id = fader.id.replace(/^gain-/, '');

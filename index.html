@@ -2227,16 +2227,18 @@ function updateActiveProcessorUI() {
       gateCurvePath.setAttribute("fill", "none");
       gateCurvePath.style.fill = "none";
     }
-    // Gate uses a transfer line only. Disable the area fill here because its
-    // large closed polygon appears as a triangular leak on narrow/mobile screens.
+    // Restore a separate gradient area under the Gate curve. Only the curve
+    // path is stroked; the closed fill polygon has no stroke, so its closing
+    // edges cannot create stray neon lines.
     const gateFillPath = document.getElementById("gate-fill-path");
     if (gateFillPath) {
-      gateFillPath.setAttribute("d", "");
-      gateFillPath.setAttribute("fill", "none");
+      gateFillPath.setAttribute("d", `${gateCurveD} L 298 188 L 30 188 Z`);
+      gateFillPath.setAttribute("fill", "url(#gateGrad)");
+      gateFillPath.setAttribute("fill-rule", "nonzero");
       gateFillPath.setAttribute("stroke", "none");
-      gateFillPath.style.fill = "none";
+      gateFillPath.style.fill = "url(#gateGrad)";
       gateFillPath.style.stroke = "none";
-      gateFillPath.style.opacity = "0";
+      gateFillPath.style.opacity = "0.28";
       gateFillPath.style.pointerEvents = "none";
     }
   } else if (currentProcessorTab === 'peq') {

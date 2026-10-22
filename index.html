@@ -2214,9 +2214,24 @@ function updateActiveProcessorUI() {
     const gy = v => 10 + (0 - Math.max(-60, Math.min(0, v))) / 60 * 180;
     const gX = gx(gateThr), gY = gy(Math.max(-80, gateThr + gateRange));
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
-    const gateD = `M 30 ${gy(-60)} L ${gX.toFixed(2)} ${gy(-60)} L ${gX.toFixed(2)} ${gY.toFixed(2)} L 300 ${gy(0)}`;
-    document.getElementById("gate-curve-path")?.setAttribute("d", gateD);
-    document.getElementById("gate-fill-path")?.setAttribute("d", gateD + " L 300 190 L 30 190 Z");
+    // Keep the neon transfer curve and its translucent area as independent SVG paths.
+    // The fill path closes only along the bottom edge and is never stroked.
+    const gateCurveD = `M 30 ${gy(-60)} L ${gX.toFixed(2)} ${gy(-60)} L ${gX.toFixed(2)} ${gY.toFixed(2)} L 300 ${gy(0)}`;
+    const gateFillD = `${gateCurveD} L 300 190 L 30 190 Z`;
+    const gateCurvePath = document.getElementById("gate-curve-path");
+    if (gateCurvePath) {
+      gateCurvePath.setAttribute("d", gateCurveD);
+      gateCurvePath.setAttribute("fill", "none");
+      gateCurvePath.style.fill = "none";
+    }
+    const gateFillPath = document.getElementById("gate-fill-path");
+    if (gateFillPath) {
+      gateFillPath.setAttribute("d", gateFillD);
+      gateFillPath.setAttribute("fill-rule", "nonzero");
+      gateFillPath.setAttribute("stroke", "none");
+      gateFillPath.style.stroke = "none";
+      gateFillPath.style.pointerEvents = "none";
+    }
   } else if (currentProcessorTab === 'peq') {
     const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
     if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }

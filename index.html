@@ -467,25 +467,28 @@
     }
 
     .geq-sliders-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: relative;
       height: 100%;
       flex: 1;
       min-width: 0;
-      gap: 1px;
-      padding: 0 1px;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0;
+      --geq-band-width: 3.05%;
     }
 
     .geq-slider-col {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: var(--geq-band-width);
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100%;
-      flex: 1;
-      min-width: 12px;
-      max-width: 18px;
+      min-width: 0;
+      max-width: none;
       flex-shrink: 0;
+      transform: translateX(-50%);
     }
 
     .geq-slider-track {
@@ -504,7 +507,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 90px;
+      width: min(34vh, 250px);
       height: 12px;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
@@ -1754,10 +1757,11 @@ let currentProcessorTab = "preamp";
 const channelIds = ["ina", "inb", "out1", "out2", "out3", "out4"];
 const channelNames = { "ina": "In A", "inb": "In B", "out1": "Out 1 (Sub)", "out2": "Out 2 (Low)", "out3": "Out 3 (Mid)", "out4": "Out 4 (High)" };
 
+// ISO 31-band center frequencies, Hz labels from 20 Hz to 20 kHz.
 const geqFrequencies = [
-  "31", "40", "50", "63", "80", "100", "125", "160", "200", "250", 
-  "315", "400", "500", "630", "800", "1k", "1k25", "1k6", "2k", "2k5", 
-  "3k15", "4k", "5k", "6k3", "8k", "10k", "12k5", "16k"
+  "20", "25", "31.5", "40", "50", "63", "80", "100", "125", "160",
+  "200", "250", "315", "400", "500", "630", "800", "1k", "1k25", "1k6",
+  "2k", "2k5", "3k15", "4k", "5k", "6k3", "8k", "10k", "12k5", "16k", "20k"
 ];
 
 let muteStates = {};
@@ -1872,24 +1876,33 @@ function updateSidebarForChannel(id) {
   sidebar.innerHTML = html;
 }
 
+function geqFrequencyHz(label) {
+  const value = String(label).toLowerCase();
+  if (value.endsWith("k")) return parseFloat(value) * 1000;
+  if (value.includes("k")) return parseFloat(value.replace("k", ".")) * 1000;
+  return parseFloat(value);
+}
+
 function buildGeqSliders() {
   const wrapper = document.getElementById("geq-sliders-wrapper");
   if (!wrapper) return;
-  let html = '';
-  geqFrequencies.forEach((freq, idx) => {
-    html += `
-      <div class="geq-slider-col">
+  const minLog = Math.log10(20);
+  const maxLog = Math.log10(20000);
+  wrapper.innerHTML = geqFrequencies.map((freq, idx) => {
+    const hz = geqFrequencyHz(freq);
+    const xPercent = ((Math.log10(hz) - minLog) / (maxLog - minLog)) * 100;
+    return `
+      <div class="geq-slider-col" style="left:${xPercent}%;" data-frequency="${hz}">
         <div class="geq-val-label" id="geq-val-${idx}">0.0</div>
         <div class="geq-slider-track">
-          <input type="range" class="geq-range" id="geq-slider-${idx}" min="-12" max="12" step="0.5" value="0" oninput="onGeqSliderChange(${idx}, this.value)">
+          <input type="range" class="geq-range" id="geq-slider-${idx}" min="-12" max="12" step="0.5" value="0" aria-label="GEQ ${freq} Hz" oninput="onGeqSliderChange(${idx}, this.value)">
         </div>
         <div class="geq-freq-label-wrapper">
           <div class="geq-freq-label">${freq}</div>
         </div>
       </div>
     `;
-  });
-  wrapper.innerHTML = html;
+  }).join("");
 }
 
 function updateGeqUI() {

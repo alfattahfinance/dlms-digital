@@ -1991,7 +1991,7 @@ function initializePermanentDSPNodes() {
 }
 
 function enforceDSPNodePolicy(pageName) {
-  initializePermanentDSPNodes();
+  initFaderThumbHitTesting();\n  initializePermanentDSPNodes();
   const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
   Object.keys(DSP_NODE_POLICY).forEach(page => {
     (DSP_NODE_POLICY[page] || []).forEach(id => {
@@ -2940,6 +2940,91 @@ if ("ResizeObserver" in window) {
     const target = document.querySelector(".app-container");
     if (target) responsiveObserver.observe(target);
   }, { once: true });
+}
+
+// Drag fader hanya boleh dimulai dari kepala/thumb yang sedang terlihat.
+// Pointer Events menyatukan mouse, sentuhan HP, dan stylus.
+let activeFaderIndex = null;
+let isDraggingFader = false;
+let activeFaderPointerId = null;
+
+function initFaderThumbHitTesting() {
+  const selectors = ['input.vertical-fader', 'input.geq-range'];
+  document.querySelectorAll(selectors.join(',')).forEach(fader => {
+    if (fader.dataset.thumbDragReady === '1') return;
+    fader.dataset.thumbDragReady = '1';
+
+    fader.addEventListener('pointerdown', event => {
+      // Selalu cegah perilaku native range yang melompat saat track disentuh.
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      const rect = fader.getBoundingClientRect();
+      const min = Number(fader.min || 0);
+      const max = Number(fader.max || 100);
+      const value = Number(fader.value);
+      const ratio = max > min ? (value - min) / (max - min) : 0;
+      // Range diputar -90deg: min berada di bawah, max di atas.
+      const thumbX = rect.left + rect.width / 2;
+      const thumbY = rect.bottom - ratio * rect.height;
+      const isGeq = fader.classList.contains('geq-range');
+      const hitX = isGeq ? 13 : 19;
+      const hitY = isGeq ? 13 : 19;
+      const onThumb = Math.abs(event.clientX - thumbX) <= hitX &&
+                      Math.abs(event.clientY - thumbY) <= hitY;
+
+      if (!onThumb) {
+        isDraggingFader = false;
+        activeFaderIndex = null;
+        activeFaderPointerId = null;
+        event.preventDefault();
+        return;
+      }
+
+      event.preventDefault();
+      isDraggingFader = true;
+      activeFaderIndex = fader;
+      activeFaderPointerId = event.pointerId;
+      try { fader.setPointerCapture(event.pointerId); } catch (err) {}
+    }, { passive: false });
+
+    fader.addEventListener('pointermove', event => {
+      if (!isDraggingFader || activeFaderIndex !== fader ||
+          activeFaderPointerId !== event.pointerId) return;
+      event.preventDefault();
+      const rect = fader.getBoundingClientRect();
+      if (!rect.height) return;
+      const min = Number(fader.min || 0);
+      const max = Number(fader.max || 100);
+      // Jaga jari di rentang track; tidak ada perubahan ketika drag belum aktif.
+      const ratio = Math.max(0, Math.min(1, (rect.bottom - event.clientY) / rect.height));
+      const step = Number(fader.step || 1);
+      let nextValue = min + ratio * (max - min);
+      if (Number.isFinite(step) && step > 0) nextValue = min + Math.round((nextValue - min) / step) * step;
+      nextValue = Math.max(min, Math.min(max, nextValue));
+      nextValue = Number(nextValue.toFixed(3));
+      if (Number(fader.value) === nextValue) return;
+      fader.value = String(nextValue);
+      if (fader.classList.contains('geq-range')) {
+        const match = fader.id.match(/^geq-slider-(\\d+)$/);
+        if (match) onGeqSliderChange(Number(match[1]), fader.value);
+      } else {
+        const id = fader.id.replace(/^gain-/, '');
+        updateFaderLabel(id, fader.value);
+        updateParam(id, fader.value);
+        if (id === currentFocusedChannel) updateActiveProcessorUI();
+      }
+    }, { passive: false });
+
+    const resetDrag = event => {
+      if (activeFaderIndex !== fader ||
+          (event && activeFaderPointerId !== event.pointerId)) return;
+      isDraggingFader = false;
+      activeFaderIndex = null;
+      activeFaderPointerId = null;
+    };
+    fader.addEventListener('pointerup', resetDrag);
+    fader.addEventListener('pointercancel', resetDrag);
+    fader.addEventListener('lostpointercapture', resetDrag);
+  });
 }
 
 function updateFaderLabel(id, value) {

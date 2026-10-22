@@ -390,7 +390,7 @@
      * The graph box itself clips all content at its responsive border box.
      */
     .sq-graph-box {
-      /* Use WebKit's stable rectangular clip; avoid overflow:clip on iOS Safari. */
+      /* Transparent graph viewport: no extra card/panel behind the Gate SVG. */
       overflow: hidden;
       contain: none;
       isolation: auto;
@@ -398,7 +398,23 @@
       -webkit-transform: none;
       backface-visibility: visible;
       -webkit-backface-visibility: visible;
-      background-color: transparent;
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none;
+      outline: none;
+    }
+    #gate-graph-box {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    #gate-graph-box > svg {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 0;
+      box-shadow: none;
     }
 
     .sq-graph-box svg {

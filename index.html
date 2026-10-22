@@ -335,7 +335,8 @@
     }
 
     .sq-curve-fill {
-      opacity: .28;
+      /* Keep SVG gradient fills vivid beneath the curve stroke on mobile browsers. */
+      opacity: 1;
       pointer-events: none;
       stroke: none;
     }
@@ -1421,7 +1422,7 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="preampGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.45"/>
+                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(0,220,255)" stop-opacity="0"/>
                   </linearGradient>
 
@@ -1477,7 +1478,7 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="hpfGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.45"/>
+                    <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(0,220,255)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
@@ -1508,7 +1509,7 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.45"/>
+                    <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(0,255,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
@@ -1535,7 +1536,7 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.45"/>
+                    <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(255,0,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
@@ -1575,7 +1576,7 @@
               <svg viewBox="0 0 320 210" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(255,200,0)" stop-opacity="0.45"/>
+                    <stop offset="0%" stop-color="rgb(255,200,0)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(255,200,0)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>

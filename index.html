@@ -1486,6 +1486,82 @@
       }
     }
 
+    /* RESTORE LAYOUT: keep the processor's right control panel and channel strips visible.
+       These are structural regions, not graph content; graph sizing must not collapse them. */
+    .touchscreen-console {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: stretch;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .tc-sidebar {
+      display: flex;
+      flex: 0 0 clamp(54px, 14vw, 100px);
+      min-width: 54px;
+      min-height: 0;
+    }
+    .tc-center-graph {
+      display: block;
+      flex: 1 1 0%;
+      min-width: 0;
+      min-height: 0;
+    }
+    .tc-right-knobs-panel {
+      display: flex;
+      flex: 0 0 clamp(76px, 23vw, 165px);
+      width: clamp(76px, 23vw, 165px);
+      min-width: 0;
+      min-height: 0;
+      visibility: visible;
+    }
+    .fader-workspace, #panel-mixer {
+      min-width: 0;
+      min-height: 0;
+    }
+    #panel-mixer.active-panel {
+      display: flex;
+      flex-direction: column;
+    }
+    #mixer-bank-container.mixer-bank {
+      display: flex;
+      flex: 1 1 0%;
+      width: 100%;
+      min-width: 0;
+      min-height: 155px;
+      visibility: visible;
+      overflow-x: auto;
+      overflow-y: hidden;
+      align-items: stretch;
+    }
+    #mixer-bank-container .channel-strip {
+      display: flex;
+      flex: 0 0 clamp(76px, 12vw, 150px);
+      min-width: 76px;
+      min-height: 0;
+      height: 100%;
+      visibility: visible;
+    }
+    @media (min-width: 761px) {
+      .tc-right-knobs-panel {
+        flex-basis: clamp(150px, 19vw, 220px);
+        width: clamp(150px, 19vw, 220px);
+      }
+      #mixer-bank-container .channel-strip {
+        flex: 1 0 0;
+        min-width: 0;
+      }
+    }
+    @media (max-width: 760px) and (orientation: portrait) {
+      .tc-right-knobs-panel {
+        flex-basis: clamp(76px, 23vw, 105px);
+        width: clamp(76px, 23vw, 105px);
+      }
+      #mixer-bank-container .channel-strip {
+        flex-basis: clamp(78px, 24vw, 105px);
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }

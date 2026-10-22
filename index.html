@@ -2051,8 +2051,11 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-gate-rel", p.gate_rel, 10, 1000);
 
     // Gate transfer curve: X=input dB (-80..0), Y=output dB (-80..0).
-    const gateThr = Math.max(-80, Math.min(0, Number(p.gate_thr) || -45));
-    const gateRange = Math.max(-60, Math.min(0, Number(p.gate_rng) || -40));
+    // Preserve exact zero values: using || here incorrectly replaced 0 dB with defaults.
+    const gateThrRaw = Number(p.gate_thr);
+    const gateRangeRaw = Number(p.gate_rng);
+    const gateThr = Math.max(-80, Math.min(0, Number.isFinite(gateThrRaw) ? gateThrRaw : -45));
+    const gateRange = Math.max(-60, Math.min(0, Number.isFinite(gateRangeRaw) ? gateRangeRaw : -40));
     const gx = v => 30 + (v + 80) / 80 * 270;
     const gy = v => 190 - (v + 80) / 80 * 150;
     const gX = gx(gateThr), gY = gy(Math.max(-80, gateThr + gateRange));
@@ -2136,8 +2139,11 @@ function updateActiveProcessorUI() {
 
     // Compressor transfer curve: one permanent threshold node; ratio alone sets
     // the post-threshold slope. Keep legacy gain/mix values out of this graph.
-    const compThr = Math.max(-60, Math.min(0, Number(c.thr) || -30));
-    const compRatio = Math.max(1, Number(c.ratio) || 1);
+    // Preserve a true 0.0 dB threshold; logical-OR would incorrectly reset it to -30 dB.
+    const compThrRaw = Number(c.thr);
+    const compRatioRaw = Number(c.ratio);
+    const compThr = Math.max(-60, Math.min(0, Number.isFinite(compThrRaw) ? compThrRaw : -30));
+    const compRatio = Math.max(1, Number.isFinite(compRatioRaw) ? compRatioRaw : 1);
     const cx = v => 30 + (v + 60) / 60 * 270;
     const cy = v => 190 - (v + 60) / 60 * 150;
     const thrX = cx(compThr), threshY = cy(compThr);
@@ -2345,8 +2351,15 @@ function initInteractiveGraphs() {
       // and never teleports the curve/node to the touch position.
       let pickedNode = null;
       const hitRadius = 18;
-      if (tab === "preamp") return; // Preamp gain is controlled by its physical knob.
-      if (tab === "comp") {
+      if (tab === "preamp") {
+        // Preamp has no draggable node: grab the visible horizontal curve itself.
+        const path = document.getElementById("preamp-curve-path");
+        const nearCurve = path && Math.abs(point.y - (() => {
+          const match = (path.getAttribute("d") || "").match(/M\\s*30\\s*([\\d.]+)/);
+          return match ? Number(match[1]) : NaN;
+        })()) <= hitRadius;
+        if (nearCurve && point.x >= 30 && point.x <= 300) pickedNode = "preamp";
+      } else if (tab === "comp") {
         const el = document.getElementById("node-thresh-group");
         const m = el?.transform.baseVal.consolidate()?.matrix;
         if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "threshold";
@@ -2436,7 +2449,12 @@ function handleGraphMove(e, tab, dragNode, box, svg) {
   const c = channelCompressors[currentFocusedChannel];
   if (!p || !c) return;
 
-  if (tab === "comp" && currentProcessorTab === "comp") {
+  if (tab === "preamp" && currentProcessorTab === "preamp") {
+    // Dragging the horizontal preamp line changes gain directly; redraw from the same state.
+    const mappedGain = -10 + (1 - svgY / height) * 70;
+    p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
+    updateParam("pre-gain_" + currentFocusedChannel, p.pre_gain);
+  } else if (tab === "comp" && currentProcessorTab === "comp") {
     // X controls Threshold (-60..0 dB); Y is intentionally free to move without
     // creating a second node. Redraw updates the node and THR knob immediately.
     const mappedThr = -60 + normalizedX * 60;

@@ -2683,54 +2683,78 @@ function initRTACanvases() {
 }
 
 function resizeRTACanvas(item) {
-  if (!item || !item.canvas || !item.host) return;
+  if (!item || !item.canvas || !item.host) return null;
+  const canvas = item.canvas;
   const rect = item.host.getBoundingClientRect();
-  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  const width = Math.max(1, Math.round(rect.width * dpr));
-  const height = Math.max(1, Math.round(rect.height * dpr));
-  if (item.canvas.width !== width || item.canvas.height !== height) {
-    item.canvas.width = width;
-    item.canvas.height = height;
+  const cssWidth = Math.max(1, rect.width);
+  const cssHeight = Math.max(1, rect.height);
+  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
+  const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
+  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
   }
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  const ctx = canvas.getContext("2d");
+  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  item.cssWidth = cssWidth;
+  item.cssHeight = cssHeight;
+  item.dpr = dpr;
+  return { width: cssWidth, height: cssHeight, dpr };
 }
 
 function drawRTAGlowWave() {
-  // Read the FFT globally on every animation frame, before checking which
-  // processor page is visible. All three canvases share this live spectrum.
   const audioElement = document.getElementById("audio-player");
   const playable = !!audioCtx && audioCtx.state === "running" && !!audioElement &&
     !audioElement.paused && !audioElement.ended && !!rtaAnalyser && !!rtaFrequencyData;
   if (playable) rtaAnalyser.getByteFrequencyData(rtaFrequencyData);
 
+  const rtaColorByPage = {
+    peq: "rgba(255, 0, 150, 0.2)",
+    hpf: "rgba(0, 220, 255, 0.2)",
+    geq: "rgba(0, 255, 120, 0.2)"
+  };
+
   Object.entries(rtaCanvases).forEach(([key, item]) => {
-    resizeRTACanvas(item);
+    const size = resizeRTACanvas(item);
     const canvas = item.canvas;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const w = canvas.width, h = canvas.height;
+    if (!ctx || !size) return;
+    const w = size.width;
+    const h = size.height;
     ctx.clearRect(0, 0, w, h);
-    // Render all three canvases continuously. Hidden pages are ready when
-    // selected; each canvas keeps its own PEQ/HPF/GEQ color.
-    if (!["hpf", "peq", "geq"].includes(key) || !playable || w <= 1 || h <= 1) return;
+    if (!Object.prototype.hasOwnProperty.call(rtaColorByPage, key) ||
+        !playable || w <= 1 || h <= 1) return;
 
+    // Base scale is derived from displayed CSS width; DPR is handled separately.
+    const baseScale = Math.max(0.55, Math.min(1.8, w / 800));
     const sampleRate = audioCtx.sampleRate;
     const binHz = sampleRate / rtaAnalyser.fftSize;
-    const minHz = 20, maxHz = Math.min(20000, sampleRate / 2);
-    const left = w * (30 / 320), right = w * (300 / 320);
-    const top = h * 0.08, bottom = h * 0.91;
+    const minHz = 20;
+    const maxHz = Math.max(minHz, Math.min(20000, sampleRate / 2));
+    const plotLeft = w * 0.06;
+    const plotRight = w * 0.94;
+    const plotTop = h * 0.08;
+    const plotBottom = h * 0.91;
+    const plotWidth = Math.max(1, plotRight - plotLeft);
+    const plotHeight = Math.max(1, plotBottom - plotTop);
     const points = [];
-    const count = 96;
+    const count = Math.max(48, Math.min(160, Math.round(w / (5 * baseScale))));
+
     for (let i = 0; i < count; i++) {
       const t = i / (count - 1);
       const hz = minHz * Math.pow(maxHz / minHz, t);
       const bin = Math.max(0, Math.min(rtaFrequencyData.length - 1, Math.round(hz / binHz)));
-      // Convert FFT byte magnitude into a restrained background height.
-      const db = (rtaFrequencyData[bin] / 255) * 72;
-      const x = left + (right - left) * t;
-      const y = bottom - (db / 72) * (bottom - top) * 0.72;
-      points.push({ x, y });
+      const magnitude = rtaFrequencyData[bin] / 255;
+      points.push({
+        x: plotLeft + plotWidth * t,
+        y: plotBottom - magnitude * plotHeight * 0.72
+      });
     }
 
+    const color = rtaColorByPage[key];
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -2741,18 +2765,31 @@ function drawRTAGlowWave() {
     }
     const last = points[points.length - 1];
     ctx.lineTo(last.x, last.y);
-    ctx.lineTo(right, bottom);
-    ctx.lineTo(left, bottom);
+    ctx.lineTo(plotRight, plotBottom);
+    ctx.lineTo(plotLeft, plotBottom);
     ctx.closePath();
-    const rtaColorByPage = {
-      peq: "rgba(255, 0, 150, 0.2)",
-      hpf: "rgba(0, 220, 255, 0.2)",
-      geq: "rgba(0, 255, 120, 0.2)"
-    };
-    ctx.fillStyle = rtaColorByPage[key] || item.color;
+    ctx.fillStyle = color;
     ctx.fill();
 
-    // Draw a smooth neon spectrum line with the requested glow.
+    // Relative grid spacing scales with the current plot width and height.
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = Math.max(0.6, baseScale);
+    ctx.strokeStyle = "rgba(120, 150, 175, 0.14)";
+    for (let i = 1; i < 4; i++) {
+      const x = plotLeft + plotWidth * (i / 4);
+      ctx.beginPath();
+      ctx.moveTo(x, plotTop);
+      ctx.lineTo(x, plotBottom);
+      ctx.stroke();
+    }
+    for (let i = 1; i < 4; i++) {
+      const y = plotTop + plotHeight * (i / 4);
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, y);
+      ctx.lineTo(plotRight, y);
+      ctx.stroke();
+    }
+
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length - 1; i++) {
@@ -2761,16 +2798,16 @@ function drawRTAGlowWave() {
       ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
     }
     ctx.lineTo(last.x, last.y);
-    // Explicitly set the glow color by processor page.
-    ctx.strokeStyle = rtaColorByPage[key] || item.color;
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = ctx.strokeStyle;
-    ctx.lineWidth = Math.max(1.25, w / 500);
+    ctx.strokeStyle = color;
+    ctx.shadowBlur = 12 * baseScale;
+    ctx.shadowColor = color;
+    ctx.lineWidth = 3 * baseScale;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.stroke();
     ctx.restore();
   });
 }
-
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
   // Draw the live spectrum before the rest of the processor UI is repainted.
@@ -2815,7 +2852,15 @@ function initDLMD() {
   buildMixerStrips();
   buildGeqSliders();
   initRTACanvases();
-  window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas));
+  window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas), { passive: true });
+  if ("ResizeObserver" in window) {
+    const rtaResizeObserver = new ResizeObserver(() => {
+      Object.values(rtaCanvases).forEach(resizeRTACanvas);
+    });
+    Object.values(rtaCanvases).forEach(item => {
+      if (item.host) rtaResizeObserver.observe(item.host);
+    });
+  }
   initAudioPlayer();
 
   channelIds.forEach(id => {

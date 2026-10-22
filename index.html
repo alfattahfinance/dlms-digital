@@ -326,9 +326,9 @@
     }
 
     .sq-grid-text {
-      fill: #d1d5db;
+      fill: rgba(255, 255, 255, 0.35);
       font-size: 7.5px;
-      font-weight: 600;
+      font-weight: 400;
       font-family: Arial, sans-serif;
     }
 
@@ -1422,7 +1422,7 @@
           <!-- HALAMAN 1: PREAMP / GAIN -->
           <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="preamp-graph-box">
-              <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="preampGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
@@ -1461,9 +1461,9 @@
                 <line x1="40" y1="10" x2="40" y2="190" class="sq-grid-line"/>
                 <line x1="140" y1="10" x2="140" y2="190" class="sq-grid-line"/>
                 <line x1="240" y1="10" x2="240" y2="190" class="sq-grid-line"/>
-                <line x1="30" y1="50" x2="310" y2="50" class="sq-grid-line"/>
-                <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
-                <line x1="30" y1="150" x2="310" y2="150" class="sq-grid-line"/>
+                <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
+                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
+                <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
                 <text x="3" y="53" class="sq-grid-text">+30</text>
                 <text x="3" y="103" class="sq-grid-text">0</text>
                 <text x="3" y="153" class="sq-grid-text">-10</text>
@@ -1478,7 +1478,7 @@
           <!-- HALAMAN 2: HPF / CROSSOVER -->
           <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="hpf-graph-box">
-              <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="hpfGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,220,255)" stop-opacity="0.68"/>
@@ -1488,9 +1488,9 @@
                 <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
                 <line x1="170" y1="10" x2="170" y2="190" class="sq-grid-line"/>
                 <line x1="250" y1="10" x2="250" y2="190" class="sq-grid-line"/>
-                <line x1="30" y1="50" x2="310" y2="50" class="sq-grid-line"/>
-                <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
-                <line x1="30" y1="150" x2="310" y2="150" class="sq-grid-line"/>
+                <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
+                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
+                <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
                 <text x="3" y="53" class="sq-grid-text">0</text>
                 <text x="3" y="123" class="sq-grid-text">-24</text>
                 <path id="hpf-fill-path" class="sq-curve-fill" style="fill:url(#hpfGrad);" d="M 30 100 L 100 100 L 230 40 L 300 40 Z"/>
@@ -1509,14 +1509,14 @@
           <!-- HALAMAN 3: GATE -->
           <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="gate-graph-box">
-              <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gateGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(0,255,150)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(0,255,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
-                <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
+                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="110" y1="10" x2="110" y2="190" class="sq-grid-line"/>
                 <line x1="210" y1="10" x2="210" y2="190" class="sq-grid-line"/>
                 <text x="3" y="103" class="sq-grid-text">Thr</text>
@@ -1536,14 +1536,14 @@
           <!-- HALAMAN 4: PEQ -->
           <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="peq-graph-box">
-              <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.68"/>
                     <stop offset="100%" stop-color="rgb(255,0,150)" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
-                <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
+                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
                 <line x1="165" y1="10" x2="165" y2="190" class="sq-grid-line"/>
                 <line x1="240" y1="10" x2="240" y2="190" class="sq-grid-line"/>
@@ -1576,7 +1576,7 @@
           <!-- HALAMAN 6: COMPRESSOR / LIMITER -->
           <div id="proc-page-comp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="editor-graph-box">
-              <svg viewBox="0 0 320 210" preserveAspectRatio="none">
+              <svg viewBox="30 10 270 180" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgb(255,200,0)" stop-opacity="0.68"/>
@@ -1586,9 +1586,9 @@
                 <line x1="80" y1="10" x2="80" y2="190" class="sq-grid-line"/>
                 <line x1="165" y1="10" x2="165" y2="190" class="sq-grid-line"/>
                 <line x1="250" y1="10" x2="250" y2="190" class="sq-grid-line"/>
-                <line x1="30" y1="50" x2="310" y2="50" class="sq-grid-line"/>
-                <line x1="30" y1="100" x2="310" y2="100" class="zero-fixed-line"/>
-                <line x1="30" y1="150" x2="310" y2="150" class="sq-grid-line"/>
+                <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
+                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
+                <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
                 <text x="3" y="53" class="sq-grid-text">0</text>
                 <text x="3" y="103" class="sq-grid-text">-30</text>
                 <text x="3" y="153" class="sq-grid-text">-60</text>
@@ -2089,7 +2089,7 @@ function updateGraphYAxisScale() {
   svg.querySelectorAll("[data-y-axis-generated='true']").forEach(node => node.remove());
   svg.querySelectorAll("line").forEach(line => {
     if (Number(line.getAttribute("x1")) === 30 &&
-        Number(line.getAttribute("x2")) === 310 &&
+        Number(line.getAttribute("x2")) === 300 &&
         line.hasAttribute("y1") && line.hasAttribute("y2")) line.remove();
   });
   svg.querySelectorAll(".sq-grid-text").forEach(label => label.remove());
@@ -2098,7 +2098,7 @@ function updateGraphYAxisScale() {
     const y = yForDb(db);
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", "30");
-    line.setAttribute("x2", "310");
+    line.setAttribute("x2", "300");
     line.setAttribute("y1", y.toFixed(2));
     line.setAttribute("y2", y.toFixed(2));
     line.setAttribute("class", db === 0 ? "zero-fixed-line" : "sq-grid-line");
@@ -2106,14 +2106,14 @@ function updateGraphYAxisScale() {
     svg.insertBefore(line, svg.querySelector("path"));
 
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", "3");
+    label.setAttribute("x", "33");
     label.setAttribute("y", (y + 3).toFixed(2));
     label.setAttribute("class", "sq-grid-text");
-    label.setAttribute("fill", "rgba(255, 255, 255, 0.4)");
+    label.setAttribute("fill", "rgba(255, 255, 255, 0.35)");
     label.setAttribute("font-family", "Arial, sans-serif");
     label.setAttribute("font-size", "10px");
     label.setAttribute("font-weight", "400");
-    label.setAttribute("style", "fill:rgba(255,255,255,0.4);font:10px Arial,sans-serif");
+    label.setAttribute("style", "fill:rgba(255,255,255,0.35);font:10px Arial,sans-serif");
     label.setAttribute("data-y-axis-generated", "true");
     label.textContent = db > 0 ? "+" + db : String(db);
     svg.insertBefore(label, svg.querySelector("path"));
@@ -2889,10 +2889,10 @@ function drawRTAGlowWave() {
     const binHz = sampleRate / rtaAnalyser.fftSize;
     const minHz = 20;
     const maxHz = Math.max(minHz, Math.min(20000, sampleRate / 2));
-    const plotLeft = w * 0.06;
-    const plotRight = w * 0.94;
-    const plotTop = h * 0.08;
-    const plotBottom = h * 0.91;
+    const plotLeft = 0;
+    const plotRight = w;
+    const plotTop = 0;
+    const plotBottom = h;
     const plotWidth = Math.max(1, plotRight - plotLeft);
     const plotHeight = Math.max(1, plotBottom - plotTop);
     const points = [];
@@ -2905,7 +2905,7 @@ function drawRTAGlowWave() {
       const magnitude = rtaFrequencyData[bin] / 255;
       points.push({
         x: plotLeft + plotWidth * t,
-        y: plotBottom - magnitude * plotHeight * 0.72
+        y: plotBottom - magnitude * plotHeight
       });
     }
 

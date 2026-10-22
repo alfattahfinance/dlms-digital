@@ -2880,31 +2880,48 @@ function initDLMD() {
     document.getElementById("ip-display").textContent = savedName;
   } catch (err) {}
 
+  // Bangun kontrol utama lebih dahulu. UI inti tidak boleh bergantung pada
+  // keberhasilan inisialisasi Canvas/RTA atau audio.
   buildMixerStrips();
+  updateSidebarForChannel(currentFocusedChannel || "ina");
   buildGeqSliders();
-  initRTACanvases();
-  window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas), { passive: true });
-  if ("ResizeObserver" in window) {
-    const rtaResizeObserver = new ResizeObserver(() => {
-      Object.values(rtaCanvases).forEach(resizeRTACanvas);
-    });
-    Object.values(rtaCanvases).forEach(item => {
-      if (item.host) rtaResizeObserver.observe(item.host);
-    });
+
+  // Setiap subsistem non-inti diisolasi agar error pada grafik/audio tidak
+  // menghentikan pembuatan menu dan fader mixer.
+  try {
+    initRTACanvases();
+    window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas), { passive: true });
+    if ("ResizeObserver" in window) {
+      const rtaResizeObserver = new ResizeObserver(() => {
+        Object.values(rtaCanvases).forEach(resizeRTACanvas);
+      });
+      Object.values(rtaCanvases).forEach(item => {
+        if (item.host) rtaResizeObserver.observe(item.host);
+      });
+    }
+  } catch (err) {
+    console.error("RTA/Canvas initialization failed; mixer UI remains available.", err);
   }
-  initAudioPlayer();
+
+  try { initAudioPlayer(); }
+  catch (err) { console.error("Audio player initialization failed.", err); }
 
   channelIds.forEach(id => {
     const fader = document.getElementById("gain-" + id);
-    if (fader) {
-      updateFaderLabel(id, fader.value);
-    }
+    if (fader) updateFaderLabel(id, fader.value);
   });
 
-  initializePermanentDSPNodes();
-  initInteractiveGraphs();
-  enforceDSPNodePolicy("preamp");
-  focusChannel('ina');
+  try { initializePermanentDSPNodes(); }
+  catch (err) { console.error("DSP node initialization failed.", err); }
+  try { initInteractiveGraphs(); }
+  catch (err) { console.error("Interactive graph initialization failed.", err); }
+  try { enforceDSPNodePolicy("preamp"); }
+  catch (err) { console.error("DSP policy initialization failed.", err); }
+  try { focusChannel("ina"); }
+  catch (err) {
+    console.error("Initial channel focus failed; restoring processor menu.", err);
+    updateSidebarForChannel("ina");
+  }
   setTimeout(syncFaderDimensions, 50);
 }
 

@@ -2216,7 +2216,11 @@ function updateActiveProcessorUI() {
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
     // Keep the neon transfer curve and its translucent area as independent SVG paths.
     // The fill path closes only along the bottom edge and is never stroked.
-    const gateCurveD = `M 30 ${gy(-60)} L ${gX.toFixed(2)} ${gy(-60)} L ${gX.toFixed(2)} ${gY.toFixed(2)} L 300 ${gy(0)}`;
+    // Keep the Gate transfer line continuous and inside the SVG viewBox.
+    // The previous bottom-edge segment sat exactly on the clipped boundary and
+    // could leave stale-looking fragments in iOS Safari during pointer dragging.
+    const gateBaseY = 188;
+    const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(12, Math.min(188, gY)).toFixed(2)} L 298 12`;
     const gateCurvePath = document.getElementById("gate-curve-path");
     if (gateCurvePath) {
       gateCurvePath.setAttribute("d", gateCurveD);

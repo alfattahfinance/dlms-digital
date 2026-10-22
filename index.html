@@ -2594,7 +2594,7 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     updateParam("peq-gain_" + channelId, p.peq_gain);
   }
 
-  updateActiveProcessorUI();
+  if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
 }
 
 function focusChannel(id) {

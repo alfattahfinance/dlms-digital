@@ -314,7 +314,8 @@
       pointer-events: auto;
     }
     .tc-right-knobs-panel .physical-knob-container,
-    .tc-right-knobs-panel .physical-knob {
+    .tc-right-knobs-panel .physical-knob,
+    .tc-master-strip[data-knob-param] {
       position: relative;
       z-index: 6;
       pointer-events: auto;
@@ -2575,7 +2576,7 @@ function updateActiveProcessorUI() {
 }
 
 function initKnobEventListeners() {
-  document.querySelectorAll(".physical-knob-container[data-knob-param]").forEach(knob => {
+  document.querySelectorAll(".physical-knob-container[data-knob-param], .tc-master-strip[data-knob-param]").forEach(knob => {
     if (knob.dataset.knobListenerReady === "1") return;
     knob.dataset.knobListenerReady = "1";
     knob.style.pointerEvents = "auto";

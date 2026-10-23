@@ -296,6 +296,29 @@
       position: relative;
       z-index: 2;
       background: transparent;
+      pointer-events: auto;
+      touch-action: none;
+    }
+    .sq-graph-box,
+    .sq-graph-box > svg,
+    #gate-graph-box,
+    #editor-graph-box {
+      pointer-events: auto;
+    }
+    /* Pointer drag must win over the knob panel's native vertical pan gesture.
+       The panel remains scrollable with its scrollbar/mouse wheel. */
+    .tc-right-knobs-panel {
+      touch-action: none !important;
+      position: relative;
+      z-index: 5;
+      pointer-events: auto;
+    }
+    .tc-right-knobs-panel .physical-knob-container,
+    .tc-right-knobs-panel .physical-knob {
+      pointer-events: auto;
+      touch-action: none !important;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .sq-curve-fill {
       opacity: .28;
@@ -2549,33 +2572,59 @@ function updateActiveProcessorUI() {
 }
 
 function initKnobDrag(e, paramKey, min, max, step) {
+  if (!e || (e.pointerType === "mouse" && e.button !== 0)) return;
   e.preventDefault();
+  e.stopPropagation();
+
   const channelId = dlmsState.activeChannel;
-  let startY = e.clientY;
-  let startVal = getParamValue(paramKey, channelId);
+  const startY = e.clientY;
+  const startVal = Number(getParamValue(paramKey, channelId));
+  const range = Math.max(0, Number(max) - Number(min));
+  const safeStep = Math.max(0, Number(step) || 0);
+  const target = e.currentTarget;
+  const pointerId = e.pointerId;
+  let finished = false;
+
+  // Capture pointer so a drag remains attached to the knob even if the finger
+  // leaves its small visual surface or the page is inside a scrolling panel.
+  try { target?.setPointerCapture?.(pointerId); } catch (err) {}
+  if (target) target.style.touchAction = "none";
 
   function onPointerMove(moveEvent) {
-    let deltaY = startY - moveEvent.clientY;
-    let range = max - min;
-    let sensitivity = range / 100;
-    let newVal = startVal + (deltaY * sensitivity);
-    newVal = Math.max(min, Math.min(max, newVal));
-    
-    if (step >= 1) newVal = Math.round(newVal);
-    else newVal = Number(newVal.toFixed(1));
+    if (finished || (pointerId != null && moveEvent.pointerId != null && moveEvent.pointerId !== pointerId)) return;
+    moveEvent.preventDefault();
+    const deltaY = startY - moveEvent.clientY;
+    const sensitivity = range / 100;
+    let newVal = Math.max(Number(min), Math.min(Number(max), startVal + deltaY * sensitivity));
 
+    if (safeStep > 0) newVal = Number((Number(min) + Math.round((newVal - Number(min)) / safeStep) * safeStep).toFixed(4));
+    if (!Number.isFinite(newVal)) return;
+    newVal = Math.max(Number(min), Math.min(Number(max), newVal));
+
+    // Two-way binding: write to the selected channel model, refresh all visible
+    // knob/value/curve UI, then send the same value to the ESP32 bridge.
     setParamValue(paramKey, newVal, channelId);
     if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
     updateParam(paramKey + "_" + channelId, newVal);
   }
 
-  function onPointerUp() {
+  function finishDrag(endEvent) {
+    if (finished) return;
+    if (endEvent && pointerId != null && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
+    finished = true;
     window.removeEventListener("pointermove", onPointerMove);
-    window.removeEventListener("pointerup", onPointerUp);
+    window.removeEventListener("pointerup", finishDrag);
+    window.removeEventListener("pointercancel", finishDrag);
+    window.removeEventListener("blur", finishDrag);
+    try {
+      if (target?.hasPointerCapture?.(pointerId)) target.releasePointerCapture(pointerId);
+    } catch (err) {}
   }
 
-  window.addEventListener("pointermove", onPointerMove);
-  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
+  window.addEventListener("pointerup", finishDrag);
+  window.addEventListener("pointercancel", finishDrag);
+  window.addEventListener("blur", finishDrag, { once: true });
 }
 
 function getParamValue(key, channelId = dlmsState.activeChannel) {
@@ -2671,9 +2720,12 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** Convert pointer input into the shared 600 × 350 graph coordinate plane. */
+/** Normalize real screen pixels to the shared 600 × 350 virtual graph plane. */
 function getGraphPoint600x350(event, graphElement) {
-  if (!event || !graphElement) return null;
+  if (!event || !graphElement || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return null;
+
+  // SVG's CTM accounts for viewBox/preserveAspectRatio letterboxing. This is
+  // the most accurate route for SVG curves; canvas/HTML uses the bounding rect.
   if (graphElement instanceof SVGGraphicsElement) {
     const svg = graphElement.ownerSVGElement || graphElement;
     const matrix = svg.getScreenCTM?.();
@@ -2683,15 +2735,21 @@ function getGraphPoint600x350(event, graphElement) {
       point.y = event.clientY;
       try {
         const local = point.matrixTransform(matrix.inverse());
-        if (Number.isFinite(local.x) && Number.isFinite(local.y)) return { x: local.x, y: local.y };
+        if (Number.isFinite(local.x) && Number.isFinite(local.y)) {
+          return {
+            x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, local.x)),
+            y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, local.y))
+          };
+        }
       } catch (err) {}
     }
   }
+
   const rect = graphElement.getBoundingClientRect?.();
   if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   return {
-    x: ((event.clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
-    y: ((event.clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
+    x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, ((event.clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH)),
+    y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, ((event.clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT))
   };
 }
 
@@ -2788,10 +2846,11 @@ function initInteractiveGraphs() {
     function graphPoint(event) {
       const standard = getGraphPoint600x350(event, svg);
       if (!standard || !Number.isFinite(standard.x) || !Number.isFinite(standard.y)) return null;
-      // Compatibility bridge: current curve/node data remains in legacy child coordinates.
+      // The SVG's visible input plane is 600×350; existing node transforms are
+      // intentionally retained in legacy 30..300 / 10..190 coordinates.
       return {
-        x: Math.max(30, Math.min(300, 30 + standard.x * 270 / GRAPH_COORD_WIDTH)),
-        y: Math.max(10, Math.min(190, 10 + standard.y * 180 / GRAPH_COORD_HEIGHT)),
+        x: Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270)),
+        y: Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180)),
         width: 270,
         height: 180
       };
@@ -2914,8 +2973,8 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   // Normalize to the shared 600 × 350 plane, then bridge to legacy DSP curve coordinates.
   const standard = getGraphPoint600x350(e, graph);
   if (!standard) return;
-  const svgX = Math.max(30, Math.min(300, 30 + standard.x * 270 / GRAPH_COORD_WIDTH));
-  const svgY = Math.max(10, Math.min(190, 10 + standard.y * 180 / GRAPH_COORD_HEIGHT));
+  const svgX = Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270));
+  const svgY = Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 

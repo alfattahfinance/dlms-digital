@@ -315,10 +315,13 @@
     }
     .tc-right-knobs-panel .physical-knob-container,
     .tc-right-knobs-panel .physical-knob {
+      position: relative;
+      z-index: 6;
       pointer-events: auto;
       touch-action: none !important;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .sq-curve-fill {
       opacity: .28;
@@ -1810,17 +1813,17 @@
         <div class="tc-right-knobs-panel">
           
           <div id="knobs-group-preamp" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-gain', -10, 60, 0.5)">
+            <div class="physical-knob-container" data-knob-param="pre-gain" data-knob-min="-10" data-knob-max="60" data-knob-step="0.5">
               <label>Gain</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-pre-gain"></div></div>
               <span id="tc-val-pregaining">12.0 dB</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-pad', -20, 0, 20)">
+            <div class="physical-knob-container" data-knob-param="pre-pad" data-knob-min="-20" data-knob-max="0" data-knob-step="20">
               <label>Pad</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-pre-pad"></div></div>
               <span id="tc-val-prepad">0 dB</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'pre-phase', 0, 1, 1)">
+            <div class="physical-knob-container" data-knob-param="pre-phase" data-knob-min="0" data-knob-max="1" data-knob-step="1">
               <label>Polarity</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-pre-phase"></div></div>
               <span id="tc-val-phase">Normal</span>
@@ -1828,41 +1831,41 @@
           </div>
 
           <div id="knobs-group-hpf" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-freq', 20, 400, 1)">
+            <div class="physical-knob-container" data-knob-param="hpf-freq" data-knob-min="20" data-knob-max="400" data-knob-step="1">
               <label>Freq</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-freq"></div></div>
               <span id="tc-val-hpffreq">80 Hz</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'hpf-slope', 6, 48, 6)">
+            <div class="physical-knob-container" data-knob-param="hpf-slope" data-knob-min="6" data-knob-max="48" data-knob-step="6">
               <label>HPF Slope</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-slope"></div></div>
               <span id="tc-val-hpfslope">24 dB/oct</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'lpf-freq', 100, 20000, 10)">
+            <div class="physical-knob-container" data-knob-param="lpf-freq" data-knob-min="100" data-knob-max="20000" data-knob-step="10">
               <label>LPF Freq</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-freq"></div></div><span id="tc-val-lpffreq">18000 Hz</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'lpf-slope', 6, 48, 6)">
+            <div class="physical-knob-container" data-knob-param="lpf-slope" data-knob-min="6" data-knob-max="48" data-knob-step="6">
               <label>LPF Slope</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-slope"></div></div><span id="tc-val-lpfslope">24 dB/oct</span>
             </div>
           </div>
 
           <div id="knobs-group-gate" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-thr', -80, 0, 1)">
+            <div class="physical-knob-container" data-knob-param="gate-thr" data-knob-min="-80" data-knob-max="0" data-knob-step="1">
               <label>Thr</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-gate-thr"></div></div>
               <span id="tc-val-gatethr">-45 dB</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-rng', -60, 0, 1)">
+            <div class="physical-knob-container" data-knob-param="gate-rng" data-knob-min="-60" data-knob-max="0" data-knob-step="1">
               <label>Range</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-gate-rng"></div></div>
               <span id="tc-val-gaterng">-40 dB</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-atk', 0.1, 100, 0.1)">
+            <div class="physical-knob-container" data-knob-param="gate-atk" data-knob-min="0.1" data-knob-max="100" data-knob-step="0.1">
               <label>Attack</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-gate-atk"></div></div>
               <span id="tc-val-gateatk">5.0 ms</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'gate-rel', 10, 1000, 1)">
+            <div class="physical-knob-container" data-knob-param="gate-rel" data-knob-min="10" data-knob-max="1000" data-knob-step="1">
               <label>Release</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-gate-rel"></div></div>
               <span id="tc-val-gaterel">200 ms</span>
@@ -1870,22 +1873,22 @@
           </div>
 
           <div id="knobs-group-peq" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-band', 1, 5, 1)">
+            <div class="physical-knob-container" data-knob-param="peq-band" data-knob-min="1" data-knob-max="5" data-knob-step="1">
               <label>Band</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-peq-band"></div></div>
               <span id="tc-val-peqband">Band 2</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-freq', 20, 20000, 10)">
+            <div class="physical-knob-container" data-knob-param="peq-freq" data-knob-min="20" data-knob-max="20000" data-knob-step="10">
               <label>Freq</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-peq-freq"></div></div>
               <span id="tc-val-peqfreq">1000 Hz</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-gain', -12, 12, 0.5)">
+            <div class="physical-knob-container" data-knob-param="peq-gain" data-knob-min="-12" data-knob-max="12" data-knob-step="0.5">
               <label>Gain</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-peq-gain"></div></div>
               <span id="tc-val-peqgain">0.0 dB</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'peq-q', 0.1, 10, 0.1)">
+            <div class="physical-knob-container" data-knob-param="peq-q" data-knob-min="0.1" data-knob-max="10" data-knob-step="0.1">
               <label>Q</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-peq-q"></div></div>
               <span id="tc-val-peqq">1.4 Q</span>
@@ -1901,22 +1904,22 @@
           </div>
 
           <div id="knobs-group-comp" class="knobs-grid" style="display:grid;">
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-atk', 0.5, 100, 0.5)">
+            <div class="physical-knob-container" data-knob-param="active-atk" data-knob-min="0.5" data-knob-max="100" data-knob-step="0.5">
               <label id="lbl-atk">Attack</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-atk"></div></div>
               <span id="tc-val-atk">60.0 ms</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-rel', 10, 1000, 1)">
+            <div class="physical-knob-container" data-knob-param="active-rel" data-knob-min="10" data-knob-max="1000" data-knob-step="1">
               <label id="lbl-rel">Release</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-rel"></div></div>
               <span id="tc-val-rel">141 ms</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-ratio', 1, 20, 0.5)">
+            <div class="physical-knob-container" data-knob-param="active-ratio" data-knob-min="1" data-knob-max="20" data-knob-step="0.5">
               <label id="lbl-ratio">Ratio</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-ratio"></div></div>
               <span id="tc-val-ratio">1.5:1</span>
             </div>
-            <div class="physical-knob-container" onpointerdown="initKnobDrag(event, 'active-thr', -60, 0, 0.5)">
+            <div class="physical-knob-container" data-knob-param="active-thr" data-knob-min="-60" data-knob-max="0" data-knob-step="0.5">
               <label id="lbl-thr">Thr</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-thr"></div></div>
               <span id="tc-val-thr">-30.5 dB</span>
@@ -1924,7 +1927,7 @@
           </div>
 
           <div>
-            <div class="tc-master-strip" onpointerdown="initKnobDrag(event, 'master-gain', -40, 20, 0.5)">
+            <div class="tc-master-strip" data-knob-param="master-gain" data-knob-min="-40" data-knob-max="20" data-knob-step="0.5">
               <label id="active-ch-label">In A</label>
               <div style="display:flex; align-items:center; gap:4px;">
                 <div class="physical-knob" style="width:24px; height:24px;"><div class="knob-indicator" id="ind-master-gain" style="height:6px;"></div></div>
@@ -2571,6 +2574,30 @@ function updateActiveProcessorUI() {
   }
 }
 
+function initKnobEventListeners() {
+  document.querySelectorAll(".physical-knob-container[data-knob-param]").forEach(knob => {
+    if (knob.dataset.knobListenerReady === "1") return;
+    knob.dataset.knobListenerReady = "1";
+    knob.style.pointerEvents = "auto";
+    knob.style.touchAction = "none";
+    const start = event => {
+      initKnobDrag(
+        event,
+        knob.dataset.knobParam,
+        Number(knob.dataset.knobMin),
+        Number(knob.dataset.knobMax),
+        Number(knob.dataset.knobStep)
+      );
+    };
+    knob.addEventListener("pointerdown", start, { passive: false });
+    // Older WebViews without Pointer Events use direct mouse/touch listeners.
+    if (!("PointerEvent" in window)) {
+      knob.addEventListener("mousedown", start, { passive: false });
+      knob.addEventListener("touchstart", start, { passive: false });
+    }
+  });
+}
+
 function initKnobDrag(e, paramKey, min, max, step) {
   if (!e || (e.pointerType === "mouse" && e.button !== 0)) return;
   e.preventDefault();
@@ -2720,37 +2747,23 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** Normalize real screen pixels to the shared 600 × 350 virtual graph plane. */
-function getGraphPoint600x350(event, graphElement) {
-  if (!event || !graphElement || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return null;
-
-  // SVG's CTM accounts for viewBox/preserveAspectRatio letterboxing. This is
-  // the most accurate route for SVG curves; canvas/HTML uses the bounding rect.
-  if (graphElement instanceof SVGGraphicsElement) {
-    const svg = graphElement.ownerSVGElement || graphElement;
-    const matrix = svg.getScreenCTM?.();
-    if (matrix && typeof svg.createSVGPoint === "function") {
-      const point = svg.createSVGPoint();
-      point.x = event.clientX;
-      point.y = event.clientY;
-      try {
-        const local = point.matrixTransform(matrix.inverse());
-        if (Number.isFinite(local.x) && Number.isFinite(local.y)) {
-          return {
-            x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, local.x)),
-            y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, local.y))
-          };
-        }
-      } catch (err) {}
-    }
-  }
-
+/** Normalize mouse, pointer, or touch coordinates to the shared 600 × 350 plane. */
+function getScaledCoordinates(event, graphElement) {
+  if (!event || !graphElement) return null;
   const rect = graphElement.getBoundingClientRect?.();
   if (!rect || rect.width <= 0 || rect.height <= 0) return null;
+  const source = event.touches?.[0] || event.changedTouches?.[0] || event;
+  const clientX = Number(source.clientX);
+  const clientY = Number(source.clientY);
+  if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
   return {
-    x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, ((event.clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH)),
-    y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, ((event.clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT))
+    x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH)),
+    y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT))
   };
+}
+
+function getGraphPoint600x350(event, graphElement) {
+  return getScaledCoordinates(event, graphElement);
 }
 
 function getGraphScaleFactor(host) {
@@ -2935,7 +2948,7 @@ function initInteractiveGraphs() {
       activeChannelId = dlmsState.activeChannel;
       isDragging = true;
       activePointerId = e.pointerId;
-      try { box.setPointerCapture(e.pointerId); } catch (err) {}
+      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
       // Do not update on pointerdown; the first movement must move the selected node
       // relative to its original position, not jump it under the user's finger.
     }
@@ -2955,14 +2968,49 @@ function initInteractiveGraphs() {
       activeDragNode = null;
       activePointerId = null;
       activeChannelId = null;
-      try { if (box.hasPointerCapture(e.pointerId)) box.releasePointerCapture(e.pointerId); } catch (err) {}
+      try { if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); } catch (err) {}
     }
 
-    box.addEventListener("pointerdown", onPointerDown, { passive: false });
-    box.addEventListener("pointermove", onPointerMove, { passive: false });
-    box.addEventListener("pointerup", onPointerEnd);
-    box.addEventListener("pointercancel", onPointerEnd);
-    box.addEventListener("lostpointercapture", onPointerEnd);
+    // Bind the handlers directly to the visible SVG. The RTA canvas is decorative
+    // and sits behind it; explicit listeners avoid relying on bubbling from a host.
+    svg.style.pointerEvents = "auto";
+    svg.style.touchAction = "none";
+    svg.style.cursor = "crosshair";
+    svg.addEventListener("pointerdown", onPointerDown, { passive: false });
+    svg.addEventListener("pointermove", onPointerMove, { passive: false });
+    svg.addEventListener("pointerup", onPointerEnd);
+    svg.addEventListener("pointercancel", onPointerEnd);
+    svg.addEventListener("lostpointercapture", onPointerEnd);
+
+    // Legacy mouse/touch listeners are installed only on browsers without Pointer Events.
+    // This prevents duplicate moves on modern iOS/Android while retaining older WebViews.
+    if (!("PointerEvent" in window)) {
+      let fallbackPointerId = 41;
+      const mouseDown = e => onPointerDown({
+        ...e, pointerType: "mouse", pointerId: fallbackPointerId, clientX: e.clientX,
+        clientY: e.clientY, preventDefault: () => e.preventDefault()
+      });
+      const mouseMove = e => onPointerMove({
+        ...e, pointerType: "mouse", pointerId: fallbackPointerId, clientX: e.clientX,
+        clientY: e.clientY, preventDefault: () => e.preventDefault()
+      });
+      const mouseEnd = e => onPointerEnd({ ...e, pointerId: fallbackPointerId });
+      const touchEvent = (e, handler, ending = false) => {
+        const touch = (ending ? e.changedTouches : e.touches)?.[0];
+        if (!touch) return;
+        handler({
+          pointerType: "touch", pointerId: fallbackPointerId, clientX: touch.clientX,
+          clientY: touch.clientY, preventDefault: () => e.preventDefault()
+        });
+      };
+      svg.addEventListener("mousedown", mouseDown, { passive: false });
+      window.addEventListener("mousemove", mouseMove, { passive: false });
+      window.addEventListener("mouseup", mouseEnd);
+      svg.addEventListener("touchstart", e => touchEvent(e, onPointerDown), { passive: false });
+      svg.addEventListener("touchmove", e => touchEvent(e, onPointerMove), { passive: false });
+      svg.addEventListener("touchend", e => touchEvent(e, onPointerEnd, true), { passive: false });
+      svg.addEventListener("touchcancel", e => touchEvent(e, onPointerEnd, true), { passive: false });
+    }
   });
 }
 
@@ -3427,6 +3475,10 @@ function initDLMD() {
     document.getElementById("dlmd-name").value = savedName;
     document.getElementById("ip-display").textContent = savedName;
   } catch (err) {}
+
+  // Register knob handlers explicitly after the DOM and knob markup exist.
+  try { initKnobEventListeners(); }
+  catch (err) { console.error("Knob event binding failed; UI remains available.", err); }
 
   // Bangun kontrol utama lebih dahulu. UI inti tidak boleh bergantung pada
   // keberhasilan inisialisasi Canvas/RTA atau audio.

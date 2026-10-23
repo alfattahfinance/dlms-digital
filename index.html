@@ -2025,9 +2025,45 @@ const dlmsState = {
 function getChannelState(id = dlmsState.activeChannel) {
   return channelIds.includes(id) ? dlmsState.channels[id] : null;
 }
+let appRenderFrame = 0;
+let pendingGraphRender = null;
+
+// One coalesced frame updates the active DSP page and applies the latest graph drag.
+function scheduleAppRender(graphTask = null) {
+  if (graphTask) pendingGraphRender = graphTask;
+  if (appRenderFrame) return;
+  appRenderFrame = requestAnimationFrame(renderApp);
+}
+
+function renderApp() {
+  appRenderFrame = 0;
+  const graphTask = pendingGraphRender;
+  pendingGraphRender = null;
+
+  if (graphTask && graphTask.channelId === dlmsState.activeChannel) {
+    handleGraphMove(graphTask.event, graphTask.tab, graphTask.dragNode, graphTask.box, graphTask.svg, graphTask.channelId);
+  }
+
+  switch (currentProcessorTab) {
+    case "preamp":
+    case "hpf":
+    case "gate":
+    case "peq":
+    case "geq":
+    case "comp":
+      updateActiveProcessorUI();
+      break;
+    default:
+      updateActiveProcessorUI();
+      break;
+  }
+
+  const gateSvg = document.querySelector("#gate-graph-box > svg");
+  if (gateSvg) gateSvg.style.display = currentProcessorTab === "gate" ? "block" : "none";
+}
+
 function redrawActiveVisuals() {
-  try { updateActiveProcessorUI(); } catch (err) { console.error("Processor redraw failed", err); }
-  try { if (typeof drawRTAGlowWave === "function" && ["peq", "hpf", "geq"].includes(currentProcessorTab)) drawRTAGlowWave(); } catch (err) {}
+  scheduleAppRender();
 }
 function setChannelGain(id, value) {
   const state = getChannelState(id), num = Number(value);
@@ -2617,14 +2653,6 @@ function initKnobDrag(e, paramKey, min, max, step) {
   if (!Number.isFinite(startY) || !Number.isFinite(startVal) || !Number.isFinite(lo) || !Number.isFinite(hi)) return;
   try { if (pointerMode) target?.setPointerCapture?.(pointerId); } catch (err) {}
 
-  let renderFrame = 0;
-  const scheduleRender = () => {
-    if (renderFrame) return;
-    renderFrame = requestAnimationFrame(() => {
-      renderFrame = 0;
-      if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
-    });
-  };
   function onMove(moveEvent) {
     if (finished) return;
     if (pointerMode && moveEvent.pointerId !== pointerId) return;
@@ -2641,14 +2669,13 @@ function initKnobDrag(e, paramKey, min, max, step) {
     value = Math.max(lo, Math.min(hi, value));
     if (!Number.isFinite(value)) return;
     setParamValue(paramKey, value, channelId);
-    scheduleRender();
+    if (channelId === dlmsState.activeChannel) scheduleAppRender();
     updateParam(paramKey + "_" + channelId, value);
   }
   function finish(endEvent) {
     if (finished) return;
     if (pointerMode && endEvent && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
     finished = true;
-    if (renderFrame) cancelAnimationFrame(renderFrame);
     if (pointerMode) {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", finish);
@@ -2768,15 +2795,14 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** One coordinate conversion for mouse, pointer and touch across SVG/Canvas graphs. */
-function getGraphCoordinates(e, element) {
-  if (!e || !element) return null;
-  const source = e.touches?.[0] || e.changedTouches?.[0] || e;
+/** Single normalized coordinate converter for Pointer, mouse, touch, SVG and Canvas. */
+function getNormalizedCoords(event, element) {
+  if (!event || !element) return null;
+  const source = event.touches?.[0] || event.changedTouches?.[0] || event;
   const clientX = Number(source.clientX);
   const clientY = Number(source.clientY);
   if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
 
-  // SVG uses its real viewBox transform so preserveAspectRatio letterboxing is handled.
   if (typeof element.getScreenCTM === "function" && typeof element.createSVGPoint === "function") {
     try {
       const matrix = element.getScreenCTM();
@@ -2788,27 +2814,24 @@ function getGraphCoordinates(e, element) {
         const viewBox = element.viewBox?.baseVal;
         const width = viewBox?.width || GRAPH_COORD_WIDTH;
         const height = viewBox?.height || GRAPH_COORD_HEIGHT;
+        const minX = viewBox?.x || 0;
+        const minY = viewBox?.y || 0;
         return {
-          x: (local.x / width) * GRAPH_COORD_WIDTH,
-          y: (local.y / height) * GRAPH_COORD_HEIGHT
+          x: ((local.x - minX) / width) * GRAPH_COORD_WIDTH,
+          y: ((local.y - minY) / height) * GRAPH_COORD_HEIGHT
         };
       }
-    } catch (err) {}
+    } catch (error) {
+      // Continue to the shared bounding-rectangle fallback.
+    }
   }
 
-  // Canvas/HTML fallback: map CSS pixels to the shared 600×350 plane.
   const rect = element.getBoundingClientRect();
   if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   return {
     x: ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
     y: ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
   };
-}
-function getScaledCoordinates(event, graphElement) {
-  return getGraphCoordinates(event, graphElement);
-}
-function getGraphPoint600x350(event, graphElement) {
-  return getGraphCoordinates(event, graphElement);
 }
 
 function getGraphScaleFactor(host) {
@@ -2898,13 +2921,9 @@ function initInteractiveGraphs() {
     let activeDragNode = null;
     let activePointerId = null;
     let activeChannelId = null;
-    let pendingMove = null;
-    let graphFrame = 0;
-
     function graphPoint(event) {
-      const standard = getGraphCoordinates(event, svg);
+      const standard = getNormalizedCoords(event, svg);
       if (!standard || !Number.isFinite(standard.x) || !Number.isFinite(standard.y)) return null;
-      // Bridge the exact 600×350 SVG viewBox to legacy curve-node coordinates.
       return {
         x: Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270)),
         y: Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180)),
@@ -2913,25 +2932,28 @@ function initInteractiveGraphs() {
       };
     }
 
-    function scheduleGraphMove(e) {
-      // Keep only the newest pointer position and draw at most once per frame.
-      pendingMove = { clientX: e.clientX, clientY: e.clientY, pointerId: e.pointerId };
-      if (graphFrame) return;
-      graphFrame = requestAnimationFrame(() => {
-        graphFrame = 0;
-        const latest = pendingMove;
-        pendingMove = null;
-        if (isDragging && latest && latest.pointerId === activePointerId) {
-          handleGraphMove(latest, tab, activeDragNode, box, svg, activeChannelId);
-        }
+    function scheduleGraphMove(event) {
+      if (!isDragging || event.pointerId !== activePointerId) return;
+      scheduleAppRender({
+        event: { clientX: event.clientX, clientY: event.clientY },
+        tab,
+        dragNode: activeDragNode,
+        box,
+        svg,
+        channelId: activeChannelId
       });
     }
 
-    function flushGraphMove(e) {
-      if (graphFrame) cancelAnimationFrame(graphFrame);
-      graphFrame = 0;
-      pendingMove = null;
-      if (e && isDragging) handleGraphMove(e, tab, activeDragNode, box, svg, activeChannelId);
+    function flushGraphMove(event) {
+      if (!event || !isDragging) return;
+      scheduleAppRender({
+        event: { clientX: event.clientX, clientY: event.clientY },
+        tab,
+        dragNode: activeDragNode,
+        box,
+        svg,
+        channelId: activeChannelId
+      });
     }
 
     function onPointerDown(e) {
@@ -3050,7 +3072,7 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   if (!graph) return;
 
   // Normalize to the shared 600 × 350 plane, then bridge to legacy DSP curve coordinates.
-  const standard = getGraphCoordinates(e, graph);
+  const standard = getNormalizedCoords(e, graph);
   if (!standard) return;
   const svgX = Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270));
   const svgY = Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180));
@@ -3073,7 +3095,6 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     const mappedThr = -60 + normalizedX * 60;
     c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
     updateParam("active-thr_" + channelId, c.thr);
-    if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
   } else if (tab === "preamp") {
     const mappedGain = -10 + (1 - normalizedY) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
@@ -3113,7 +3134,6 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     updateParam("peq-gain_" + channelId, p.peq_gain);
   }
 
-  if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
 }
 
 function focusChannel(id) {

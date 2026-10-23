@@ -2576,23 +2576,22 @@ function updateActiveProcessorUI() {
 }
 
 function initKnobEventListeners() {
-  document.querySelectorAll(".physical-knob-container[data-knob-param], .tc-master-strip[data-knob-param]").forEach(knob => {
+  const selector = ".physical-knob-container[data-knob-param], .tc-master-strip[data-knob-param]";
+  document.querySelectorAll(selector).forEach(knob => {
     if (knob.dataset.knobListenerReady === "1") return;
     knob.dataset.knobListenerReady = "1";
     knob.style.pointerEvents = "auto";
     knob.style.touchAction = "none";
+    knob.style.userSelect = "none";
+    knob.style.webkitUserSelect = "none";
     const start = event => {
-      initKnobDrag(
-        event,
-        knob.dataset.knobParam,
-        Number(knob.dataset.knobMin),
-        Number(knob.dataset.knobMax),
-        Number(knob.dataset.knobStep)
-      );
+      if (event.target && event.target.closest && !event.target.closest(selector)) return;
+      initKnobDrag(event, knob.dataset.knobParam,
+        Number(knob.dataset.knobMin), Number(knob.dataset.knobMax), Number(knob.dataset.knobStep));
     };
-    knob.addEventListener("pointerdown", start, { passive: false });
-    // Older WebViews without Pointer Events use direct mouse/touch listeners.
-    if (!("PointerEvent" in window)) {
+    if ("PointerEvent" in window) {
+      knob.addEventListener("pointerdown", start, { passive: false });
+    } else {
       knob.addEventListener("mousedown", start, { passive: false });
       knob.addEventListener("touchstart", start, { passive: false });
     }
@@ -2600,61 +2599,79 @@ function initKnobEventListeners() {
 }
 
 function initKnobDrag(e, paramKey, min, max, step) {
-  if (!e || (e.pointerType === "mouse" && e.button !== 0)) return;
+  if (!e || (e.type === "mousedown" && e.button !== 0) ||
+      (e.type === "pointerdown" && e.pointerType === "mouse" && e.button !== 0)) return;
   e.preventDefault();
   e.stopPropagation();
-
   const channelId = dlmsState.activeChannel;
-  const startY = e.clientY;
+  const firstTouch = e.touches && e.touches[0];
+  const startY = Number(firstTouch ? firstTouch.clientY : e.clientY);
   const startVal = Number(getParamValue(paramKey, channelId));
-  const range = Math.max(0, Number(max) - Number(min));
+  const lo = Number(min), hi = Number(max);
+  const range = Math.max(0, hi - lo);
   const safeStep = Math.max(0, Number(step) || 0);
   const target = e.currentTarget;
-  const pointerId = e.pointerId;
+  const pointerMode = e.type === "pointerdown";
+  const pointerId = pointerMode ? e.pointerId : null;
   let finished = false;
+  if (!Number.isFinite(startY) || !Number.isFinite(startVal) || !Number.isFinite(lo) || !Number.isFinite(hi)) return;
+  try { if (pointerMode) target?.setPointerCapture?.(pointerId); } catch (err) {}
 
-  // Capture pointer so a drag remains attached to the knob even if the finger
-  // leaves its small visual surface or the page is inside a scrolling panel.
-  try { target?.setPointerCapture?.(pointerId); } catch (err) {}
-  if (target) target.style.touchAction = "none";
-
-  function onPointerMove(moveEvent) {
-    if (finished || (pointerId != null && moveEvent.pointerId != null && moveEvent.pointerId !== pointerId)) return;
-    moveEvent.preventDefault();
-    const deltaY = startY - moveEvent.clientY;
-    const sensitivity = range / 100;
-    let newVal = Math.max(Number(min), Math.min(Number(max), startVal + deltaY * sensitivity));
-
-    if (safeStep > 0) newVal = Number((Number(min) + Math.round((newVal - Number(min)) / safeStep) * safeStep).toFixed(4));
-    if (!Number.isFinite(newVal)) return;
-    newVal = Math.max(Number(min), Math.min(Number(max), newVal));
-
-    // Two-way binding: write to the selected channel model, refresh all visible
-    // knob/value/curve UI, then send the same value to the ESP32 bridge.
-    setParamValue(paramKey, newVal, channelId);
-    if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
-    updateParam(paramKey + "_" + channelId, newVal);
-  }
-
-  function finishDrag(endEvent) {
+  let renderFrame = 0;
+  const scheduleRender = () => {
+    if (renderFrame) return;
+    renderFrame = requestAnimationFrame(() => {
+      renderFrame = 0;
+      if (channelId === dlmsState.activeChannel) redrawActiveVisuals();
+    });
+  };
+  function onMove(moveEvent) {
     if (finished) return;
-    if (endEvent && pointerId != null && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
-    finished = true;
-    window.removeEventListener("pointermove", onPointerMove);
-    window.removeEventListener("pointerup", finishDrag);
-    window.removeEventListener("pointercancel", finishDrag);
-    window.removeEventListener("blur", finishDrag);
-    try {
-      if (target?.hasPointerCapture?.(pointerId)) target.releasePointerCapture(pointerId);
-    } catch (err) {}
+    if (pointerMode && moveEvent.pointerId !== pointerId) return;
+    const touch = moveEvent.touches && moveEvent.touches[0];
+    const y = Number(touch ? touch.clientY : moveEvent.clientY);
+    if (!Number.isFinite(y)) return;
+    moveEvent.preventDefault();
+    const sensitivity = range / 100;
+    let value = Math.max(lo, Math.min(hi, startVal + (startY - y) * sensitivity));
+    if (safeStep > 0) value = Number((lo + Math.round((value - lo) / safeStep) * safeStep).toFixed(4));
+    value = Math.max(lo, Math.min(hi, value));
+    if (!Number.isFinite(value)) return;
+    setParamValue(paramKey, value, channelId);
+    scheduleRender();
+    updateParam(paramKey + "_" + channelId, value);
   }
-
-  window.addEventListener("pointermove", onPointerMove, { passive: false });
-  window.addEventListener("pointerup", finishDrag);
-  window.addEventListener("pointercancel", finishDrag);
-  window.addEventListener("blur", finishDrag, { once: true });
+  function finish(endEvent) {
+    if (finished) return;
+    if (pointerMode && endEvent && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
+    finished = true;
+    if (renderFrame) cancelAnimationFrame(renderFrame);
+    if (pointerMode) {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+      try { if (target?.hasPointerCapture?.(pointerId)) target.releasePointerCapture(pointerId); } catch (err) {}
+    } else {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", finish);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", finish);
+      window.removeEventListener("touchcancel", finish);
+    }
+  }
+  if (pointerMode) {
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
+  } else if (e.type === "touchstart") {
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", finish);
+    window.addEventListener("touchcancel", finish);
+  } else {
+    window.addEventListener("mousemove", onMove, { passive: false });
+    window.addEventListener("mouseup", finish);
+  }
 }
-
 function getParamValue(key, channelId = dlmsState.activeChannel) {
   const state = getChannelState(channelId);
   if (!state) return 0;
@@ -2748,23 +2765,25 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** Normalize mouse, pointer, or touch coordinates to the shared 600 × 350 plane. */
-function getScaledCoordinates(event, graphElement) {
-  if (!event || !graphElement) return null;
-  const rect = graphElement.getBoundingClientRect?.();
+/** One coordinate conversion for mouse, pointer and touch across SVG/Canvas graphs. */
+function getGraphCoordinates(e, element) {
+  if (!e || !element) return null;
+  const rect = element.getBoundingClientRect();
   if (!rect || rect.width <= 0 || rect.height <= 0) return null;
-  const source = event.touches?.[0] || event.changedTouches?.[0] || event;
+  const source = e.touches?.[0] || e.changedTouches?.[0] || e;
   const clientX = Number(source.clientX);
   const clientY = Number(source.clientY);
   if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
   return {
-    x: Math.max(0, Math.min(GRAPH_COORD_WIDTH, ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH)),
-    y: Math.max(0, Math.min(GRAPH_COORD_HEIGHT, ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT))
+    x: ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
+    y: ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
   };
 }
-
+function getScaledCoordinates(event, graphElement) {
+  return getGraphCoordinates(event, graphElement);
+}
 function getGraphPoint600x350(event, graphElement) {
-  return getScaledCoordinates(event, graphElement);
+  return getGraphCoordinates(event, graphElement);
 }
 
 function getGraphScaleFactor(host) {
@@ -2895,53 +2914,40 @@ function initInteractiveGraphs() {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       const point = graphPoint(e);
       if (!point) return;
-      // Graph interaction is node-only: tapping empty canvas never starts a drag
-      // and never teleports the curve/node to the touch position.
+      // Hit-test in CSS screen pixels. This avoids mixing the outer 600×350
+      // viewBox with the legacy transformed node coordinates (the previous
+      // coordinate-space mismatch made valid taps miss every node).
       let pickedNode = null;
-      // Hitbox is specified in screen CSS pixels, then converted to SVG coordinates.
-      const ctm = svg.getScreenCTM();
-      // Convert a 22 CSS-pixel hit radius into legacy child-coordinate units.
-      const scaleX = ctm ? Math.hypot(ctm.a, ctm.b) * (GRAPH_COORD_WIDTH / 270) : 1;
-      const scaleY = ctm ? Math.hypot(ctm.c, ctm.d) * (GRAPH_COORD_HEIGHT / 180) : 1;
-      const screenScale = Math.max(0.01, Math.min(scaleX || 1, scaleY || 1));
-      const hitRadius = 22 / screenScale;
+      const clientX = Number(e.clientX);
+      const clientY = Number(e.clientY);
+      const screenDistance = (element) => {
+        if (!element || element.style.display === "none") return Infinity;
+        const r = element.getBoundingClientRect();
+        if (!r.width && !r.height) return Infinity;
+        return Math.hypot(clientX - (r.left + r.width / 2), clientY - (r.top + r.height / 2));
+      };
       if (tab === "preamp") {
-        // Preamp has no draggable node: grab the visible horizontal curve itself.
-        const path = document.getElementById("preamp-curve-path");
-        const nearCurve = path && Math.abs(point.y - (() => {
-          const match = (path.getAttribute("d") || "").match(/M\\s*30\\s*([\\d.]+)/);
-          return match ? Number(match[1]) : NaN;
-        })()) <= hitRadius;
-        if (nearCurve && point.x >= 30 && point.x <= 300) pickedNode = "preamp";
+        // The preamp is a horizontal curve, so any tap inside the graph can grab it.
+        const r = svg.getBoundingClientRect();
+        if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) pickedNode = "preamp";
       } else if (tab === "comp") {
-        const el = document.getElementById("node-thresh-group");
-        const m = el?.transform.baseVal.consolidate()?.matrix;
-        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "threshold";
+        if (screenDistance(svg.querySelector("#node-thresh-group")) <= 36) pickedNode = "threshold";
       } else if (tab === "gate") {
-        const el = document.getElementById("node-gate-group");
-        const m = el?.transform.baseVal.consolidate()?.matrix;
-        if (m && Math.hypot(m.e - point.x, m.f - point.y) <= hitRadius) pickedNode = "gate";
+        if (screenDistance(svg.querySelector("#node-gate-group")) <= 36) pickedNode = "gate";
       } else if (tab === "hpf") {
         const markers = [
-          { id: "hpf", el: document.getElementById("node-hpf-group") },
-          { id: "lpf", el: document.getElementById("node-lpf-group") }
-        ].filter(item => item.el && item.el.style.display !== "none");
-        const nearest = markers.reduce((best, item) => {
-          const m = item.el.transform.baseVal.consolidate()?.matrix;
-          if (!m) return best;
-          const distance = Math.hypot(m.e - point.x, m.f - point.y);
-          return !best || distance < best.distance ? { id: item.id, distance } : best;
-        }, null);
-        if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
+          { id: "hpf", el: svg.querySelector("#node-hpf-group") },
+          { id: "lpf", el: svg.querySelector("#node-lpf-group") }
+        ];
+        const nearest = markers.map(item => ({ id: item.id, distance: screenDistance(item.el) }))
+          .filter(item => Number.isFinite(item.distance))
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest && nearest.distance <= 36) pickedNode = nearest.id;
       } else if (tab === "peq") {
-        const markers = Array.from(svg.querySelectorAll("[data-peq-band]"));
-        const nearest = markers.reduce((best, node) => {
-          const m = node.transform.baseVal.consolidate()?.matrix;
-          if (!m) return best;
-          const distance = Math.hypot(m.e - point.x, m.f - point.y);
-          return !best || distance < best.distance ? { id: node.dataset.peqBand, distance } : best;
-        }, null);
-        if (nearest && nearest.distance <= hitRadius) pickedNode = nearest.id;
+        const nearest = Array.from(svg.querySelectorAll("[data-peq-band]"))
+          .map(node => ({ id: node.dataset.peqBand, distance: screenDistance(node) }))
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest && nearest.distance <= 36) pickedNode = nearest.id;
       }
       if (!pickedNode) return;
       e.preventDefault();
@@ -3020,7 +3026,7 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   if (!graph) return;
 
   // Normalize to the shared 600 × 350 plane, then bridge to legacy DSP curve coordinates.
-  const standard = getGraphPoint600x350(e, graph);
+  const standard = getGraphCoordinates(e, graph);
   if (!standard) return;
   const svgX = Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270));
   const svgY = Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180));

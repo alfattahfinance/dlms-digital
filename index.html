@@ -2344,6 +2344,10 @@ function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   const minDb = gainPages.has(page) ? -30 : -60;
   const maxDb = gainPages.has(page) ? 30 : 0;
   const yForDb = db => bottom - ((db - minDb) / (maxDb - minDb)) * (bottom - top);
+  // insertBefore() requires its reference node to be a direct child of this SVG.
+  // querySelector("path") may return a nested curve path inside a <g>, which throws
+  // a DOMException and also breaks focusChannel() when it refreshes the active page.
+  const directPath = Array.from(svg.children).find(node => node.localName === "path") || null;
 
   // Rebuild only horizontal grid lines and Y-axis labels; keep vertical grid lines intact.
   svg.querySelectorAll("[data-y-axis-generated='true']").forEach(node => node.remove());
@@ -2368,7 +2372,7 @@ function updateGraphYAxisScale(targetPage = currentProcessorTab) {
     line.style.stroke = isZeroLine ? "rgba(255,255,255,0.30)" : "rgba(255,255,255,0.08)";
     line.style.strokeWidth = (isZeroLine ? 1.25 : 0.75) * getGraphScaleFactor(host) + "px";
     line.style.opacity = "1";
-    svg.insertBefore(line, svg.querySelector("path"));
+    svg.insertBefore(line, directPath);
 
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
     label.setAttribute("x", "33");
@@ -2386,7 +2390,7 @@ function updateGraphYAxisScale(targetPage = currentProcessorTab) {
     label.style.strokeWidth = "0.7px";
     label.setAttribute("data-y-axis-generated", "true");
     label.textContent = db > 0 ? "+" + db : String(db);
-    svg.insertBefore(label, svg.querySelector("path"));
+    svg.insertBefore(label, directPath);
   });
 }
 

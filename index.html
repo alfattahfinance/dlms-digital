@@ -2289,10 +2289,13 @@ function updateGraphYAxisScale(targetPage = currentProcessorTab) {
     label.setAttribute("fill", "rgba(255,255,255,0.55)");
     label.style.fill = "rgba(255,255,255,0.55)";
     label.style.opacity = "1";
-    label.setAttribute("font-family", "Arial, sans-serif");
-    label.setAttribute("font-size", Math.max(8, Math.min(11, 11 * getGraphScaleFactor(host))).toFixed(2) + "px");
-    label.setAttribute("font-weight", "400");
-    label.setAttribute("style", "fill:rgba(255,255,255,0.4);font-family:Arial,sans-serif");
+    label.style.fontFamily = "Arial, sans-serif";
+    label.style.fontSize = Math.max(8, Math.min(11, 11 * getGraphScaleFactor(host))).toFixed(2) + "px";
+    label.style.fontWeight = "400";
+    // Never overwrite the full inline style afterward: that used to lower label
+    // contrast to 0.4 whenever the graph was redrawn after node interaction.
+    label.style.stroke = "rgba(10,15,25,0.75)";
+    label.style.strokeWidth = "0.7px";
     label.setAttribute("data-y-axis-generated", "true");
     label.textContent = db > 0 ? "+" + db : String(db);
     svg.insertBefore(label, svg.querySelector("path"));
@@ -3175,6 +3178,12 @@ function drawRTAGlowWave() {
     const w = size.width;
     const h = size.height;
     ctx.clearRect(0, 0, w, h);
+    // Reset canvas drawing state every frame. SVG curve-node interactions must
+    // never leave alpha, compositing, or shadows affecting the RTA canvas.
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
     if (!Object.prototype.hasOwnProperty.call(rtaColorByPage, key) ||
         !playable || w <= 1 || h <= 1) return;
 
@@ -3221,8 +3230,13 @@ function drawRTAGlowWave() {
     ctx.fillStyle = color;
     ctx.fill();
 
-    // Relative grid spacing scales with the current plot width and height.
+    // Draw the RTA grid in an isolated, fully opaque context state.
+    // This grid is a canvas overlay; the dB labels and DSP response grid are SVG.
+    ctx.save();
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = "source-over";
     ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
     ctx.lineWidth = 0.75 * baseScale;
     ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
     for (let i = 1; i < 4; i++) {
@@ -3239,6 +3253,7 @@ function drawRTAGlowWave() {
       ctx.lineTo(plotRight, y);
       ctx.stroke();
     }
+    ctx.restore();
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);

@@ -2230,7 +2230,7 @@ function updateKnobRotation(indicatorId, val, min, max) {
   ind.style.transform = `translateX(-50%) rotate(${deg}deg)`;
 }
 
-function updateGraphYAxisScale() {
+function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   // Tick values are evenly spaced in the same linear dB scale used by the graph.
   // HPF is an attenuation/level response, not a positive/negative gain graph.
   const gainPages = new Set(["preamp", "peq"]);
@@ -2243,7 +2243,8 @@ function updateGraphYAxisScale() {
     peq: "proc-page-peq",
     comp: "proc-page-comp"
   };
-  const page = currentProcessorTab === "limiter" ? "comp" : currentProcessorTab;
+  const requestedPage = targetPage === "limiter" ? "comp" : targetPage;
+  const page = requestedPage;
   const hostId = graphIds[page];
   if (!hostId) return;
   const host = document.getElementById(hostId);
@@ -3351,6 +3352,15 @@ function initDLMD() {
   catch (err) { console.error("Interactive graph initialization failed.", err); }
   try { initResponsiveGraphScaling(); }
   catch (err) { console.error("Responsive graph scaling initialization failed.", err); }
+
+  // Normalize each curve page's Y-axis/grid immediately on startup. This removes
+  // the smaller static HTML grid before the user touches a node, so the graph
+  // does not visibly jump to a second grid/label size on the first interaction.
+  try {
+    ["preamp", "hpf", "gate", "peq", "comp"].forEach(page => updateGraphYAxisScale(page));
+  } catch (err) {
+    console.error("Initial graph axis normalization failed.", err);
+  }
   try { enforceDSPNodePolicy("preamp"); }
   catch (err) { console.error("DSP policy initialization failed.", err); }
   try { focusChannel("ina"); }

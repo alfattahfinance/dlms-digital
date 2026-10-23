@@ -2318,12 +2318,96 @@ function updateKnobRotation(indicatorId, val, min, max) {
   ind.style.transform = `translateX(-50%) rotate(${deg}deg)`;
 }
 
-function updateGraphYAxisScale(targetPage = currentProcessorTab) {
-  // Tick values are evenly spaced in the same linear dB scale used by the graph.
-  // HPF is an attenuation/level response, not a positive/negative gain graph.
+/**
+ * Shared SVG grid renderer for every DSP response graph.
+ * Plot coordinates deliberately retain the existing 30..300 / 10..190 plane:
+ * curve models and pointer hit-testing already use that coordinate system.
+ */
+function drawBackgroundGrid(svg, host, page) {
+  if (!svg || !host) return;
+  const ns = "http://www.w3.org/2000/svg";
+  const scale = getGraphScaleFactor(host);
+  const left = 30, right = 300, top = 10, bottom = 190;
+  const plotW = right - left, plotH = bottom - top;
   const gainPages = new Set(["preamp", "peq"]);
   const gainTicks = [30, 20, 10, 0, -10, -20, -30];
   const levelTicks = [0, -10, -20, -30, -40, -50, -60];
+  const ticks = gainPages.has(page) ? gainTicks : levelTicks;
+  const minDb = gainPages.has(page) ? -30 : -60;
+  const maxDb = gainPages.has(page) ? 30 : 0;
+  const yForDb = db => bottom - ((db - minDb) / (maxDb - minDb)) * plotH;
+  const directPath = Array.from(svg.children).find(node => node.localName === "path") || null;
+
+  // Remove only grid decorations. Curve paths, nodes and pointer handlers remain untouched.
+  svg.querySelectorAll("[data-dlms-grid='true']").forEach(node => node.remove());
+  svg.querySelectorAll("line.sq-grid-line, line.zero-fixed-line").forEach(node => node.remove());
+  svg.querySelectorAll(".sq-grid-text").forEach(node => node.remove());
+
+  const addLine = (x1, y1, x2, y2, major = false) => {
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+    line.setAttribute("class", major ? "zero-fixed-line" : "sq-grid-line");
+    line.setAttribute("data-dlms-grid", "true");
+    line.style.stroke = "rgba(255,255,255,0.08)";
+    line.style.strokeWidth = Math.max(0.5, (major ? 1 : 0.75) * scale).toFixed(2) + "px";
+    line.style.opacity = "1";
+    svg.insertBefore(line, directPath);
+  };
+  const addLabel = (x, y, text, anchor = "start") => {
+    const label = document.createElementNS(ns, "text");
+    label.setAttribute("x", x); label.setAttribute("y", y);
+    label.setAttribute("text-anchor", anchor);
+    label.setAttribute("class", "sq-grid-text");
+    label.setAttribute("data-dlms-grid", "true");
+    label.setAttribute("fill", "rgba(255,255,255,0.45)");
+    label.style.fill = "rgba(255,255,255,0.45)";
+    label.style.fontFamily = "Arial, sans-serif";
+    label.style.fontSize = Math.max(7, 10 * scale).toFixed(2) + "px";
+    label.style.fontWeight = "400";
+    label.style.stroke = "rgba(10,15,25,0.65)";
+    label.style.strokeWidth = "0.65px";
+    label.style.paintOrder = "stroke";
+    label.style.pointerEvents = "none";
+    label.textContent = text;
+    svg.insertBefore(label, directPath);
+  };
+
+  // Y axis: linear dB divisions.
+  ticks.forEach(db => {
+    const y = yForDb(db);
+    addLine(left, y, right, y, db === 0);
+    addLabel(left + 3, Math.max(top + 7, Math.min(bottom - 2, y + 3)), db > 0 ? "+" + db : String(db));
+  });
+
+  // X axis: logarithmic frequency for EQ/filter pages, linear input level for dynamics.
+  if (page === "peq" || page === "hpf") {
+    const minHz = 20, maxHz = page === "peq" ? 1000 : 20000;
+    const freqTicks = page === "peq"
+      ? [20, 31.5, 50, 100, 200, 500, 1000]
+      : [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
+    freqTicks.forEach(hz => {
+      const x = left + (Math.log(hz / minHz) / Math.log(maxHz / minHz)) * plotW;
+      if (x <= left || x >= right) return;
+      addLine(x, top, x, bottom, false);
+      addLabel(x, bottom + 14, hz >= 1000 ? (hz / 1000) + "k" : String(hz), "middle");
+    });
+  } else if (page === "comp") {
+    [-60, -45, -30, -15, 0].forEach(db => {
+      const x = left + ((db + 60) / 60) * plotW;
+      addLine(x, top, x, bottom, false);
+      addLabel(x, bottom + 14, String(db), "middle");
+    });
+  } else if (page === "gate") {
+    [0, 0.25, 0.5, 0.75, 1].forEach((fraction, i) => {
+      const x = left + fraction * plotW;
+      addLine(x, top, x, bottom, false);
+      if (i > 0 && i < 4) addLabel(x, bottom + 14, String(i * 25), "middle");
+    });
+  }
+}
+
+function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   const graphIds = {
     preamp: "proc-page-preamp",
     hpf: "proc-page-hpf",
@@ -2331,67 +2415,13 @@ function updateGraphYAxisScale(targetPage = currentProcessorTab) {
     peq: "proc-page-peq",
     comp: "proc-page-comp"
   };
-  const requestedPage = targetPage === "limiter" ? "comp" : targetPage;
-  const page = requestedPage;
-  const hostId = graphIds[page];
-  if (!hostId) return;
-  const host = document.getElementById(hostId);
-  const svg = host?.querySelector("svg");
-  if (!svg) return;
-
-  const ticks = gainPages.has(page) ? gainTicks : levelTicks;
-  const top = 10, bottom = 190;
-  const minDb = gainPages.has(page) ? -30 : -60;
-  const maxDb = gainPages.has(page) ? 30 : 0;
-  const yForDb = db => bottom - ((db - minDb) / (maxDb - minDb)) * (bottom - top);
-  // insertBefore() requires its reference node to be a direct child of this SVG.
-  // querySelector("path") may return a nested curve path inside a <g>, which throws
-  // a DOMException and also breaks focusChannel() when it refreshes the active page.
-  const directPath = Array.from(svg.children).find(node => node.localName === "path") || null;
-
-  // Rebuild only horizontal grid lines and Y-axis labels; keep vertical grid lines intact.
-  svg.querySelectorAll("[data-y-axis-generated='true']").forEach(node => node.remove());
-  svg.querySelectorAll("line").forEach(line => {
-    if (Number(line.getAttribute("x1")) === 30 &&
-        Number(line.getAttribute("x2")) === 300 &&
-        line.hasAttribute("y1") && line.hasAttribute("y2")) line.remove();
-  });
-  svg.querySelectorAll(".sq-grid-text").forEach(label => label.remove());
-
-  ticks.forEach(db => {
-    const y = yForDb(db);
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", "30");
-    line.setAttribute("x2", "300");
-    line.setAttribute("y1", y.toFixed(2));
-    line.setAttribute("y2", y.toFixed(2));
-    const isZeroLine = db === 0;
-    line.setAttribute("class", isZeroLine ? "zero-fixed-line" : "sq-grid-line");
-    line.setAttribute("data-y-axis-generated", "true");
-    // Keep generated grid lines at the same brightness before and after a node touch.
-    line.style.stroke = isZeroLine ? "rgba(255,255,255,0.30)" : "rgba(255,255,255,0.08)";
-    line.style.strokeWidth = (isZeroLine ? 1.25 : 0.75) * getGraphScaleFactor(host) + "px";
-    line.style.opacity = "1";
-    svg.insertBefore(line, directPath);
-
-    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", "33");
-    label.setAttribute("y", (y + 3).toFixed(2));
-    label.setAttribute("class", "sq-grid-text");
-    label.setAttribute("fill", "rgba(255,255,255,0.55)");
-    label.style.fill = "rgba(255,255,255,0.55)";
-    label.style.opacity = "1";
-    label.style.fontFamily = "Arial, sans-serif";
-    label.style.fontSize = Math.max(7, 11 * getGraphScaleFactor(host)).toFixed(2) + "px";
-    label.style.fontWeight = "400";
-    // Never overwrite the full inline style afterward: that used to lower label
-    // contrast to 0.4 whenever the graph was redrawn after node interaction.
-    label.style.stroke = "rgba(10,15,25,0.75)";
-    label.style.strokeWidth = "0.7px";
-    label.setAttribute("data-y-axis-generated", "true");
-    label.textContent = db > 0 ? "+" + db : String(db);
-    svg.insertBefore(label, directPath);
-  });
+  const page = targetPage === "limiter" ? "comp" : targetPage;
+  const host = document.getElementById(graphIds[page]);
+  const graphBox = host?.querySelector(".sq-graph-box") || host;
+  const svg = graphBox?.querySelector("svg");
+  if (!svg || !graphBox) return;
+  drawBackgroundGrid(svg, graphBox, page);
+  applyResponsiveGraphScale(graphBox);
 }
 
 function updateActiveProcessorUI() {
@@ -2802,7 +2832,9 @@ function applyResponsiveGraphScale(host) {
   const svg = host.matches("svg") ? host : host.querySelector("svg");
   if (!svg) return;
   svg.querySelectorAll(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq").forEach(path => {
-    path.style.strokeWidth = (3.5 * scaleFactor).toFixed(3) + "px";
+    path.style.strokeWidth = (3 * scaleFactor).toFixed(3) + "px";
+    // Avoid SVG filters during touch drags; mobile Safari can leave stale pixels.
+    path.style.filter = "none";
   });
   svg.querySelectorAll(".sq-grid-line").forEach(line => {
     line.style.strokeWidth = Math.max(0.5, 0.75 * scaleFactor).toFixed(3) + "px";
@@ -2816,7 +2848,7 @@ function applyResponsiveGraphScale(host) {
   });
   svg.querySelectorAll(".sq-grid-text").forEach(label => {
     label.style.fontSize = Math.max(7, 11 * scaleFactor).toFixed(3) + "px";
-    label.style.fill = "rgba(255,255,255,0.55)";
+    label.style.fill = "rgba(255,255,255,0.45)";
     label.style.stroke = "rgba(10,15,25,0.75)";
     label.style.strokeWidth = "0.7px";
   });

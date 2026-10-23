@@ -1633,6 +1633,88 @@
       .tc-center-graph { padding: clamp(8px, 1vw, 14px); }
     }
 
+    /* AUTO-DESIGN graph viewport: consistent 16:9 responsive canvas. */
+    .tc-center-graph {
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(4px, 1vw, 10px);
+      overflow: hidden;
+    }
+    .processor-subpage {
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      max-height: 100%;
+      overflow: hidden;
+    }
+    .sq-graph-box, #gate-graph-box, #editor-graph-box {
+      box-sizing: border-box;
+      position: relative;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 16 / 9 !important;
+      max-width: 100%;
+      max-height: 100%;
+      min-width: 0;
+      min-height: 0;
+      flex: 0 1 auto;
+      align-self: center;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent !important;
+      box-shadow: none;
+    }
+    .sq-graph-box > svg, #gate-graph-box > svg, #editor-graph-box > svg {
+      position: relative;
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      max-height: 100%;
+      background: transparent !important;
+      pointer-events: auto;
+      touch-action: none;
+    }
+    .dlms-curve-glow {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none !important;
+      opacity: 0.16;
+    }
+    .dlms-node-halo { pointer-events: none !important; }
+    .sq-grid-line, .zero-fixed-line {
+      stroke: rgba(255,255,255,0.08) !important;
+      vector-effect: non-scaling-stroke;
+    }
+    .sq-grid-text {
+      fill: rgba(255,255,255,0.45) !important;
+      stroke: none !important;
+      paint-order: normal !important;
+    }
+    @media (max-width: 520px) {
+      .tc-center-graph { padding: 3px; }
+      .sq-graph-box, #gate-graph-box, #editor-graph-box { width: 100% !important; }
+    }
+    @media (orientation: landscape) and (max-height: 520px) {
+      .tc-center-graph { padding: 2px 4px; }
+      .sq-graph-box, #gate-graph-box, #editor-graph-box {
+        width: min(100%, calc(100dvh * 1.7778)) !important;
+        max-height: 100%;
+      }
+    }
+    @media (min-width: 760px) {
+      .tc-center-graph { padding: clamp(6px, 1vw, 12px); }
+      .sq-graph-box, #gate-graph-box, #editor-graph-box { max-width: 100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -2459,7 +2541,7 @@ function drawBackgroundGrid(svg, host, page) {
       addLine(x,10,x,190);
       addLabel(String(db),x,185,"middle");
     });
-    addLabel("INPUT dB",165,199,"middle");
+    addLabel("INPUT dB",165,194,"middle");
   } else {
     [20,31.5,50,100,200,500,1000,2000,5000,10000,20000].forEach(freq => {
       const x=30+270*Math.log(freq/20)/Math.log(1000);
@@ -2469,7 +2551,7 @@ function drawBackgroundGrid(svg, host, page) {
         addLabel(label,x,185,freq===20 ? "start" : (freq===20000 ? "end" : "middle"));
       }
     });
-    addLabel("FREQUENCY Hz",165,199,"middle");
+    addLabel("FREQUENCY Hz",165,194,"middle");
   }
   const firstCurve=layer.querySelector(".sq-curve-fill, .sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq, path");
   layer.insertBefore(group,firstCurve || layer.firstChild);
@@ -2543,14 +2625,15 @@ function updateActiveProcessorUI() {
     const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
     const lpfFreq = Math.max(100, Number(p.lpf_freq) || 18000);
     const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
-    const hpfY = 190 - ((Math.max(-30, Math.min(30, hpfDb(hpfFreq))) + 30) / 60) * 180;
-    const lpfY = 100;
     const lpfDb = f => {
       const ratio = Math.max(1e-6, f / lpfFreq);
       const order = Math.max(1, Math.round((Number(p.lpf_slope) || 24) / 6));
       const mag = 1 / Math.sqrt(1 + Math.pow(ratio, 2 * order));
       return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
     };
+    const responseY = db => 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180;
+    const hpfY = responseY(hpfDb(hpfFreq) + lpfDb(hpfFreq));
+    const lpfY = responseY(hpfDb(lpfFreq) + lpfDb(lpfFreq));
     const combinedPts = [];
     for (let i = 0; i <= 180; i++) {
       const x = 30 + 270 * i / 180;
@@ -2581,7 +2664,8 @@ function updateActiveProcessorUI() {
     const gateRange = Math.max(-60, Math.min(0, Number.isFinite(gateRangeRaw) ? gateRangeRaw : -40));
     const gx = v => 30 + (v + 80) / 80 * 270;
     const gy = v => 10 + (0 - Math.max(-60, Math.min(0, v))) / 60 * 180;
-    const gX = gx(gateThr), gY = gy(Math.max(-80, gateThr + gateRange));
+    const gX = gx(gateThr);
+    const gY = Math.max(12, Math.min(188, gy(Math.max(-80, gateThr + gateRange))));
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
     // Keep the neon transfer curve and its translucent area as independent SVG paths.
     // The fill path closes only along the bottom edge and is never stroked.
@@ -3074,9 +3158,9 @@ function initInteractiveGraphs() {
         const r = svg.getBoundingClientRect();
         if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) pickedNode = "preamp";
       } else if (tab === "comp") {
-        if (screenDistance(svg.querySelector("#node-thresh-group")) <= 36) pickedNode = "threshold";
+        if (screenDistance(svg.querySelector("#node-thresh-group")) <= 22) pickedNode = "threshold";
       } else if (tab === "gate") {
-        if (screenDistance(svg.querySelector("#node-gate-group")) <= 36) pickedNode = "gate";
+        if (screenDistance(svg.querySelector("#node-gate-group")) <= 22) pickedNode = "gate";
       } else if (tab === "hpf") {
         const markers = [
           { id: "hpf", el: svg.querySelector("#node-hpf-group") },
@@ -3085,7 +3169,7 @@ function initInteractiveGraphs() {
         const nearest = markers.map(item => ({ id: item.id, distance: screenDistance(item.el) }))
           .filter(item => Number.isFinite(item.distance))
           .sort((a, b) => a.distance - b.distance)[0];
-        if (nearest && nearest.distance <= 36) pickedNode = nearest.id;
+        if (nearest && nearest.distance <= 22) pickedNode = nearest.id;
       } else if (tab === "peq") {
         const nearest = Array.from(svg.querySelectorAll("[data-peq-band]"))
           .map(node => ({ id: node.dataset.peqBand, distance: screenDistance(node) }))
@@ -3495,35 +3579,7 @@ function drawRTAGlowWave() {
     ctx.fillStyle = color;
     ctx.fill();
 
-    // Draw the RTA grid in an isolated, fully opaque context state.
-    // This grid is a canvas overlay; the dB labels and DSP response grid are SVG.
-    ctx.save();
-    ctx.globalAlpha = 1.0;
-    ctx.globalCompositeOperation = "source-over";
-    ctx.shadowBlur = 0;
-    ctx.shadowColor = "transparent";
-    ctx.lineWidth = Math.max(0.5, 0.75 * baseScale);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-    // Log-spaced frequency grid, matching the RTA's logarithmic X mapping.
-    const gridHz = [31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400,
-      500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
-      8000, 10000, 12500, 16000];
-    gridHz.forEach(hz => {
-      if (hz <= minHz || hz >= maxHz) return;
-      const x = plotLeft + plotWidth * (Math.log(hz / minHz) / Math.log(maxHz / minHz));
-      ctx.beginPath();
-      ctx.moveTo(x, plotTop);
-      ctx.lineTo(x, plotBottom);
-      ctx.stroke();
-    });
-    for (let i = 1; i < 6; i++) {
-      const y = plotTop + plotHeight * (i / 6);
-      ctx.beginPath();
-      ctx.moveTo(plotLeft, y);
-      ctx.lineTo(plotRight, y);
-      ctx.stroke();
-    }
-    ctx.restore();
+    // SVG owns the single shared graph grid and all axis labels.
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);

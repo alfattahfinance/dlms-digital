@@ -2632,7 +2632,10 @@ function initKnobDrag(e, paramKey, min, max, step) {
     const y = Number(touch ? touch.clientY : moveEvent.clientY);
     if (!Number.isFinite(y)) return;
     moveEvent.preventDefault();
-    const sensitivity = range / 100;
+    const knobRect = target?.getBoundingClientRect?.();
+    // Normalize drag distance to the actual target height on every screen density.
+    const dragHeight = Math.max(24, Number(knobRect?.height) || 32);
+    const sensitivity = range / (dragHeight * 2);
     let value = Math.max(lo, Math.min(hi, startVal + (startY - y) * sensitivity));
     if (safeStep > 0) value = Number((lo + Math.round((value - lo) / safeStep) * safeStep).toFixed(4));
     value = Math.max(lo, Math.min(hi, value));
@@ -2768,12 +2771,34 @@ const GRAPH_COORD_HEIGHT = 350;
 /** One coordinate conversion for mouse, pointer and touch across SVG/Canvas graphs. */
 function getGraphCoordinates(e, element) {
   if (!e || !element) return null;
-  const rect = element.getBoundingClientRect();
-  if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   const source = e.touches?.[0] || e.changedTouches?.[0] || e;
   const clientX = Number(source.clientX);
   const clientY = Number(source.clientY);
   if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
+
+  // SVG uses its real viewBox transform so preserveAspectRatio letterboxing is handled.
+  if (typeof element.getScreenCTM === "function" && typeof element.createSVGPoint === "function") {
+    try {
+      const matrix = element.getScreenCTM();
+      if (matrix) {
+        const point = element.createSVGPoint();
+        point.x = clientX;
+        point.y = clientY;
+        const local = point.matrixTransform(matrix.inverse());
+        const viewBox = element.viewBox?.baseVal;
+        const width = viewBox?.width || GRAPH_COORD_WIDTH;
+        const height = viewBox?.height || GRAPH_COORD_HEIGHT;
+        return {
+          x: (local.x / width) * GRAPH_COORD_WIDTH,
+          y: (local.y / height) * GRAPH_COORD_HEIGHT
+        };
+      }
+    } catch (err) {}
+  }
+
+  // Canvas/HTML fallback: map CSS pixels to the shared 600×350 plane.
+  const rect = element.getBoundingClientRect();
+  if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   return {
     x: ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
     y: ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
@@ -2877,10 +2902,9 @@ function initInteractiveGraphs() {
     let graphFrame = 0;
 
     function graphPoint(event) {
-      const standard = getGraphPoint600x350(event, svg);
+      const standard = getGraphCoordinates(event, svg);
       if (!standard || !Number.isFinite(standard.x) || !Number.isFinite(standard.y)) return null;
-      // The SVG's visible input plane is 600×350; existing node transforms are
-      // intentionally retained in legacy 30..300 / 10..190 coordinates.
+      // Bridge the exact 600×350 SVG viewBox to legacy curve-node coordinates.
       return {
         x: Math.max(30, Math.min(300, 30 + (standard.x / GRAPH_COORD_WIDTH) * 270)),
         y: Math.max(10, Math.min(190, 10 + (standard.y / GRAPH_COORD_HEIGHT) * 180)),

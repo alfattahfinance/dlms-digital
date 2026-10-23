@@ -2460,7 +2460,7 @@ function updateActiveProcessorUI() {
       const totalDb = Math.max(-18, Math.min(18, totalPeqDbAt(freq)));
       const nodeY = peqY(totalDb);
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
-      node.style.opacity = Number(p.peq_band) === index + 1 ? "1" : "0.3";
+      node.style.opacity = "1"; // Keep every PEQ curve node equally bright; do not dim inactive bands.
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
     document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 190 L 30 190 Z");

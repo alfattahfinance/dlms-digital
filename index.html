@@ -1439,12 +1439,22 @@
     .sq-graph-box *,
     #gate-graph-box,
     #gate-graph-box *,
+    /* Restrict no-touch-action to the draggable graph editor only.
+       GEQ must retain horizontal swipe scrolling on phones/tablets. */
     #editor-graph-box,
-    #editor-graph-box *,
-    #geq-container-box,
-    #geq-container-box * {
+    #editor-graph-box * {
       touch-action: none;
       -ms-touch-action: none;
+    }
+    #geq-container-box {
+      touch-action: pan-x pan-y;
+      -ms-touch-action: pan-x pan-y;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    #geq-container-box .geq-range {
+      touch-action: pan-y;
+      -ms-touch-action: pan-y;
     }
     /* Keep graph interaction local; do not disable zoom for the whole page. */
 

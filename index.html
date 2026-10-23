@@ -2397,13 +2397,83 @@ function updateKnobRotation(indicatorId, val, min, max) {
  * Curve-only graph renderer: remove all grid lines and numeric labels while
  * preserving the SVG curve paths, nodes, and existing pointer handlers.
  */
+/**
+ * Auto-design renderer for the shared 600 × 350 SVG coordinate plane.
+ * Grid, ticks and labels are generated from measured host size; curve geometry
+ * and interactive node handlers remain in their existing SVG layer.
+ */
 function drawBackgroundGrid(svg, host, page) {
-  if (!svg) return;
-  svg.querySelectorAll(
-    "line.sq-grid-line, line.zero-fixed-line, .sq-grid-text, [data-dlms-grid='true']"
-  ).forEach(node => node.remove());
+  if (!svg || !host) return;
+  const layer = svg.querySelector(".graph-legacy-coordinate-layer");
+  if (!layer) return;
+  svg.querySelectorAll("[data-dlms-grid='true']").forEach(node => node.remove());
+  layer.querySelectorAll("line.sq-grid-line, line.zero-fixed-line, .sq-grid-text").forEach(node => node.remove());
+  const rect = host.getBoundingClientRect();
+  const width = Math.max(1, rect.width || 600), height = Math.max(1, rect.height || 350);
+  let baseScale = Math.min(width / 600, height / 350);
+  baseScale = Math.max(0.35, Math.min(1.25, baseScale));
+  const NS = "http://www.w3.org/2000/svg";
+  const group = document.createElementNS(NS, "g");
+  group.setAttribute("data-dlms-grid", "true");
+  group.setAttribute("aria-hidden", "true");
+  group.style.pointerEvents = "none";
+  const addLine = (x1,y1,x2,y2,stronger=false) => {
+    const line = document.createElementNS(NS,"line");
+    line.setAttribute("x1",x1); line.setAttribute("y1",y1);
+    line.setAttribute("x2",x2); line.setAttribute("y2",y2);
+    line.setAttribute("stroke","rgba(255,255,255,0.08)");
+    line.setAttribute("stroke-width",stronger ? "0.9" : "0.65");
+    line.setAttribute("vector-effect","non-scaling-stroke");
+    line.setAttribute("class",stronger ? "zero-fixed-line" : "sq-grid-line");
+    group.appendChild(line);
+  };
+  const addLabel = (value,x,y,anchor="start") => {
+    const label = document.createElementNS(NS,"text");
+    label.setAttribute("x",x); label.setAttribute("y",y);
+    label.setAttribute("text-anchor",anchor);
+    label.setAttribute("dominant-baseline","middle");
+    label.setAttribute("class","sq-grid-text");
+    label.setAttribute("font-size",(6.1*baseScale).toFixed(2));
+    label.setAttribute("font-family","Arial, sans-serif");
+    label.setAttribute("font-weight","400");
+    label.setAttribute("fill","rgba(255,255,255,0.45)");
+    label.setAttribute("stroke","none");
+    label.textContent=value;
+    group.appendChild(label);
+  };
+  const levelGraph = page==="gate" || page==="comp" || page==="limiter";
+  const yTicks = levelGraph
+    ? [{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"},{v:-45,label:"-45"},{v:-60,label:"-60"}]
+    : [{v:30,label:"+30"},{v:15,label:"+15"},{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"}];
+  const yToCoord = value => levelGraph ? 10+((0-value)/60)*180 : 10+((30-value)/60)*180;
+  yTicks.forEach(tick => {
+    const y=yToCoord(tick.v);
+    addLine(30,y,300,y,tick.v===0);
+    addLabel(tick.label,33,y,"start");
+  });
+  if (levelGraph) {
+    const minDb=page==="gate" ? -80 : -60;
+    const ticks=page==="gate" ? [-80,-60,-40,-20,0] : [-60,-45,-30,-15,0];
+    ticks.forEach(db => {
+      const x=30+((db-minDb)/(0-minDb))*270;
+      addLine(x,10,x,190);
+      addLabel(String(db),x,185,"middle");
+    });
+    addLabel("INPUT dB",165,199,"middle");
+  } else {
+    [20,31.5,50,100,200,500,1000,2000,5000,10000,20000].forEach(freq => {
+      const x=30+270*Math.log(freq/20)/Math.log(1000);
+      addLine(x,10,x,190);
+      if ([20,100,1000,10000,20000].includes(freq)) {
+        const label=freq>=1000 ? (freq===20000 ? "20k" : (freq/1000)+"k") : String(freq);
+        addLabel(label,x,185,freq===20 ? "start" : (freq===20000 ? "end" : "middle"));
+      }
+    });
+    addLabel("FREQUENCY Hz",165,199,"middle");
+  }
+  const firstCurve=layer.querySelector(".sq-curve-fill, .sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq, path");
+  layer.insertBefore(group,firstCurve || layer.firstChild);
 }
-
 function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   const graphIds = {
     preamp: "proc-page-preamp",
@@ -2816,38 +2886,80 @@ function getNormalizedCoords(event, element) {
 }
 
 function getGraphScaleFactor(host) {
-  const rect = host?.getBoundingClientRect?.();
-  const width = Math.max(1, rect?.width || GRAPH_COORD_WIDTH);
-  const height = Math.max(1, rect?.height || GRAPH_COORD_HEIGHT);
-  return Math.max(0.35, Math.min(1.25, width / GRAPH_COORD_WIDTH, height / GRAPH_COORD_HEIGHT));
+  const rect=host?.getBoundingClientRect?.();
+  const width=Math.max(1,rect?.width || GRAPH_COORD_WIDTH);
+  const height=Math.max(1,rect?.height || GRAPH_COORD_HEIGHT);
+  let baseScale=Math.min(width/GRAPH_COORD_WIDTH,height/GRAPH_COORD_HEIGHT);
+  return Math.max(0.35,Math.min(1.25,baseScale));
 }
-
+function initGraphGlowLayers(svg) {
+  if (!svg || svg.dataset.glowLayersReady==="1") return;
+  svg.dataset.glowLayersReady="1";
+  const selector=".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq";
+  const colors={"sq-curve-line":"#ffd15c","neon-line-blue":"#36f4ff","neon-line-emerald":"#3dffd0","neon-line-peq":"#ff559e"};
+  const sync=path=>{
+    if(!path || !path.parentNode) return;
+    const color=Array.from(path.classList).map(name=>colors[name]).find(Boolean) || "#36f4ff";
+    let glow=path.previousElementSibling;
+    if(!glow || glow.getAttribute("data-dlms-glow-for")!==(path.id || "")) {
+      glow=path.ownerDocument.createElementNS("http://www.w3.org/2000/svg","path");
+      glow.setAttribute("data-dlms-glow-for",path.id || "");
+      glow.setAttribute("class","dlms-curve-glow");
+      glow.setAttribute("fill","none");
+      glow.setAttribute("stroke-linecap","round");
+      glow.setAttribute("stroke-linejoin","round");
+      glow.setAttribute("vector-effect","non-scaling-stroke");
+      glow.setAttribute("pointer-events","none");
+      glow.setAttribute("aria-hidden","true");
+      path.parentNode.insertBefore(glow,path);
+    }
+    glow.setAttribute("d",path.getAttribute("d") || "");
+    glow.setAttribute("stroke",color);
+  };
+  svg.querySelectorAll(selector).forEach(sync);
+  if(typeof MutationObserver!=="undefined") {
+    const observer=new MutationObserver(records=>{
+      new Set(records.map(record=>record.target).filter(node=>node.matches?.(selector))).forEach(sync);
+    });
+    svg.querySelectorAll(selector).forEach(path=>observer.observe(path,{attributes:true,attributeFilter:["d","class"]}));
+    svg.__dlmsGlowObserver=observer;
+  }
+  svg.querySelectorAll(".screen-real-knob").forEach(node=>{
+    if(node.querySelector(".dlms-node-halo")) return;
+    const halo=node.ownerDocument.createElementNS("http://www.w3.org/2000/svg","circle");
+    halo.setAttribute("class","dlms-node-halo"); halo.setAttribute("r","11");
+    halo.setAttribute("fill","rgba(255,255,255,0.025)");
+    halo.setAttribute("stroke","rgba(255,255,255,0.32)");
+    halo.setAttribute("stroke-width","0.8"); halo.setAttribute("pointer-events","none");
+    node.insertBefore(halo,node.firstChild);
+  });
+}
 function applyResponsiveGraphScale(host) {
-  if (!host) return;
-  const scaleFactor = getGraphScaleFactor(host);
-  host.style.setProperty("--graph-scale", String(scaleFactor));
-  const svg = host.matches("svg") ? host : host.querySelector("svg");
-  if (!svg) return;
-  svg.querySelectorAll(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq").forEach(path => {
-    path.style.strokeWidth = (3 * scaleFactor).toFixed(3) + "px";
-    // Avoid SVG filters during touch drags; mobile Safari can leave stale pixels.
-    path.style.filter = "none";
+  if(!host) return;
+  const scaleFactor=getGraphScaleFactor(host);
+  host.style.setProperty("--graph-scale",String(scaleFactor));
+  const svg=host.matches("svg") ? host : host.querySelector("svg");
+  if(!svg) return;
+  initGraphGlowLayers(svg);
+  svg.querySelectorAll(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq").forEach(path=>{
+    path.style.strokeWidth=(3.5*scaleFactor).toFixed(3)+"px";
+    path.style.filter="none";
+    const glow=path.previousElementSibling;
+    if(glow?.classList.contains("dlms-curve-glow")) {
+      glow.style.strokeWidth=(8*scaleFactor).toFixed(3)+"px";
+      glow.style.opacity="0.16";
+    }
   });
-  svg.querySelectorAll(".sq-grid-line").forEach(line => {
-    line.style.strokeWidth = Math.max(0.5, 0.75 * scaleFactor).toFixed(3) + "px";
-    line.style.stroke = "rgba(255,255,255,0.08)";
-    line.style.opacity = "1";
+  svg.querySelectorAll(".sq-grid-line, .zero-fixed-line").forEach(line=>{
+    line.style.strokeWidth=Math.max(0.5,0.75*scaleFactor).toFixed(3)+"px";
+    line.style.stroke="rgba(255,255,255,0.08)";
+    line.style.opacity="1";
   });
-  svg.querySelectorAll(".zero-fixed-line").forEach(line => {
-    line.style.strokeWidth = Math.max(0.9, 1.25 * scaleFactor).toFixed(3) + "px";
-    line.style.stroke = "rgba(255,255,255,0.42)";
-    line.style.opacity = "1";
-  });
-  svg.querySelectorAll(".sq-grid-text").forEach(label => {
-    label.style.fontSize = Math.max(7, 11 * scaleFactor).toFixed(3) + "px";
-    label.style.fill = "rgba(255,255,255,0.45)";
-    label.style.stroke = "rgba(10,15,25,0.75)";
-    label.style.strokeWidth = "0.7px";
+  svg.querySelectorAll(".sq-grid-text").forEach(label=>{
+    label.style.fontSize=(6.1*scaleFactor).toFixed(3)+"px";
+    label.style.fill="rgba(255,255,255,0.45)";
+    label.style.stroke="none";
+    label.style.paintOrder="normal";
   });
 }
 function initResponsiveGraphScaling() {

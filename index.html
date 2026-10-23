@@ -2625,39 +2625,30 @@ function initKnobEventListeners() {
       initKnobDrag(event, knob.dataset.knobParam,
         Number(knob.dataset.knobMin), Number(knob.dataset.knobMax), Number(knob.dataset.knobStep));
     };
-    if ("PointerEvent" in window) {
-      knob.addEventListener("pointerdown", start, { passive: false });
-    } else {
-      knob.addEventListener("mousedown", start, { passive: false });
-      knob.addEventListener("touchstart", start, { passive: false });
-    }
+    knob.addEventListener("pointerdown", start, { passive: false });
   });
 }
 
 function initKnobDrag(e, paramKey, min, max, step) {
-  if (!e || (e.type === "mousedown" && e.button !== 0) ||
-      (e.type === "pointerdown" && e.pointerType === "mouse" && e.button !== 0)) return;
+  if (!e || e.type !== "pointerdown" || (e.pointerType === "mouse" && e.button !== 0)) return;
   e.preventDefault();
   e.stopPropagation();
   const channelId = dlmsState.activeChannel;
-  const firstTouch = e.touches && e.touches[0];
-  const startY = Number(firstTouch ? firstTouch.clientY : e.clientY);
+  const startY = Number(e.clientY);
   const startVal = Number(getParamValue(paramKey, channelId));
   const lo = Number(min), hi = Number(max);
   const range = Math.max(0, hi - lo);
   const safeStep = Math.max(0, Number(step) || 0);
   const target = e.currentTarget;
-  const pointerMode = e.type === "pointerdown";
-  const pointerId = pointerMode ? e.pointerId : null;
+  const pointerId = e.pointerId;
   let finished = false;
   if (!Number.isFinite(startY) || !Number.isFinite(startVal) || !Number.isFinite(lo) || !Number.isFinite(hi)) return;
   try { if (pointerMode) target?.setPointerCapture?.(pointerId); } catch (err) {}
 
   function onMove(moveEvent) {
     if (finished) return;
-    if (pointerMode && moveEvent.pointerId !== pointerId) return;
-    const touch = moveEvent.touches && moveEvent.touches[0];
-    const y = Number(touch ? touch.clientY : moveEvent.clientY);
+    if (moveEvent.pointerId !== pointerId) return;
+    const y = Number(moveEvent.clientY);
     if (!Number.isFinite(y)) return;
     moveEvent.preventDefault();
     const knobRect = target?.getBoundingClientRect?.();
@@ -2674,33 +2665,16 @@ function initKnobDrag(e, paramKey, min, max, step) {
   }
   function finish(endEvent) {
     if (finished) return;
-    if (pointerMode && endEvent && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
+    if (endEvent && endEvent.pointerId != null && endEvent.pointerId !== pointerId) return;
     finished = true;
-    if (pointerMode) {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", finish);
-      window.removeEventListener("pointercancel", finish);
-      try { if (target?.hasPointerCapture?.(pointerId)) target.releasePointerCapture(pointerId); } catch (err) {}
-    } else {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", finish);
-      window.removeEventListener("touchmove", onMove);
-      window.removeEventListener("touchend", finish);
-      window.removeEventListener("touchcancel", finish);
-    }
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", finish);
+    window.removeEventListener("pointercancel", finish);
+    try { if (target?.hasPointerCapture?.(pointerId)) target.releasePointerCapture(pointerId); } catch (err) {}
   }
-  if (pointerMode) {
-    window.addEventListener("pointermove", onMove, { passive: false });
-    window.addEventListener("pointerup", finish);
-    window.addEventListener("pointercancel", finish);
-  } else if (e.type === "touchstart") {
-    window.addEventListener("touchmove", onMove, { passive: false });
-    window.addEventListener("touchend", finish);
-    window.addEventListener("touchcancel", finish);
-  } else {
-    window.addEventListener("mousemove", onMove, { passive: false });
-    window.addEventListener("mouseup", finish);
-  }
+  window.addEventListener("pointermove", onMove, { passive: false });
+  window.addEventListener("pointerup", finish);
+  window.addEventListener("pointercancel", finish);
 }
 function getParamValue(key, channelId = dlmsState.activeChannel) {
   const state = getChannelState(channelId);
@@ -2795,39 +2769,15 @@ function updateThumbnailCurve(id, tx, ty, ey) {
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** Single normalized coordinate converter for Pointer, mouse, touch, SVG and Canvas. */
+/** Convert real pointer pixels into the shared 600×350 graph coordinate plane. */
 function getNormalizedCoords(event, element) {
   if (!event || !element) return null;
+  const rect = element.getBoundingClientRect();
+  if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   const source = event.touches?.[0] || event.changedTouches?.[0] || event;
   const clientX = Number(source.clientX);
   const clientY = Number(source.clientY);
   if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
-
-  if (typeof element.getScreenCTM === "function" && typeof element.createSVGPoint === "function") {
-    try {
-      const matrix = element.getScreenCTM();
-      if (matrix) {
-        const point = element.createSVGPoint();
-        point.x = clientX;
-        point.y = clientY;
-        const local = point.matrixTransform(matrix.inverse());
-        const viewBox = element.viewBox?.baseVal;
-        const width = viewBox?.width || GRAPH_COORD_WIDTH;
-        const height = viewBox?.height || GRAPH_COORD_HEIGHT;
-        const minX = viewBox?.x || 0;
-        const minY = viewBox?.y || 0;
-        return {
-          x: ((local.x - minX) / width) * GRAPH_COORD_WIDTH,
-          y: ((local.y - minY) / height) * GRAPH_COORD_HEIGHT
-        };
-      }
-    } catch (error) {
-      // Continue to the shared bounding-rectangle fallback.
-    }
-  }
-
-  const rect = element.getBoundingClientRect();
-  if (!rect || rect.width <= 0 || rect.height <= 0) return null;
   return {
     x: ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
     y: ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
@@ -3035,35 +2985,7 @@ function initInteractiveGraphs() {
     svg.addEventListener("pointercancel", onPointerEnd);
     svg.addEventListener("lostpointercapture", onPointerEnd);
 
-    // Legacy mouse/touch listeners are installed only on browsers without Pointer Events.
-    // This prevents duplicate moves on modern iOS/Android while retaining older WebViews.
-    if (!("PointerEvent" in window)) {
-      let fallbackPointerId = 41;
-      const mouseDown = e => onPointerDown({
-        ...e, pointerType: "mouse", pointerId: fallbackPointerId, clientX: e.clientX,
-        clientY: e.clientY, preventDefault: () => e.preventDefault()
-      });
-      const mouseMove = e => onPointerMove({
-        ...e, pointerType: "mouse", pointerId: fallbackPointerId, clientX: e.clientX,
-        clientY: e.clientY, preventDefault: () => e.preventDefault()
-      });
-      const mouseEnd = e => onPointerEnd({ ...e, pointerId: fallbackPointerId });
-      const touchEvent = (e, handler, ending = false) => {
-        const touch = (ending ? e.changedTouches : e.touches)?.[0];
-        if (!touch) return;
-        handler({
-          pointerType: "touch", pointerId: fallbackPointerId, clientX: touch.clientX,
-          clientY: touch.clientY, preventDefault: () => e.preventDefault()
-        });
-      };
-      svg.addEventListener("mousedown", mouseDown, { passive: false });
-      window.addEventListener("mousemove", mouseMove, { passive: false });
-      window.addEventListener("mouseup", mouseEnd);
-      svg.addEventListener("touchstart", e => touchEvent(e, onPointerDown), { passive: false });
-      svg.addEventListener("touchmove", e => touchEvent(e, onPointerMove), { passive: false });
-      svg.addEventListener("touchend", e => touchEvent(e, onPointerEnd, true), { passive: false });
-      svg.addEventListener("touchcancel", e => touchEvent(e, onPointerEnd, true), { passive: false });
-    }
+    // Pointer Events are the sole graph input path for touch, mouse and stylus.
   });
 }
 

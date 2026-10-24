@@ -31,7 +31,7 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #121212;
+      background: #2b2b2b;
       color: var(--text-light);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
@@ -105,7 +105,6 @@
       box-shadow: 0 0 6px #00ff55;
     }
 
-    /* PLAYER BAR STYLING */
     .player-bar {
       display: flex;
       align-items: center;
@@ -185,7 +184,6 @@
       width: 100%;
     }
 
-    /* KONTROL TOUCHSCREEN KONSOL UTAMA (DIOPTIMALKAN UNTUK LANDSCAPE) */
     .touchscreen-console {
       flex: 0 0 auto;
       height: 195px;
@@ -268,7 +266,7 @@
       overflow: hidden;
       border: 1px solid rgba(71, 85, 105, .55);
       border-radius: 4px;
-      background: transparent; /* Transparan: tanpa panel/latar belakang di area skala dB. */
+      background: transparent;
     }
 
     .sq-graph-box svg {
@@ -280,7 +278,6 @@
       overflow: hidden;
     }
 
-    /* RTA canvas sits behind the SVG tuning curve and its draggable nodes. */
     .rta-canvas {
       position: absolute;
       inset: 0;
@@ -290,8 +287,7 @@
       pointer-events: none;
       opacity: 1;
     }
-    /* Keep the live spectrum above the graph background but visible through
-       the translucent tuning fill; curve lines and draggable nodes stay on top. */
+
     .sq-graph-box > svg {
       position: relative;
       z-index: 2;
@@ -299,20 +295,21 @@
       pointer-events: auto;
       touch-action: none;
     }
+
     .sq-graph-box,
     .sq-graph-box > svg,
     #gate-graph-box,
-    #editor-graph-box {
+    #comp-graph-box {
       pointer-events: auto;
     }
-    /* Pointer drag must win over the knob panel's native vertical pan gesture.
-       The panel remains scrollable with its scrollbar/mouse wheel. */
+
     .tc-right-knobs-panel {
       touch-action: none !important;
       position: relative;
       z-index: 5;
       pointer-events: auto;
     }
+
     .tc-right-knobs-panel .physical-knob-container,
     .tc-right-knobs-panel .physical-knob,
     .tc-master-strip[data-knob-param] {
@@ -324,9 +321,11 @@
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
+
     .sq-curve-fill {
       opacity: .28;
     }
+
     #geq-container-box { position: relative; }
     #geq-container-box > .rta-canvas { z-index: 0; }
     #geq-container-box .geq-scale-side,
@@ -370,7 +369,6 @@
     }
 
     .sq-curve-fill {
-      /* Keep SVG gradient fills vivid beneath the curve stroke on mobile browsers. */
       opacity: 1;
       pointer-events: none;
       stroke: none;
@@ -392,7 +390,6 @@
     .sq-curve-line {
       stroke: #ffd15c;
       stroke-width: 2.8;
-      /* Avoid SVG filter layers: iOS Safari can leave stale pixels after transforms. */
       filter: none !important;
     }
 
@@ -420,14 +417,7 @@
       filter: none !important;
     }
 
-    /*
-     * Keep SVG repainting on the normal document layer.
-     * Forced GPU layers (translateZ), paint containment and clip-path can
-     * leave stale tiles on some iOS Safari/WebKit sizes during SVG path edits.
-     * The graph box itself clips all content at its responsive border box.
-     */
     .sq-graph-box {
-      /* Transparent graph viewport: no extra card/panel behind the Gate SVG. */
       overflow: hidden;
       contain: none;
       isolation: auto;
@@ -440,24 +430,27 @@
       box-shadow: none;
       outline: none;
     }
-    #gate-graph-box {
+
+    #gate-graph-box,
+    #comp-graph-box {
       background: transparent !important;
       background-color: transparent !important;
       border: 0;
       border-radius: 0;
       box-shadow: none;
     }
-    #gate-graph-box > svg {
+
+    #gate-graph-box > svg,
+    #comp-graph-box > svg {
       background: transparent !important;
       background-color: transparent !important;
       border: 0;
       box-shadow: none;
     }
 
-    /* Match the graph SVG viewBox (270:180 = 3:2) to prevent wide-screen flattening. */
     .sq-graph-box,
     #gate-graph-box,
-    #editor-graph-box {
+    #comp-graph-box {
       box-sizing: border-box;
       position: relative;
       width: 100%;
@@ -468,22 +461,14 @@
       flex: 0 1 auto;
       align-self: center;
     }
+
     .sq-graph-box > svg,
     #gate-graph-box > svg,
-    #editor-graph-box > svg {
+    #comp-graph-box > svg {
       width: 100%;
       height: 100%;
       display: block;
     }
-    @media (max-height: 500px) and (orientation: landscape) {
-      .sq-graph-box,
-      #gate-graph-box,
-      #editor-graph-box {
-        max-height: 100%;
-        width: min(100%, calc(100dvh * 1.6667));
-      }
-    }
-
 
     .sq-graph-box svg {
       display: block;
@@ -491,7 +476,6 @@
       height: 100%;
       overflow: hidden;
       clip-path: none;
-      /* Transparent SVG lets the RTA canvas behind it remain visible. */
       background-color: transparent;
       shape-rendering: geometricPrecision;
       transform: none;
@@ -504,13 +488,6 @@
       cursor: grabbing;
     }
 
-    /*
-     * Mobile Safari/WebKit can leave stale pixels when SVG paths with CSS
-     * drop-shadow filters are repeatedly changed during touch drags.
-     * The graph is SVG (not canvas), so clearRect() is not applicable here.
-     * Disable filter compositing on touch-first devices to prevent ghost trails;
-     * keep the neon stroke colors and rounded line joins intact.
-     */
     @media (hover: none) and (pointer: coarse) {
       .sq-curve-line,
       .neon-line-blue,
@@ -521,14 +498,12 @@
       }
     }
 
-    /* 31-BAND GEQ CONTAINER */
     .geq-container {
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: row;
       gap: 2px;
-      /* Match the other DSP graph pages: no opaque card behind the GEQ. */
       background: transparent;
       border-radius: 0;
       padding: 3px;
@@ -563,12 +538,10 @@
       flex: 0 0 max(700px, calc(100% - 26px));
       width: max(700px, calc(100% - 26px));
       min-width: 700px;
-      height: 100%;
       min-height: 0;
       overflow: hidden;
       padding: 0;
       --geq-band-width: 22px;
-      /* Keep only the frequency/dB grid; remove the solid fader-card fill. */
       background-color: transparent;
       background-image:
         linear-gradient(to bottom,
@@ -608,9 +581,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: min(23vh, 155px);
-      height: 22px;
-      /* Biarkan swipe horizontal diteruskan ke container scroll; drag fader tetap vertikal. */
+      width: min(33vh, 155px);
+      height: 32px;
       touch-action: pan-y;
       transform: translate(-50%, -50%) rotate(-90deg);
       background: transparent;
@@ -620,7 +592,7 @@
 
     input[type="range"].geq-range::-webkit-slider-runnable-track {
       width: 100%;
-      height: 2.5px;
+      height: 4px;
       background: #1e293b;
       border-radius: 2px;
     }
@@ -628,11 +600,11 @@
     input[type="range"].geq-range::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 12px;
-      margin-top: -4.5px;
+      width: 20px;
+      height: 16px;
+      margin-top: -8px;
       box-sizing: border-box;
-      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(30, 30, 30, 0.9);
+      background: linear-gradient(to right, transparent 0%, transparent calc(50% - 0px), #fff calc(50% - 0px), #ffffff calc(50% + 1px), transparent calc(50% + 1px), transparent 100%), rgba(30, 30, 30, 0.9);
       border: 1.2px solid rgba(255, 255, 255, 0.55);
       border-radius: 3px;
       box-shadow: inset 0 1px 2px rgba(255,255,255,.35), 0 2px 4px rgba(0,0,0,.65);
@@ -652,7 +624,7 @@
     }
 
     .geq-freq-label-wrapper {
-      height: 18px;
+      height: 20px;
       width: 100%;
       overflow: visible;
       display: flex;
@@ -662,7 +634,7 @@
     }
 
     .geq-freq-label {
-      font-size: 4.5px;
+      font-size: 5px;
       color: rgba(255, 255, 255, 0.35);
       font-family: monospace;
       text-align: center;
@@ -674,9 +646,8 @@
       border: 0;
     }
 
-    /* PANEL KANAN TOUCHSCREEN (UKURAN KOMPAK KHUSUS HORIZONTAL) */
     .tc-right-knobs-panel {
-      width: 165px;
+      width: 175px;
       display: flex;
       flex-direction: column;
       background: #090d16;
@@ -689,34 +660,28 @@
 
     .knobs-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(1, 2fr);
       gap: 4px;
       overflow-y: auto;
       max-height: 135px;
-      padding: 0 2px 2px;
+      padding-right: 2px;
       align-content: start;
-      min-width: 0;
-      box-sizing: border-box;
     }
 
-    .physical-knob-container {
-      background: linear-gradient(to bottom, #131d31, #0a0f1d);
-      border: 1px solid #334155;
+ .physical-knob-container {
+      background: linear-gradient(to bottom, #424b57, #252c36);
+      border: 1px solid #424b58;
       border-radius: 3px;
       padding: 3px;
-      min-width: 0;
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      gap: 1px;
       cursor: grab;
       touch-action: none;
     }
 
     .physical-knob-container label {
-      font-size: .45rem;
+      font-size: .50rem;
       color: #94a3b8;
       text-transform: uppercase;
       margin-bottom: 1px;
@@ -724,38 +689,31 @@
     }
 
     .physical-knob {
-      --knob-size: 32px;
+      --knob-size: 50px;
       width: var(--knob-size);
       height: var(--knob-size);
-      min-width: var(--knob-size);
-      min-height: var(--knob-size);
       flex: 0 0 var(--knob-size);
-      box-sizing: border-box;
       border-radius: 50%;
       position: relative;
       isolation: isolate;
-      overflow: visible;
-      margin: 1px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #05070b;
+      border: 2px solid #02040a;
       background:
-        repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #657080 4deg 5deg, #252c37 5deg 9deg),
+        repeating-conic-gradient(from 0deg, #141922 0deg 4deg, #fff 3deg 4deg, #141922 5deg 9deg),
         #202733;
-      box-shadow: 0 2px 2px #02040a, inset 0 1px 1px rgba(255,255,255,.32);
+      box-shadow: 0 2px 2px #02040a, inset 0 0px 0px rgba(255,255,255,.32);
     }
 
     .physical-knob::before {
       content: "";
       position: absolute;
-      inset: 2.5px;
-      box-sizing: border-box;
+      inset: 3px;
       border-radius: 50%;
       z-index: -1;
       background: radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
       border: 1px solid #87909c;
-      pointer-events: none;
     }
 
     .knob-indicator {
@@ -764,7 +722,7 @@
       left: 50%;
       width: 2.5px;
       height: 9px;
-      background: linear-gradient(to right, #d8dde4 0%, #ffffff 48%, #9ca3af 100%);
+      background: linear-gradient(to right, #d8dde4 0%, #ffffff 48%, #fff 100%);
       border: 1px solid #202630;
       transform: translateX(-50%);
       transform-origin: 50% 12px;
@@ -782,20 +740,20 @@
     }
 
     .tc-master-strip {
-      display: flex;
+      display: flexm
       align-items: center;
       justify-content: space-between;
-      background: #030712;
+      background: #334155;
       border: 1px solid #334155;
-      padding: 2px 4px;
-      border-radius: 3px;
+      padding: 4px 4px;
+      border-radius: 1px;
       margin-top: 2px;
       cursor: grab;
       touch-action: none;
     }
 
     .tc-master-strip label {
-      font-size: .45rem;
+      font-size: .50rem;
       color: #94a3b8;
       font-weight: bold;
     }
@@ -839,7 +797,6 @@
       padding-left: 2px;
     }
 
-    /* BANK MIXER / CHANNEL STRIPS BAWAH (DISESUAIKAN AGAR TIDAK TERPOTONG SECARA VERTIKAL) */
     .mixer-bank {
       flex: 1;
       min-height: 0;
@@ -891,19 +848,19 @@
 
     .ch-name {
       color: #ffffff;
-      font-size: .58rem;
+      font-size: .5rem;
       font-weight: 800;
     }
 
     .ch-sublabel {
       color: #bbf7d0;
-      font-size: .42rem;
+      font-size: .40rem;
       margin-top: 0px;
     }
 
     .eq-curve-box {
       width: 100%;
-      height: 22px;
+      height: 50px;
       background: #09090b;
       border: 1px solid #27272a;
       border-radius: 2px;
@@ -918,7 +875,7 @@
     .eq-curve-box svg {
       width: 100%;
       height: 100%;
-      display: block;
+      display: b0lock;
       pointer-events: none;
     }
 
@@ -950,7 +907,7 @@
     .sq-btn {
       width: 100%;
       padding: 2px 0;
-      background: linear-gradient(to bottom, #333, #222);
+      background: linear-gradient(to bottom, #dc2626, #dc2626);
       color: #ccc;
       border: 1px solid #555;
       border-radius: 2px;
@@ -962,22 +919,22 @@
     }
 
     .sq-btn.on-btn {
-      background: linear-gradient(to bottom, #16a34a, #15803d);
-      color: #fff;
+      background: linear-gradient(to bottom, #4ede81, #171);
+      color: #ffa;
       border-color: #4ade80;
     }
 
     .sq-btn.on-btn.off {
-      background: linear-gradient(to bottom, #334155, #1e293b) !important;
-      color: #64748b !important;
-      border-color: #475569 !important;
+      background: linear-gradient(to bottom, #173, #183) !important;
+      color: #999 !important;
+      border-color: #183 !important;
     }
-
-    .sq-btn.muted {
-      background: linear-gradient(to bottom, #dc2626, #991b1b) !important;
-      color: #fff !important;
-      border-color: #f87171 !important;
+ .sq-btn.muted {
+      background: linear-gradient(to bottom, #dc2626, #991b1b);
+      color: #fff;
+      border-color: #f87171;
     }
+   
 
     .fader-meter-area {
       flex: 1;
@@ -997,7 +954,7 @@
 
     .fader-scale {
       position: relative;
-      width: 15px;
+      width: 19px;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -1046,30 +1003,30 @@
       justify-content: flex-end;
       border: 1px solid #1a2332;
       pointer-events: none;
-      z-index: 1;
+      z-index: 2;
     }
 
     .sq-meter-fill {
       width: 100%;
       height: 0%;
-      background: #00e676;
+      background: #60e676;
       box-shadow: 0 0 5px currentColor;
       transition: height 0.035s linear, background-color 0.035s linear;
       will-change: height;
     }
-    .sq-meter-fill.meter-green { background: #00e676; color: #00e676; }
+    .sq-meter-fill.meter-green { background: #60e675; color: #00e675; }
     .sq-meter-fill.meter-yellow { background: #ffea00; color: #ffea00; }
     .sq-meter-fill.meter-red { background: #ff1744; color: #ff1744; box-shadow: 0 0 8px #ff1744; }
 
     .fader-right-indicator {
       position: relative;
-      width: 14px;
+      width: 20px;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: space-between;
-      font-size: 4.5px;
+      font-size: 5px;
       color: #888;
       font-family: monospace;
       z-index: 1;
@@ -1086,7 +1043,7 @@
 
     .tick-right {
       position: relative;
-      width: 2px;
+      width: 1px;
       height: 1px;
       background: #555;
       margin: auto 0;
@@ -1225,9 +1182,6 @@
       background: var(--dark-chassis);
     }
 
-
-
-    /* FIX SCROLL PANEL KNOB KANAN: panel dapat digulir, knob tetap bisa disentuh/drag */
     .tc-right-knobs-panel {
       min-height: 0;
       max-height: 100%;
@@ -1260,7 +1214,6 @@
       .tc-right-knobs-panel .knobs-grid { gap: 3px; }
     }
 
-    /* THEME UPDATE: bodi graphite/charcoal seperti mixer digital profesional */
     :root {
       --dark-chassis: linear-gradient(145deg, #454545, #292929);
       --strip-bg: linear-gradient(135deg, #3c3c3c, #242424);
@@ -1328,7 +1281,6 @@
     }
     .section-group-title { color: #c5c5c5; }
 
-    /* RESPONSIVE LAYOUT: ponsel kecil, tablet, desktop, portrait & landscape */
     html { -webkit-text-size-adjust: 100%; }
     body, .app-container, .fader-workspace, .feature-panel,
     .touchscreen-console, .tc-center-graph, .mixer-bank { min-width: 0; }
@@ -1339,7 +1291,7 @@
       max-height: 42dvh;
       min-height: 0;
     }
-    .tc-sidebar { width: clamp(58px, 16vw, 95px); }
+    .tc-sidebar { width: clamp(50px, 16vw, 90px); }
     .tc-right-knobs-panel { width: clamp(88px, 25vw, 165px); }
     .tc-center-graph { flex: 1 1 0; }
     .knobs-grid { max-height: min(20dvh, 135px); }
@@ -1352,7 +1304,6 @@
     button, input, select, label { touch-action: manipulation; }
     input[type="range"] { accent-color: var(--neon-emerald); }
 
-    /* Ponsel kecil dan portrait: semua kontrol tetap dapat dijangkau */
     @media (max-width: 520px) {
       .app-container { padding: 3px; gap: 3px; border-width: 1px; }
       .chassis-rack { min-height: 25px; padding: 2px 6px; }
@@ -1387,7 +1338,6 @@
       .param-card label, .param-card select, .param-card input, .action-btn { font-size: 12px; }
     }
 
-    /* Landscape: kurangi tinggi panel atas dan sisakan ruang untuk fader */
     @media (orientation: landscape) and (max-height: 600px) {
       .app-container { padding: 2px; gap: 2px; }
       .chassis-rack { min-height: 22px; }
@@ -1395,7 +1345,7 @@
       .player-bar audio { height: 20px; }
       .nav-tabs { padding: 1px 3px; }
       .tab-btn { padding: 3px 7px; }
-      .touchscreen-console { height: clamp(112px, 34dvh, 185px); max-height: 38dvh; margin-bottom: 1px; }
+      .touchscreen-console { height: clamp(112px, 34dvh, 180px); max-height: 38dvh; margin-bottom: 1px; }
       .tc-sidebar { width: clamp(56px, 12vw, 82px); }
       .tc-right-knobs-panel { width: clamp(88px, 17vw, 135px); padding: 3px; }
       .knobs-grid { max-height: 18dvh; }
@@ -1405,7 +1355,6 @@
       .app-footer { min-height: 13px; padding: 1px 4px; }
     }
 
-    /* Tablet dan desktop: gunakan ruang ekstra tanpa memperbesar berlebihan */
     @media (min-width: 760px) {
       .app-container { padding: 6px; gap: 5px; }
       .touchscreen-console { height: clamp(180px, 34dvh, 280px); max-height: 44dvh; gap: 8px; padding: 6px; }
@@ -1417,8 +1366,6 @@
       .fader-scale, .fader-right-indicator { font-size: 7px; }
     }
 
-
-    /* FIX: pastikan jalur fader channel tidak terpotong di tablet landscape */
     .fader-workspace, #panel-mixer {
       min-height: 0;
       min-width: 0;
@@ -1477,15 +1424,12 @@
       .channel-strip { flex: 0 0 clamp(78px, 15vw, 112px); }
     }
 
-    /* Prevent page/pinch zoom from starting inside DSP curve editors on touch devices. */
     .sq-graph-box,
     .sq-graph-box *,
     #gate-graph-box,
     #gate-graph-box *,
-    /* Restrict no-touch-action to the draggable graph editor only.
-       GEQ must retain horizontal swipe scrolling on phones/tablets. */
-    #editor-graph-box,
-    #editor-graph-box * {
+    #comp-graph-box,
+    #comp-graph-box * {
       touch-action: none;
       -ms-touch-action: none;
     }
@@ -1499,9 +1443,7 @@
       touch-action: pan-y;
       -ms-touch-action: pan-y;
     }
-    /* Keep graph interaction local; do not disable zoom for the whole page. */
 
-    /* GRAPH VIEWPORT RESPONSIVE: small/large phones, portrait/landscape, tablet. */
     .tc-center-graph {
       flex: 1 1 0;
       min-width: 0;
@@ -1519,7 +1461,7 @@
     }
     .sq-graph-box,
     #gate-graph-box,
-    #editor-graph-box {
+    #comp-graph-box {
       width: 100%;
       height: 100%;
       min-width: 0;
@@ -1530,7 +1472,7 @@
     }
     .sq-graph-box > svg,
     #gate-graph-box > svg,
-    #editor-graph-box > svg {
+    #comp-graph-box > svg {
       display: block;
       width: 100%;
       height: 100%;
@@ -1554,7 +1496,7 @@
     }
     @media (max-width: 760px) and (orientation: landscape) {
       .touchscreen-console {
-        height: clamp(105px, 27dvh, 175px);
+        height: clamp(105px, 27dvh, 170px);
         max-height: 31dvh;
       }
       .tc-center-graph { padding: 2px; }
@@ -1565,9 +1507,9 @@
         max-height: 48dvh;
       }
     }
-    @media (min-width: 761px) and (orientation: landscape) {
+    @media (min-width: 760px) and (orientation: landscape) {
       .touchscreen-console {
-        height: clamp(220px, 42dvh, 420px);
+        height: clamp(200px, 35dvh, 300px);
         max-height: 50dvh;
       }
     }
@@ -1576,13 +1518,11 @@
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
 
-
-    /* CURVE CANVAS REDESIGN: clean graph, full available area, safe inset. */
     .tc-center-graph {
       box-sizing: border-box;
       min-width: 0;
       min-height: 0;
-      padding: clamp(4px, 1.2vw, 12px);
+      padding: clamp(4px, 1.2vw, 10px);
       overflow: hidden;
       align-items: stretch;
       justify-content: center;
@@ -1599,7 +1539,7 @@
     }
     .sq-graph-box,
     #gate-graph-box,
-    #editor-graph-box {
+    #comp-graph-box {
       box-sizing: border-box;
       position: relative;
       width: 100% !important;
@@ -1621,7 +1561,7 @@
     }
     .sq-graph-box > svg,
     #gate-graph-box > svg,
-    #editor-graph-box > svg {
+    #comp-graph-box > svg {
       display: block;
       width: 100% !important;
       height: 100% !important;
@@ -1646,7 +1586,6 @@
       .tc-center-graph { padding: clamp(8px, 1vw, 14px); }
     }
 
-    /* AUTO-DESIGN graph viewport: consistent 16:9 responsive canvas. */
     .tc-center-graph {
       box-sizing: border-box;
       min-width: 0;
@@ -1666,11 +1605,11 @@
       max-height: 100%;
       overflow: hidden;
     }
-    .sq-graph-box, #gate-graph-box, #editor-graph-box {
+    .sq-graph-box, #gate-graph-box, #comp-graph-box {
       box-sizing: border-box;
       position: relative;
       width: 100% !important;
-      height: auto !important;
+      height: 100% !important;
       aspect-ratio: 16 / 9 !important;
       max-width: 100%;
       max-height: 100%;
@@ -1684,7 +1623,7 @@
       background: transparent !important;
       box-shadow: none;
     }
-    .sq-graph-box > svg, #gate-graph-box > svg, #editor-graph-box > svg {
+    .sq-graph-box > svg, #gate-graph-box > svg, #comp-graph-box > svg {
       position: relative;
       display: block;
       width: 100% !important;
@@ -1714,18 +1653,18 @@
     }
     @media (max-width: 520px) {
       .tc-center-graph { padding: 3px; }
-      .sq-graph-box, #gate-graph-box, #editor-graph-box { width: 100% !important; }
+      .sq-graph-box, #gate-graph-box, #comp-graph-box { width: 100% !important; }
     }
     @media (orientation: landscape) and (max-height: 520px) {
       .tc-center-graph { padding: 2px 4px; }
-      .sq-graph-box, #gate-graph-box, #editor-graph-box {
+      .sq-graph-box, #gate-graph-box, #comp-graph-box {
         width: min(100%, calc(100dvh * 1.7778)) !important;
         max-height: 100%;
       }
     }
     @media (min-width: 760px) {
       .tc-center-graph { padding: clamp(6px, 1vw, 12px); }
-      .sq-graph-box, #gate-graph-box, #editor-graph-box { max-width: 100%; }
+      .sq-graph-box, #gate-graph-box, #comp-graph-box { max-width: 100%; }
     }
 
   </style>
@@ -1749,7 +1688,6 @@
     </div>
   </div>
 
-  <!-- PLAYER PEMUTAR MUSIK FILE -->
   <div class="player-bar">
     <label for="audio-file-input">🎵 Pilih File Musik</label>
     <input type="file" id="audio-file-input" accept="audio/*">
@@ -1764,19 +1702,14 @@
 
   <div class="fader-workspace">
 
-    <!-- PANEL MIXER / DLMS CHANNEL BANK -->
     <div id="panel-mixer" class="feature-panel active-panel" style="position:relative;">
       
-      <!-- TOUCHSCREEN PROCESSOR CONSOLE -->
       <div class="touchscreen-console">
-        <!-- Sidebar Menu Prosesor Dinamis -->
         <div class="tc-sidebar" id="processor-sidebar"></div>
 
-        <!-- Area Grafik / GEQ Interaktif -->
         <div class="tc-center-graph">
           
-          <!-- HALAMAN 1: PREAMP / GAIN -->
-          <div id="proc-page-preamp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+          <div id="proc-page-preamp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="preamp-graph-box">
               <svg viewBox="0 0 600 350" preserveAspectRatio="none">
                 <defs>
@@ -1833,7 +1766,6 @@
             </div>
           </div>
 
-          <!-- HALAMAN 2: HPF / CROSSOVER -->
           <div id="proc-page-hpf" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="hpf-graph-box">
               <svg viewBox="0 0 600 350" preserveAspectRatio="none">
@@ -1844,29 +1776,38 @@
                   </linearGradient>
                 </defs>
                 <g class="graph-legacy-coordinate-layer" transform="translate(-30,-0.5) scale(2,1.75)">
-                <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
-                <line x1="170" y1="10" x2="170" y2="190" class="sq-grid-line"/>
-                <line x1="250" y1="10" x2="250" y2="190" class="sq-grid-line"/>
-                <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
-                <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
-                <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
-                <text x="33" y="53" class="sq-grid-text">0</text>
-                <text x="33" y="123" class="sq-grid-text">-24</text>
-                <path id="hpf-fill-path" class="sq-curve-fill" style="fill:url(#hpfGrad);" d="M 30 100 L 100 100 L 230 40 L 300 40 Z"/>
-                <path id="hpf-curve-path" class="neon-line-blue" d="M 30 150 L 100 150 L 230 40 L 300 40"/>
-                
-                <g id="node-hpf-group" class="screen-real-knob" transform="translate(100, 150)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
+                  <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
+                  <line x1="170" y1="10" x2="170" y2="190" class="sq-grid-line"/>
+                  <line x1="250" y1="10" x2="250" y2="190" class="sq-grid-line"/>
+                  <line x1="30" y1="50" x2="300" y2="50" class="sq-grid-line"/>
+                  <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
+                  <line x1="30" y1="150" x2="300" y2="150" class="sq-grid-line"/>
+                  <text x="33" y="53" class="sq-grid-text">0</text>
+                  <text x="33" y="123" class="sq-grid-text">-24</text>
+                  
+                  <path id="hpf-fill-path" class="sq-curve-fill" style="fill:url(#hpfGrad);" d="M 30 100 L 100 100 L 230 40 L 300 40 Z"/>
+                  <path id="hpf-curve-path" class="neon-line-blue" d="M 30 150 L 100 150 L 230 40 L 300 40"/>
+                  
+                  <!-- Titik Node HPF -->
+                  <g id="node-hpf-group" class="screen-real-knob" transform="translate(100, 150)">
+                    <circle r="10" fill="#000" opacity="0.6"/>
+                    <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
+                    <circle r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="0.8"/>
+                    <circle r="2" fill="#ffffff"/>
+                  </g>
+
+                  <!-- Titik Node LPF yang identik dengan HPF -->
+                  <g id="node-lpf-group" class="screen-real-knob" transform="translate(230, 40)">
+                    <circle r="10" fill="#000" opacity="0.6"/>
+                    <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
+                    <circle r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="0.8"/>
+                    <circle r="2" fill="#ffffff"/>
+                  </g>
                 </g>
-              </g>
               </svg>
             </div>
           </div>
 
-          <!-- HALAMAN 3: GATE -->
           <div id="proc-page-gate" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="gate-graph-box">
               <svg viewBox="0 0 600 350" preserveAspectRatio="none">
@@ -1895,7 +1836,6 @@
             </div>
           </div>
 
-          <!-- HALAMAN 4: PEQ -->
           <div id="proc-page-peq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="sq-graph-box" id="peq-graph-box">
               <svg viewBox="0 0 600 350" preserveAspectRatio="none">
@@ -1925,7 +1865,6 @@
             </div>
           </div>
 
-          <!-- HALAMAN 5: 31-BAND GEQ -->
           <div id="proc-page-geq" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
             <div class="geq-container" id="geq-container-box">
               <div class="geq-scale-side">
@@ -1937,9 +1876,8 @@
             </div>
           </div>
 
-          <!-- HALAMAN 6: COMPRESSOR / LIMITER -->
-          <div id="proc-page-comp" class="processor-subpage" style="display:block; width:100%; height:100%; position:relative;">
-            <div class="sq-graph-box" id="editor-graph-box">
+          <div id="proc-page-comp" class="processor-subpage" style="display:none; width:100%; height:100%; position:relative;">
+            <div class="sq-graph-box" id="comp-graph-box">
               <svg viewBox="0 0 600 350" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sqCurveGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1975,10 +1913,9 @@
 
         </div>
 
-        <!-- PANEL KANAN: KENOP PUTAR & MASTER -->
         <div class="tc-right-knobs-panel">
           
-          <div id="knobs-group-preamp" class="knobs-grid" style="display:none;">
+          <div id="knobs-group-preamp" class="knobs-grid" style="display:grid;">
             <div class="physical-knob-container" data-knob-param="pre-gain" data-knob-min="-10" data-knob-max="60" data-knob-step="0.5">
               <label>Gain</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-pre-gain"></div></div>
@@ -1997,8 +1934,8 @@
           </div>
 
           <div id="knobs-group-hpf" class="knobs-grid" style="display:none;">
-            <div class="physical-knob-container" data-knob-param="hpf-freq" data-knob-min="20" data-knob-max="400" data-knob-step="1">
-              <label>Freq</label>
+            <div class="physical-knob-container" data-knob-param="hpf-freq" data-knob-min="20" data-knob-max="1000" data-knob-step="1">
+              <label>HPF Freq</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-freq"></div></div>
               <span id="tc-val-hpffreq">80 Hz</span>
             </div>
@@ -2008,10 +1945,14 @@
               <span id="tc-val-hpfslope">24 dB/oct</span>
             </div>
             <div class="physical-knob-container" data-knob-param="lpf-freq" data-knob-min="100" data-knob-max="20000" data-knob-step="10">
-              <label>LPF Freq</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-freq"></div></div><span id="tc-val-lpffreq">18000 Hz</span>
+              <label>LPF Freq</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-lpf-freq"></div></div>
+              <span id="tc-val-lpffreq">18000 Hz</span>
             </div>
             <div class="physical-knob-container" data-knob-param="lpf-slope" data-knob-min="6" data-knob-max="48" data-knob-step="6">
-              <label>LPF Slope</label><div class="physical-knob"><div class="knob-indicator" id="ind-lpf-slope"></div></div><span id="tc-val-lpfslope">24 dB/oct</span>
+              <label>LPF Slope</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-lpf-slope"></div></div>
+              <span id="tc-val-lpfslope">24 dB/oct</span>
             </div>
           </div>
 
@@ -2069,7 +2010,7 @@
             </div>
           </div>
 
-          <div id="knobs-group-comp" class="knobs-grid" style="display:grid;">
+          <div id="knobs-group-comp" class="knobs-grid" style="display:none;">
             <div class="physical-knob-container" data-knob-param="active-atk" data-knob-min="0.5" data-knob-max="100" data-knob-step="0.5">
               <label id="lbl-atk">Attack</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-atk"></div></div>
@@ -2111,7 +2052,6 @@
       <div class="mixer-bank" id="mixer-bank-container"></div>
     </div>
 
-    <!-- TAB SETTINGS / KONEKSI WI-FI -->
     <div id="panel-settings" class="feature-panel">
       <div class="section-group-title">Konfigurasi Perangkat Wi-Fi</div>
       <div class="param-grid" style="grid-template-columns:minmax(0,350px);justify-content:center;">
@@ -2141,7 +2081,6 @@ let currentProcessorTab = "preamp";
 const channelIds = ["ina", "inb", "out1", "out2", "out3", "out4"];
 const channelNames = { "ina": "In A", "inb": "In B", "out1": "Out 1 (Sub)", "out2": "Out 2 (Low)", "out3": "Out 3 (Mid)", "out4": "Out 4 (High)" };
 
-// ISO 31-band center frequencies, Hz labels from 20 Hz to 20 kHz.
 const geqFrequencies = [
   "20", "25", "31.5", "40", "50", "63", "80", "100", "125", "160",
   "200", "250", "315", "400", "500", "630", "800", "1k", "1k25", "1k6",
@@ -2162,7 +2101,6 @@ let analysers = {};
 let rtaAnalyser = null;
 let rtaFrequencyData = null;
 let rtaCanvases = {};
-let rtaAnimationReady = false;
 let filters = {};
 let outputMeterGains = {};
 
@@ -2187,13 +2125,14 @@ const dlmsState = {
     compressor: channelCompressors[id], geq: channelGeqValues[id]
   }]))
 };
+
 function getChannelState(id = dlmsState.activeChannel) {
   return channelIds.includes(id) ? dlmsState.channels[id] : null;
 }
+
 let appRenderFrame = 0;
 let pendingGraphRender = null;
 
-// One coalesced frame updates the active DSP page and applies the latest graph drag.
 function scheduleAppRender(graphTask = null) {
   if (graphTask) pendingGraphRender = graphTask;
   if (appRenderFrame) return;
@@ -2209,27 +2148,18 @@ function renderApp() {
     handleGraphMove(graphTask.event, graphTask.tab, graphTask.dragNode, graphTask.box, graphTask.svg, graphTask.channelId);
   }
 
-  switch (currentProcessorTab) {
-    case "preamp":
-    case "hpf":
-    case "gate":
-    case "peq":
-    case "geq":
-    case "comp":
-      updateActiveProcessorUI();
-      break;
-    default:
-      updateActiveProcessorUI();
-      break;
-  }
+  updateActiveProcessorUI();
 
   const gateSvg = document.querySelector("#gate-graph-box > svg");
   if (gateSvg) gateSvg.style.display = currentProcessorTab === "gate" ? "block" : "none";
+  const compSvg = document.querySelector("#comp-graph-box > svg");
+  if (compSvg) compSvg.style.display = currentProcessorTab === "comp" ? "block" : "none";
 }
 
 function redrawActiveVisuals() {
   scheduleAppRender();
 }
+
 function setChannelGain(id, value) {
   const state = getChannelState(id), num = Number(value);
   if (!state || !Number.isFinite(num)) return;
@@ -2333,8 +2263,6 @@ function buildGeqSliders() {
   const maxLog = Math.log10(20000);
   wrapper.innerHTML = geqFrequencies.map((freq, idx) => {
     const hz = geqFrequencyHz(freq);
-    // Sisakan ruang di kedua ujung agar kepala fader pertama dan terakhir
-    // tidak terpotong oleh batas wrapper saat digeser sampai ujung scroll.
     const logPosition = (Math.log10(hz) - minLog) / (maxLog - minLog);
     const xPercent = 2 + (Math.max(0, Math.min(1, logPosition)) * 96);
     return `
@@ -2425,7 +2353,6 @@ function initializePermanentDSPNodes() {
 }
 
 function enforceDSPNodePolicy(pageName) {
-  // Kebijakan node grafik hanya mengatur node SVG; tidak memasang listener fader.
   initializePermanentDSPNodes();
   const allowed = new Set(DSP_NODE_POLICY[pageName] || []);
   Object.keys(DSP_NODE_POLICY).forEach(page => {
@@ -2444,8 +2371,6 @@ function switchProcessorPage(pageName) {
   currentProcessorTab = pageName;
   enforceDSPNodePolicy(pageName);
 
-  // RTA canvases exist only for HPF, PEQ and GEQ. Toggle their actual
-  // display state on every tab change so they cannot remain layered behind Gate SVG.
   const rtaAllowed = ["peq", "hpf", "geq"].includes(pageName);
   Object.values(rtaCanvases).forEach(item => {
     if (!item || !item.canvas) return;
@@ -2459,9 +2384,10 @@ function switchProcessorPage(pageName) {
     }
   });
 
-  // Gate uses SVG exclusively; keep it visible only while Gate is active.
   const gateSvg = document.querySelector("#gate-graph-box > svg");
   if (gateSvg) gateSvg.style.display = pageName === "gate" ? "block" : "none";
+  const compSvg = document.querySelector("#comp-graph-box > svg");
+  if (compSvg) compSvg.style.display = pageName === "comp" ? "block" : "none";
 
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
@@ -2483,20 +2409,6 @@ function updateKnobRotation(indicatorId, val, min, max) {
   ind.style.transform = `translateX(-50%) rotate(${deg}deg)`;
 }
 
-/**
- * Shared SVG grid renderer for every DSP response graph.
- * Plot coordinates deliberately retain the existing 30..300 / 10..190 plane:
- * curve models and pointer hit-testing already use that coordinate system.
- */
-/**
- * Curve-only graph renderer: remove all grid lines and numeric labels while
- * preserving the SVG curve paths, nodes, and existing pointer handlers.
- */
-/**
- * Auto-design renderer for the shared 600 × 350 SVG coordinate plane.
- * Grid, ticks and labels are generated from measured host size; curve geometry
- * and interactive node handlers remain in their existing SVG layer.
- */
 function drawBackgroundGrid(svg, host, page) {
   if (!svg || !host) return;
   const layer = svg.querySelector(".graph-legacy-coordinate-layer");
@@ -2566,16 +2478,13 @@ function drawBackgroundGrid(svg, host, page) {
     });
     addLabel("FREQUENCY Hz",165,194,"middle");
   }
-  // IMPORTANT: the curve fill is a translucent/opaque area and must sit
-  // behind the grid. Inserting the grid before the fill hides every grid line.
-  // Put the shared grid after the fill, but before the visible curve stroke and
-  // draggable nodes so it stays readable without covering the interactive curve.
   const curveStroke = layer.querySelector(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq");
   const firstNode = layer.querySelector(".screen-real-knob, [data-graph-node]");
   const insertionPoint = curveStroke || firstNode || null;
   if (insertionPoint) layer.insertBefore(group, insertionPoint);
   else layer.appendChild(group);
 }
+
 function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   const graphIds = {
     preamp: "proc-page-preamp",
@@ -2602,6 +2511,19 @@ function updateActiveProcessorUI() {
   const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   const isOut = !isInputChannel(currentFocusedChannel);
 
+  // Bersihkan path sisa ghosting
+  ["preamp", "hpf", "gate", "peq", "comp"].forEach(tabName => {
+    const pageSvg = document.querySelector("#proc-page-" + tabName + " svg");
+    if (pageSvg) {
+      const validIds = new Set(["preamp-fill-path", "preamp-curve-path", "hpf-fill-path", "hpf-curve-path", "gate-fill-path", "gate-curve-path", "peq-fill-path", "peq-curve-path", "sq-fill-path", "sq-curve-path"]);
+      pageSvg.querySelectorAll("path").forEach(pathEl => {
+        if (!validIds.has(pathEl.id)) {
+          pathEl.remove();
+        }
+      });
+    }
+  });
+
   if (currentProcessorTab === 'preamp') {
     setTxt("tc-val-pregaining", Number(p.pre_gain).toFixed(1) + " dB");
     setTxt("tc-val-prepad", p.pre_pad + " dB");
@@ -2626,7 +2548,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-lpf-freq", p.lpf_freq, 100, 20000);
     updateKnobRotation("ind-lpf-slope", p.lpf_slope, 6, 48);
 
-    // HPF Butterworth magnitude: high frequencies approach 0 dB; lows are attenuated.
     const hpfFreq = Math.max(20, Number(p.hpf_freq) || 20);
     const hpfOrder = Math.max(1, Math.round((Number(p.hpf_slope) || 12) / 6));
     const hpfDb = f => {
@@ -2634,17 +2555,7 @@ function updateActiveProcessorUI() {
       const mag = 1 / Math.sqrt(1 + Math.pow(1 / ratio, 2 * hpfOrder));
       return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
     };
-    const hpfPts = [];
-    for (let i = 0; i <= 180; i++) {
-      const x = 30 + 270 * i / 180;
-      const f = 20 * Math.pow(1000, i / 180); // 20 Hz .. 20 kHz, logarithmic
-      const db = hpfDb(f);
-      hpfPts.push([x, Math.max(10, Math.min(190, 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180))]);
-    }
-    const hpfD = hpfPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
-    const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
     const lpfFreq = Math.max(100, Number(p.lpf_freq) || 18000);
-    const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
     const lpfDb = f => {
       const ratio = Math.max(1e-6, f / lpfFreq);
       const order = Math.max(1, Math.round((Number(p.lpf_slope) || 24) / 6));
@@ -2652,18 +2563,23 @@ function updateActiveProcessorUI() {
       return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
     };
     const responseY = db => 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180;
-    const hpfY = responseY(hpfDb(hpfFreq) + lpfDb(hpfFreq));
-    const lpfY = responseY(hpfDb(lpfFreq) + lpfDb(lpfFreq));
+    
     const combinedPts = [];
     for (let i = 0; i <= 180; i++) {
       const x = 30 + 270 * i / 180;
       const f = 20 * Math.pow(1000, i / 180);
       const db = hpfDb(f) + lpfDb(f);
-      combinedPts.push([x, Math.max(10, Math.min(190, 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180))]);
+      combinedPts.push([x, Math.max(10, Math.min(190, responseY(db)))]);
     }
     const combinedD = combinedPts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(2) + " " + pt[1].toFixed(2)).join(" ");
-    document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX}, ${hpfY})`);
-    document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX}, ${lpfY})`);
+    
+    const hpfX = 30 + 270 * (Math.log(hpfFreq / 20) / Math.log(1000));
+    const lpfX = 30 + 270 * (Math.log(lpfFreq / 20) / Math.log(1000));
+    const hpfY = responseY(hpfDb(hpfFreq) + lpfDb(hpfFreq));
+    const lpfY = responseY(hpfDb(lpfFreq) + lpfDb(lpfFreq));
+
+    document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX.toFixed(2)}, ${hpfY.toFixed(2)})`);
+    document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX.toFixed(2)}, ${lpfY.toFixed(2)})`);
     document.getElementById("hpf-curve-path")?.setAttribute("d", combinedD);
     document.getElementById("hpf-fill-path")?.setAttribute("d", combinedD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'gate' && !isOut) {
@@ -2676,8 +2592,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-gate-atk", p.gate_atk, 0.1, 100);
     updateKnobRotation("ind-gate-rel", p.gate_rel, 10, 1000);
 
-    // Gate transfer curve: X=input dB (-80..0), Y=output dB (-80..0).
-    // Preserve exact zero values: using || here incorrectly replaced 0 dB with defaults.
     const gateThrRaw = Number(p.gate_thr);
     const gateRangeRaw = Number(p.gate_rng);
     const gateThr = Math.max(-80, Math.min(0, Number.isFinite(gateThrRaw) ? gateThrRaw : -45));
@@ -2687,32 +2601,12 @@ function updateActiveProcessorUI() {
     const gX = gx(gateThr);
     const gY = Math.max(12, Math.min(188, gy(Math.max(-80, gateThr + gateRange))));
     document.getElementById("node-gate-group")?.setAttribute("transform", `translate(${gX}, ${gY})`);
-    // Keep the neon transfer curve and its translucent area as independent SVG paths.
-    // The fill path closes only along the bottom edge and is never stroked.
-    // Keep the Gate transfer line continuous and inside the SVG viewBox.
-    // The previous bottom-edge segment sat exactly on the clipped boundary and
-    // could leave stale-looking fragments in iOS Safari during pointer dragging.
+    
     const gateBaseY = 188;
-    const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(12, Math.min(188, gY)).toFixed(2)} L 298 12`;
-    // Update the existing SVG nodes in place. Never clone/append a second
-    // curve while dragging: one fill path and one stroke path must remain visible.
-    const gateFill = document.getElementById("gate-fill-path");
-    if (gateFill) {
-      gateFill.setAttribute("d", `${gateCurveD} L 298 188 L 30 188 Z`);
-      gateFill.setAttribute("fill", "url(#gateGrad)");
-      gateFill.setAttribute("fill-rule", "nonzero");
-      gateFill.setAttribute("stroke", "none");
-      gateFill.style.fill = "url(#gateGrad)";
-      gateFill.style.stroke = "none";
-      gateFill.style.opacity = "0.28";
-      gateFill.style.pointerEvents = "none";
-    }
-    const gateCurve = document.getElementById("gate-curve-path");
-    if (gateCurve) {
-      gateCurve.setAttribute("d", gateCurveD);
-      gateCurve.setAttribute("fill", "none");
-      gateCurve.style.fill = "none";
-    }
+    const gateCurveD = `M 30 ${gateBaseY} L ${gX.toFixed(2)} ${gateBaseY} L ${gX.toFixed(2)} ${Math.max(12, Math.min(188, gY)).toFixed(2)} L 300 12`;
+    
+    document.getElementById("gate-fill-path")?.setAttribute("d", `${gateCurveD} L 300 188 L 30 188 Z`);
+    document.getElementById("gate-curve-path")?.setAttribute("d", gateCurveD);
   } else if (currentProcessorTab === 'peq') {
     const selectedBand = p.peq_bands[Math.max(0, Math.min(4, Number(p.peq_band) - 1))];
     if (selectedBand) { p.peq_freq = selectedBand.freq; p.peq_gain = selectedBand.gain; p.peq_q = selectedBand.q; }
@@ -2725,8 +2619,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-peq-gain", p.peq_gain, -12, 12);
     updateKnobRotation("ind-peq-q", p.peq_q, 0.1, 10);
 
-    // Total PEQ response: cascade the five RBJ peaking biquads in dB.
-    // The single continuous curve and each permanent band node use this same transfer function.
     const peqBandDbAt = (band, freq) => {
       const bf = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const bg = Math.max(-12, Math.min(12, Number(band.gain) || 0));
@@ -2759,11 +2651,10 @@ function updateActiveProcessorUI() {
       if (!node) return;
       const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
-      // Anchor Y to the *total* response at this band's own frequency, not to its gain alone.
       const totalDb = Math.max(-18, Math.min(18, totalPeqDbAt(freq)));
       const nodeY = peqY(totalDb);
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
-      node.style.opacity = "1"; // Keep every PEQ curve node equally bright; do not dim inactive bands.
+      node.style.opacity = "1";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);
     document.getElementById("peq-fill-path")?.setAttribute("d", peqD + " L 300 190 L 30 190 Z");
@@ -2774,10 +2665,6 @@ function updateActiveProcessorUI() {
     document.getElementById("lbl-rel").textContent = isOut ? "Decay" : "Release";
     document.getElementById("lbl-ratio").textContent = isOut ? "Over" : "Ratio";
     document.getElementById("lbl-thr").textContent = isOut ? "Limit" : "Thr";
-    // Gain/Mix controls were intentionally removed from the 4-knob Compressor UI.
-    // Keep this legacy container optional so a missing element cannot abort all knob/graph updates.
-    const legacyMixContainer = document.getElementById("container-mix");
-    if (legacyMixContainer) legacyMixContainer.style.display = isOut ? "none" : "flex";
 
     setTxt("tc-val-atk", Number(c.atk).toFixed(1) + " ms");
     setTxt("tc-val-rel", Math.round(c.rel) + " ms");
@@ -2788,9 +2675,6 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-active-ratio", c.ratio, 1, 20);
     updateKnobRotation("ind-active-thr", c.thr, -60, 0);
 
-    // Compressor transfer curve: one permanent threshold node; ratio alone sets
-    // the post-threshold slope. Keep legacy gain/mix values out of this graph.
-    // Preserve a true 0.0 dB threshold; logical-OR would incorrectly reset it to -30 dB.
     const compThrRaw = Number(c.thr);
     const compRatioRaw = Number(c.ratio);
     const compThr = Math.max(-60, Math.min(0, Number.isFinite(compThrRaw) ? compThrRaw : -30));
@@ -2848,7 +2732,7 @@ function initKnobDrag(e, paramKey, min, max, step) {
   const pointerId = e.pointerId;
   let finished = false;
   if (!Number.isFinite(startY) || !Number.isFinite(startVal) || !Number.isFinite(lo) || !Number.isFinite(hi)) return;
-  try { if (pointerMode) target?.setPointerCapture?.(pointerId); } catch (err) {}
+  try { target?.setPointerCapture?.(pointerId); } catch (err) {}
 
   function onMove(moveEvent) {
     if (finished) return;
@@ -2857,7 +2741,6 @@ function initKnobDrag(e, paramKey, min, max, step) {
     if (!Number.isFinite(y)) return;
     moveEvent.preventDefault();
     const knobRect = target?.getBoundingClientRect?.();
-    // Normalize drag distance to the actual target height on every screen density.
     const dragHeight = Math.max(24, Number(knobRect?.height) || 32);
     const sensitivity = range / (dragHeight * 2);
     let value = Math.max(lo, Math.min(hi, startVal + (startY - y) * sensitivity));
@@ -2881,6 +2764,7 @@ function initKnobDrag(e, paramKey, min, max, step) {
   window.addEventListener("pointerup", finish);
   window.addEventListener("pointercancel", finish);
 }
+
 function getParamValue(key, channelId = dlmsState.activeChannel) {
   const state = getChannelState(channelId);
   if (!state) return 0;
@@ -2967,14 +2851,9 @@ function updateThumbnailCurve(id, tx, ty, ey) {
   miniPath.setAttribute("d", `M 0 40 L ${pThreshX} ${pThreshY} L 100 ${pEndY}`);
 }
 
-// Shared responsive graph styling. Width is measured from the live graph box,
-// so SVG curves, grid lines and axis labels keep consistent proportions on phones/tablets.
-// Keep curve graphs proportionate across phone and wide tablet layouts.
-// Scale against both dimensions so width alone cannot make labels/strokes oversized.
 const GRAPH_COORD_WIDTH = 600;
 const GRAPH_COORD_HEIGHT = 350;
 
-/** Convert real pointer pixels into the shared 600×350 graph coordinate plane. */
 function getNormalizedCoords(event, element) {
   if (!event || !element) return null;
   const rect = element.getBoundingClientRect();
@@ -2983,10 +2862,11 @@ function getNormalizedCoords(event, element) {
   const clientX = Number(source.clientX);
   const clientY = Number(source.clientY);
   if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
-  return {
-    x: ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH,
-    y: ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT
-  };
+
+  // Normalisasi presisi tinggi sesuai viewBox
+  const rawX = ((clientX - rect.left) / rect.width) * GRAPH_COORD_WIDTH;
+  const rawY = ((clientY - rect.top) / rect.height) * GRAPH_COORD_HEIGHT;
+  return { x: rawX, y: rawY };
 }
 
 function getGraphScaleFactor(host) {
@@ -2996,6 +2876,7 @@ function getGraphScaleFactor(host) {
   let baseScale=Math.min(width/GRAPH_COORD_WIDTH,height/GRAPH_COORD_HEIGHT);
   return Math.max(0.35,Math.min(1.25,baseScale));
 }
+
 function initGraphGlowLayers(svg) {
   if (!svg || svg.dataset.glowLayersReady==="1") return;
   svg.dataset.glowLayersReady="1";
@@ -3038,6 +2919,7 @@ function initGraphGlowLayers(svg) {
     node.insertBefore(halo,node.firstChild);
   });
 }
+
 function applyResponsiveGraphScale(host) {
   if(!host) return;
   const scaleFactor=getGraphScaleFactor(host);
@@ -3066,6 +2948,7 @@ function applyResponsiveGraphScale(host) {
     label.style.paintOrder="normal";
   });
 }
+
 function initResponsiveGraphScaling() {
   const hosts = Array.from(document.querySelectorAll(".sq-graph-box, #geq-container-box"));
   hosts.forEach(applyResponsiveGraphScale);
@@ -3077,11 +2960,8 @@ function initResponsiveGraphScaling() {
   }
 }
 
-// iOS Safari can dispatch proprietary gesture events even when the graph uses
-// Pointer Events. Cancel pinch gestures only when they originate inside a DSP graph;
-// the rest of the page keeps its normal browser zoom/accessibility behavior.
 function preventDSPGraphPinchZoom() {
-  const graphSelector = ".sq-graph-box, #gate-graph-box, #editor-graph-box, #geq-container-box";
+  const graphSelector = ".sq-graph-box, #gate-graph-box, #comp-graph-box, #geq-container-box";
   ["gesturestart", "gesturechange", "gestureend"].forEach(type => {
     document.addEventListener(type, event => {
       const target = event.target;
@@ -3092,164 +2972,16 @@ function preventDSPGraphPinchZoom() {
   });
 }
 
-function initInteractiveGraphs() {
-  ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
-    const box = document.getElementById(tab === "comp" ? "editor-graph-box" : tab + "-graph-box");
-    if (!box || box.dataset.graphPointerReady === "1") return;
-
-    // Keep each graph host to a single SVG renderer and remove duplicate
-    // SVG nodes/IDs left by accidental repeated initialization or stale markup.
-    const svgNodes = Array.from(box.querySelectorAll("svg"));
-    const svg = svgNodes[0];
-    if (!svg) return;
-    svgNodes.slice(1).forEach(node => node.remove());
-    const seenIds = new Set();
-    svg.querySelectorAll("[id]").forEach(node => {
-      if (seenIds.has(node.id)) node.remove();
-      else seenIds.add(node.id);
-    });
-    box.dataset.graphPointerReady = "1";
-
-    // Pointer Events cover mouse, touch and pen. Disable browser pan/zoom only
-    // while interacting with the graph, and use SVG's own coordinate transform.
-    box.style.touchAction = "none";
-    box.style.userSelect = "none";
-    box.style.webkitUserSelect = "none";
-
-    let isDragging = false;
-    let activeDragNode = null;
-    let activePointerId = null;
-    let activeChannelId = null;
-    function graphPoint(event) {
-      const standard = getNormalizedCoords(event, svg);
-      if (!standard || !Number.isFinite(standard.x) || !Number.isFinite(standard.y)) return null;
-      // Inverse of the visual inset transform: screenX=2*modelX-30,
-      // screenY=1.75*modelY-0.5. This keeps drag coordinates aligned.
-      return {
-        x: Math.max(30, Math.min(300, (standard.x + 30) / 2)),
-        y: Math.max(10, Math.min(190, (standard.y + 0.5) / 1.75)),
-        width: 270,
-        height: 180
-      };
-    }
-
-    function scheduleGraphMove(event) {
-      if (!isDragging || event.pointerId !== activePointerId) return;
-      scheduleAppRender({
-        event: { clientX: event.clientX, clientY: event.clientY },
-        tab,
-        dragNode: activeDragNode,
-        box,
-        svg,
-        channelId: activeChannelId
-      });
-    }
-
-    function flushGraphMove(event) {
-      if (!event || !isDragging) return;
-      scheduleAppRender({
-        event: { clientX: event.clientX, clientY: event.clientY },
-        tab,
-        dragNode: activeDragNode,
-        box,
-        svg,
-        channelId: activeChannelId
-      });
-    }
-
-    function onPointerDown(e) {
-      if (e.pointerType === "mouse" && e.button !== 0) return;
-      const point = graphPoint(e);
-      if (!point) return;
-      // Hit-test in CSS screen pixels. This avoids mixing the outer 600×350
-      // viewBox with the legacy transformed node coordinates (the previous
-      // coordinate-space mismatch made valid taps miss every node).
-      let pickedNode = null;
-      const clientX = Number(e.clientX);
-      const clientY = Number(e.clientY);
-      const screenDistance = (element) => {
-        if (!element || element.style.display === "none") return Infinity;
-        const r = element.getBoundingClientRect();
-        if (!r.width && !r.height) return Infinity;
-        return Math.hypot(clientX - (r.left + r.width / 2), clientY - (r.top + r.height / 2));
-      };
-      if (tab === "preamp") {
-        // The preamp is a horizontal curve, so any tap inside the graph can grab it.
-        const r = svg.getBoundingClientRect();
-        if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) pickedNode = "preamp";
-      } else if (tab === "comp") {
-        if (screenDistance(svg.querySelector("#node-thresh-group")) <= 22) pickedNode = "threshold";
-      } else if (tab === "gate") {
-        if (screenDistance(svg.querySelector("#node-gate-group")) <= 22) pickedNode = "gate";
-      } else if (tab === "hpf") {
-        const markers = [
-          { id: "hpf", el: svg.querySelector("#node-hpf-group") },
-          { id: "lpf", el: svg.querySelector("#node-lpf-group") }
-        ];
-        const nearest = markers.map(item => ({ id: item.id, distance: screenDistance(item.el) }))
-          .filter(item => Number.isFinite(item.distance))
-          .sort((a, b) => a.distance - b.distance)[0];
-        if (nearest && nearest.distance <= 22) pickedNode = nearest.id;
-      } else if (tab === "peq") {
-        const nearest = Array.from(svg.querySelectorAll("[data-peq-band]"))
-          .map(node => ({ id: node.dataset.peqBand, distance: screenDistance(node) }))
-          .sort((a, b) => a.distance - b.distance)[0];
-        if (nearest && nearest.distance <= 36) pickedNode = nearest.id;
-      }
-      if (!pickedNode) return;
-      e.preventDefault();
-      activeDragNode = pickedNode;
-      activeChannelId = dlmsState.activeChannel;
-      isDragging = true;
-      activePointerId = e.pointerId;
-      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
-      // Do not update on pointerdown; the first movement must move the selected node
-      // relative to its original position, not jump it under the user's finger.
-    }
-
-    function onPointerMove(e) {
-      if (!isDragging || e.pointerId !== activePointerId) return;
-      e.preventDefault();
-      scheduleGraphMove(e);
-    }
-
-    function onPointerEnd(e) {
-      if (e.pointerId !== activePointerId) return;
-      // Apply the final touch position before releasing capture to avoid a
-      // one-frame visual jump or a stale-looking curve at the end of a drag.
-      flushGraphMove(e);
-      isDragging = false;
-      activeDragNode = null;
-      activePointerId = null;
-      activeChannelId = null;
-      try { if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); } catch (err) {}
-    }
-
-    // Bind the handlers directly to the visible SVG. The RTA canvas is decorative
-    // and sits behind it; explicit listeners avoid relying on bubbling from a host.
-    svg.style.pointerEvents = "auto";
-    svg.style.touchAction = "none";
-    svg.style.cursor = "crosshair";
-    svg.addEventListener("pointerdown", onPointerDown, { passive: false });
-    svg.addEventListener("pointermove", onPointerMove, { passive: false });
-    svg.addEventListener("pointerup", onPointerEnd);
-    svg.addEventListener("pointercancel", onPointerEnd);
-    svg.addEventListener("lostpointercapture", onPointerEnd);
-
-    // Pointer Events are the sole graph input path for touch, mouse and stylus.
-  });
-}
-
 function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activeChannel) {
   const graph = svg || (box && box.querySelector("svg"));
   if (!graph) return;
 
-  // Normalize to the shared 600 × 350 plane, then bridge to legacy DSP curve coordinates.
   const standard = getNormalizedCoords(e, graph);
   if (!standard) return;
-  // Inverse of the visual inset transform; keeps dragged nodes on the curve.
-  const svgX = Math.max(30, Math.min(300, (standard.x + 30) / 2));
-  const svgY = Math.max(10, Math.min(190, (standard.y + 0.5) / 1.75));
+
+  // Koreksi langsung skala SVG ke sistem koordinat internal grafik (30->300, 10->190)
+  const svgX = Math.max(30, Math.min(300, standard.x / 2 + 15));
+  const svgY = Math.max(10, Math.min(190, standard.y / 1.75));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 
@@ -3258,21 +2990,14 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   const p = state.processor;
   const c = state.compressor;
 
-  if (tab === "preamp" && currentProcessorTab === "preamp") {
-    // Dragging the horizontal preamp line changes gain directly; redraw from the same state.
+  if (tab === "preamp") {
     const mappedGain = -10 + (1 - normalizedY) * 70;
     p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
     updateParam("pre-gain_" + channelId, p.pre_gain);
-  } else if (tab === "comp" && currentProcessorTab === "comp") {
-    // X controls Threshold (-60..0 dB); Y is intentionally free to move without
-    // creating a second node. Redraw updates the node and THR knob immediately.
+  } else if (tab === "comp") {
     const mappedThr = -60 + normalizedX * 60;
     c.thr = Number(Math.max(-60, Math.min(0, mappedThr)).toFixed(1));
     updateParam("active-thr_" + channelId, c.thr);
-  } else if (tab === "preamp") {
-    const mappedGain = -10 + (1 - normalizedY) * 70;
-    p.pre_gain = Number(Math.max(-10, Math.min(60, mappedGain)).toFixed(1));
-    updateParam("pre-gain_" + channelId, p.pre_gain);
   } else if (tab === "hpf") {
     const isLPF = dragNode === "lpf";
     const minFreq = isLPF ? 100 : 20;
@@ -3287,7 +3012,6 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
       updateParam("hpf-freq_" + channelId, p.hpf_freq);
     }
   } else if (tab === "gate") {
-    // Free/diagonal drag: combine horizontal input-level and vertical output-level coordinates.
     const normalizedGateY = 1 - normalizedY;
     const mappedThr = -80 + (((normalizedX + normalizedGateY) / 2) * 80);
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
@@ -3308,6 +3032,116 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     updateParam("peq-gain_" + channelId, p.peq_gain);
   }
 
+  // Reflow buffer pembersihan ghosting
+  if (graph) {
+    graph.style.transform = "translateZ(0)";
+    requestAnimationFrame(() => {
+      graph.style.transform = "none";
+    });
+  }
+}
+
+function initInteractiveGraphs() {
+  ["preamp", "hpf", "gate", "peq", "comp"].forEach(tab => {
+    const box = document.getElementById(tab + "-graph-box");
+    if (!box || box.dataset.graphPointerReady === "1") return;
+
+    const svgNodes = Array.from(box.querySelectorAll("svg"));
+    const svg = svgNodes[0];
+    if (!svg) return;
+    svgNodes.slice(1).forEach(node => node.remove());
+    const seenIds = new Set();
+    svg.querySelectorAll("[id]").forEach(node => {
+      if (seenIds.has(node.id)) node.remove();
+      else seenIds.add(node.id);
+    });
+    box.dataset.graphPointerReady = "1";
+
+    box.style.touchAction = "none";
+    box.style.userSelect = "none";
+    box.style.webkitUserSelect = "none";
+
+    let isDragging = false;
+    let activeDragNode = null;
+    let activePointerId = null;
+    let activeChannelId = null;
+
+    function onPointerDown(e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      let pickedNode = null;
+      const clientX = Number(e.clientX);
+      const clientY = Number(e.clientY);
+      const screenDistance = (element) => {
+        if (!element || element.style.display === "none") return Infinity;
+        const r = element.getBoundingClientRect();
+        if (!r.width && !r.height) return Infinity;
+        return Math.hypot(clientX - (r.left + r.width / 2), clientY - (r.top + r.height / 2));
+      };
+
+      if (tab === "preamp") {
+        const r = svg.getBoundingClientRect();
+        if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) pickedNode = "preamp";
+      } else if (tab === "comp") {
+        if (screenDistance(svg.querySelector("#node-thresh-group")) <= 40) pickedNode = "threshold";
+      } else if (tab === "gate") {
+        if (screenDistance(svg.querySelector("#node-gate-group")) <= 40) pickedNode = "gate";
+      } else if (tab === "hpf") {
+        const markers = [
+          { id: "hpf", el: svg.querySelector("#node-hpf-group") },
+          { id: "lpf", el: svg.querySelector("#node-lpf-group") }
+        ];
+        const nearest = markers.map(item => ({ id: item.id, distance: screenDistance(item.el) }))
+          .filter(item => Number.isFinite(item.distance))
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest && nearest.distance <= 40) pickedNode = nearest.id;
+      } else if (tab === "peq") {
+        const nearest = Array.from(svg.querySelectorAll("[data-peq-band]"))
+          .map(node => ({ id: node.dataset.peqBand, distance: screenDistance(node) }))
+          .sort((a, b) => a.distance - b.distance)[0];
+        if (nearest && nearest.distance <= 45) pickedNode = nearest.id;
+      }
+
+      if (!pickedNode) return;
+
+      e.preventDefault();
+      activeDragNode = pickedNode;
+      activeChannelId = dlmsState.activeChannel;
+      isDragging = true;
+      activePointerId = e.pointerId;
+      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging || e.pointerId !== activePointerId) return;
+      e.preventDefault();
+      scheduleAppRender({
+        event: { clientX: e.clientX, clientY: e.clientY },
+        tab,
+        dragNode: activeDragNode,
+        box,
+        svg,
+        channelId: activeChannelId
+      });
+    }
+
+    function onPointerEnd(e) {
+      if (e.pointerId !== activePointerId) return;
+      isDragging = false;
+      activeDragNode = null;
+      activePointerId = null;
+      activeChannelId = null;
+      try { if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+
+    svg.style.pointerEvents = "auto";
+    svg.style.touchAction = "none";
+    svg.style.cursor = "crosshair";
+    svg.addEventListener("pointerdown", onPointerDown, { passive: false });
+    svg.addEventListener("pointermove", onPointerMove, { passive: false });
+    svg.addEventListener("pointerup", onPointerEnd);
+    svg.addEventListener("pointercancel", onPointerEnd);
+    svg.addEventListener("lostpointercapture", onPointerEnd);
+  });
 }
 
 function focusChannel(id) {
@@ -3383,8 +3217,6 @@ function setupAudioDSPNodes(audioElement) {
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
 
   audioSourceNode.connect(audioCtx.destination);
-  // Dedicated full-spectrum analyser for the RTA overlay. It observes the same
-  // selected music file without changing the audible playback route.
   rtaAnalyser = audioCtx.createAnalyser();
   rtaAnalyser.fftSize = 4096;
   rtaAnalyser.smoothingTimeConstant = 0.84;
@@ -3398,8 +3230,6 @@ function setupAudioDSPNodes(audioElement) {
     analysers[id] = analyser;
   });
 
-  // This demo music player is the available input source. Feed both input
-  // meters from it; separate physical input capture is not configured here.
   audioSourceNode.connect(analysers.ina);
   audioSourceNode.connect(analysers.inb);
 
@@ -3452,7 +3282,6 @@ function updateVUMeter(id, analyser, active) {
   const meterEl = document.getElementById("meter-" + id);
   if (!meterEl) return;
   const targetDb = active ? getMeterDb(analyser, id) : -60;
-  // Light smoothing reduces jitter while retaining quick attack on musical peaks.
   const previousDb = Number.isFinite(meterDbState[id]) ? meterDbState[id] : -60;
   const smoothing = targetDb > previousDb ? 0.62 : 0.24;
   const db = previousDb + (targetDb - previousDb) * smoothing;
@@ -3491,15 +3320,11 @@ function resizeRTACanvas(item) {
   const canvas = item.canvas;
   const rect = item.host.getBoundingClientRect();
   const cssWidth = Math.max(1, rect.width);
-  // Read the final measured host dimensions; never derive height from viewport width.
   const cssHeight = Math.max(1, rect.height);
   const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
   const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
 
-  // Assigning canvas.width/height clears its buffer and resets the context transform.
-  // Only resize when needed, then synchronize the drawing transform with the actual
-  // backing-buffer/CSS-size ratio so fractional CSS pixels cannot stretch the RTA.
   if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
   if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
   canvas.style.width = "100%";
@@ -3547,8 +3372,6 @@ function drawRTAGlowWave() {
     const w = size.width;
     const h = size.height;
     ctx.clearRect(0, 0, w, h);
-    // Reset canvas drawing state every frame. SVG curve-node interactions must
-    // never leave alpha, compositing, or shadows affecting the RTA canvas.
     ctx.globalAlpha = 1.0;
     ctx.globalCompositeOperation = "source-over";
     ctx.shadowBlur = 0;
@@ -3556,7 +3379,6 @@ function drawRTAGlowWave() {
     if (!Object.prototype.hasOwnProperty.call(rtaColorByPage, key) ||
         !playable || w <= 1 || h <= 1) return;
 
-    // Scale against width and height; DPR only controls raster resolution.
     const baseScale = Math.max(0.35, Math.min(1.25, w / 600, h / 350));
     const sampleRate = audioCtx.sampleRate;
     const binHz = sampleRate / rtaAnalyser.fftSize;
@@ -3599,8 +3421,6 @@ function drawRTAGlowWave() {
     ctx.fillStyle = color;
     ctx.fill();
 
-    // SVG owns the single shared graph grid and all axis labels.
-
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length - 1; i++) {
@@ -3619,11 +3439,10 @@ function drawRTAGlowWave() {
     ctx.restore();
   });
 }
+
 function renderRealtimeMeters() {
   requestAnimationFrame(renderRealtimeMeters);
 
-  // RTA is allowed only on HPF, PEQ and GEQ. Gate, Compressor and Preamp
-  // must never render analyzer traces; clear and hide any RTA canvases there.
   const rtaAllowed = ["peq", "hpf", "geq"].includes(currentProcessorTab);
   if (rtaAllowed) {
     drawRTAGlowWave();
@@ -3661,7 +3480,6 @@ function renderRealtimeMeters() {
       );
     }
 
-    // Render every channel's meter every animation frame, never from fader position.
     updateVUMeter(id, analyser, playable && !!analyser && !muteStates[id] && !onStates[id]);
   });
 }
@@ -3673,23 +3491,16 @@ function initDLMD() {
     document.getElementById("ip-display").textContent = savedName;
   } catch (err) {}
 
-  // Register knob handlers explicitly after the DOM and knob markup exist.
   try { initKnobEventListeners(); }
-  catch (err) { console.error("Knob event binding failed; UI remains available.", err); }
+  catch (err) { console.error("Knob event binding failed.", err); }
 
-  // Bangun kontrol utama lebih dahulu. UI inti tidak boleh bergantung pada
-  // keberhasilan inisialisasi Canvas/RTA atau audio.
   buildMixerStrips();
   updateSidebarForChannel(currentFocusedChannel || "ina");
   buildGeqSliders();
 
-  // Listener kontrol dipasang hanya pada range fader yang sudah dibangun.
-  // Jika setup kontrol gagal, menu dan layout tetap tersedia.
   try { initFaderThumbHitTesting(); }
-  catch (err) { console.error("Fader interaction setup failed; UI remains available.", err); }
+  catch (err) { console.error("Fader interaction setup failed.", err); }
 
-  // Setiap subsistem non-inti diisolasi agar error pada grafik/audio tidak
-  // menghentikan pembuatan menu dan fader mixer.
   try {
     initRTACanvases();
     window.addEventListener("resize", () => Object.values(rtaCanvases).forEach(resizeRTACanvas), { passive: true });
@@ -3702,7 +3513,7 @@ function initDLMD() {
       });
     }
   } catch (err) {
-    console.error("RTA/Canvas initialization failed; mixer UI remains available.", err);
+    console.error("RTA/Canvas initialization failed.", err);
   }
 
   try { initAudioPlayer(); }
@@ -3725,9 +3536,6 @@ function initDLMD() {
   try { initResponsiveGraphScaling(); }
   catch (err) { console.error("Responsive graph scaling initialization failed.", err); }
 
-  // Normalize each curve page's Y-axis/grid immediately on startup. This removes
-  // the smaller static HTML grid before the user touches a node, so the graph
-  // does not visibly jump to a second grid/label size on the first interaction.
   try {
     ["preamp", "hpf", "gate", "peq", "comp"].forEach(page => updateGraphYAxisScale(page));
   } catch (err) {
@@ -3737,7 +3545,7 @@ function initDLMD() {
   catch (err) { console.error("DSP policy initialization failed.", err); }
   try { focusChannel("ina"); }
   catch (err) {
-    console.error("Initial channel focus failed; restoring processor menu.", err);
+    console.error("Initial channel focus failed.", err);
     updateSidebarForChannel("ina");
   }
   setTimeout(syncFaderDimensions, 50);
@@ -3753,7 +3561,6 @@ function syncFaderDimensions() {
   });
 }
 
-// Ukuran fader diselaraskan semula apabila orientasi/viewport berubah.
 let faderResizeFrame = 0;
 function scheduleResponsiveLayout() {
   if (faderResizeFrame) cancelAnimationFrame(faderResizeFrame);
@@ -3778,15 +3585,11 @@ if ("ResizeObserver" in window) {
   }, { once: true });
 }
 
-// Drag fader hanya boleh dimulai dari kepala/thumb yang sedang terlihat.
-// Pointer Events menyatukan mouse, sentuhan HP, dan stylus.
 let activeFaderIndex = null;
 let isDraggingFader = false;
 let activeFaderPointerId = null;
 
 function initFaderThumbHitTesting() {
-  // Isolasi: fader mixer dan fader GEQ dipilih sebagai dua kelompok terpisah.
-  // Tidak memasang listener pada canvas, tombol menu, strip induk, atau seluruh dokumen.
   const groups = [
     { selector: '#mixer-bank-container input.vertical-fader', kind: 'mixer' },
     { selector: '#geq-sliders-wrapper input.geq-range', kind: 'geq' }
@@ -3799,62 +3602,59 @@ function initFaderThumbHitTesting() {
       fader.dataset.thumbDragKind = group.kind;
 
       fader.addEventListener('pointerdown', event => {
-      // Selalu cegah perilaku native range yang melompat saat track disentuh.
-      if (event.pointerType === 'mouse' && event.button !== 0) return;
-      const rect = fader.getBoundingClientRect();
-      const min = Number(fader.min || 0);
-      const max = Number(fader.max || 100);
-      const value = Number(fader.value);
-      const ratio = max > min ? (value - min) / (max - min) : 0;
-      // Range diputar -90deg: min berada di bawah, max di atas.
-      const thumbX = rect.left + rect.width / 2;
-      const thumbY = rect.bottom - ratio * rect.height;
-      const isGeq = fader.classList.contains('geq-range');
-      const hitX = isGeq ? 13 : 19;
-      const hitY = isGeq ? 13 : 19;
-      const onThumb = Math.abs(event.clientX - thumbX) <= hitX &&
-                      Math.abs(event.clientY - thumbY) <= hitY;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        const rect = fader.getBoundingClientRect();
+        const min = Number(fader.min || 0);
+        const max = Number(fader.max || 100);
+        const value = Number(fader.value);
+        const ratio = max > min ? (value - min) / (max - min) : 0;
+        const thumbX = rect.left + rect.width / 2;
+        const thumbY = rect.bottom - ratio * rect.height;
+        const isGeq = fader.classList.contains('geq-range');
+        const hitX = isGeq ? 13 : 19;
+        const hitY = isGeq ? 13 : 19;
+        const onThumb = Math.abs(event.clientX - thumbX) <= hitX &&
+                        Math.abs(event.clientY - thumbY) <= hitY;
 
-      if (!onThumb) {
-        isDraggingFader = false;
-        activeFaderIndex = null;
-        activeFaderPointerId = null;
+        if (!onThumb) {
+          isDraggingFader = false;
+          activeFaderIndex = null;
+          activeFaderPointerId = null;
+          event.preventDefault();
+          return;
+        }
+
         event.preventDefault();
-        return;
-      }
-
-      event.preventDefault();
-      isDraggingFader = true;
-      activeFaderIndex = fader;
-      activeFaderPointerId = event.pointerId;
-      try { fader.setPointerCapture(event.pointerId); } catch (err) {}
+        isDraggingFader = true;
+        activeFaderIndex = fader;
+        activeFaderPointerId = event.pointerId;
+        try { fader.setPointerCapture(event.pointerId); } catch (err) {}
       }, { passive: false });
 
       fader.addEventListener('pointermove', event => {
-      if (!isDraggingFader || activeFaderIndex !== fader ||
-          activeFaderPointerId !== event.pointerId) return;
-      event.preventDefault();
-      const rect = fader.getBoundingClientRect();
-      if (!rect.height) return;
-      const min = Number(fader.min || 0);
-      const max = Number(fader.max || 100);
-      // Jaga jari di rentang track; tidak ada perubahan ketika drag belum aktif.
-      const ratio = Math.max(0, Math.min(1, (rect.bottom - event.clientY) / rect.height));
-      const step = Number(fader.step || 1);
-      let nextValue = min + ratio * (max - min);
-      if (Number.isFinite(step) && step > 0) nextValue = min + Math.round((nextValue - min) / step) * step;
-      nextValue = Math.max(min, Math.min(max, nextValue));
-      nextValue = Number(nextValue.toFixed(3));
-      if (Number(fader.value) === nextValue) return;
-      fader.value = String(nextValue);
-      if (fader.classList.contains('geq-range')) {
-        const match = fader.id.match(/^geq-slider-(\d+)$/);
-        if (match) onGeqSliderChange(Number(match[1]), fader.value);
-      } else {
-        const id = fader.id.replace(/^gain-/, '');
-        setChannelGain(id, fader.value);
-        updateParam(id, fader.value);
-      }
+        if (!isDraggingFader || activeFaderIndex !== fader ||
+            activeFaderPointerId !== event.pointerId) return;
+        event.preventDefault();
+        const rect = fader.getBoundingClientRect();
+        if (!rect.height) return;
+        const min = Number(fader.min || 0);
+        const max = Number(fader.max || 100);
+        const ratio = Math.max(0, Math.min(1, (rect.bottom - event.clientY) / rect.height));
+        const step = Number(fader.step || 1);
+        let nextValue = min + ratio * (max - min);
+        if (Number.isFinite(step) && step > 0) nextValue = min + Math.round((nextValue - min) / step) * step;
+        nextValue = Math.max(min, Math.min(max, nextValue));
+        nextValue = Number(nextValue.toFixed(3));
+        if (Number(fader.value) === nextValue) return;
+        fader.value = String(nextValue);
+        if (fader.classList.contains('geq-range')) {
+          const match = fader.id.match(/^geq-slider-(\d+)$/);
+          if (match) onGeqSliderChange(Number(match[1]), fader.value);
+        } else {
+          const id = fader.id.replace(/^gain-/, '');
+          setChannelGain(id, fader.value);
+          updateParam(id, fader.value);
+        }
       }, { passive: false });
 
       const resetDrag = event => {

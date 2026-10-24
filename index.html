@@ -689,12 +689,14 @@
 
     .knobs-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 4px;
       overflow-y: auto;
       max-height: 135px;
-      padding-right: 2px;
+      padding: 0 2px 2px;
       align-content: start;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .physical-knob-container {
@@ -702,9 +704,13 @@
       border: 1px solid #334155;
       border-radius: 3px;
       padding: 3px;
+      min-width: 0;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
+      gap: 1px;
       cursor: grab;
       touch-action: none;
     }
@@ -721,10 +727,15 @@
       --knob-size: 32px;
       width: var(--knob-size);
       height: var(--knob-size);
+      min-width: var(--knob-size);
+      min-height: var(--knob-size);
       flex: 0 0 var(--knob-size);
+      box-sizing: border-box;
       border-radius: 50%;
       position: relative;
       isolation: isolate;
+      overflow: visible;
+      margin: 1px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -739,10 +750,12 @@
       content: "";
       position: absolute;
       inset: 2.5px;
+      box-sizing: border-box;
       border-radius: 50%;
       z-index: -1;
       background: radial-gradient(circle at 32% 24%, #707985 0%, #424b58 18%, #242b35 48%, #10151d 78%, #05080d 100%);
       border: 1px solid #87909c;
+      pointer-events: none;
     }
 
     .knob-indicator {

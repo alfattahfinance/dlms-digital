@@ -2553,8 +2553,15 @@ function drawBackgroundGrid(svg, host, page) {
     });
     addLabel("FREQUENCY Hz",165,194,"middle");
   }
-  const firstCurve=layer.querySelector(".sq-curve-fill, .sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq, path");
-  layer.insertBefore(group,firstCurve || layer.firstChild);
+  // IMPORTANT: the curve fill is a translucent/opaque area and must sit
+  // behind the grid. Inserting the grid before the fill hides every grid line.
+  // Put the shared grid after the fill, but before the visible curve stroke and
+  // draggable nodes so it stays readable without covering the interactive curve.
+  const curveStroke = layer.querySelector(".sq-curve-line, .neon-line-blue, .neon-line-emerald, .neon-line-peq");
+  const firstNode = layer.querySelector(".screen-real-knob, [data-graph-node]");
+  const insertionPoint = curveStroke || firstNode || null;
+  if (insertionPoint) layer.insertBefore(group, insertionPoint);
+  else layer.appendChild(group);
 }
 function updateGraphYAxisScale(targetPage = currentProcessorTab) {
   const graphIds = {

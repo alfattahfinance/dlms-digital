@@ -2411,7 +2411,135 @@
   }
 }
 
-</style>
+
+/* Kartu vertikal baru di sebelah kiri channel Input A */
+.mixer-bank-layout {
+  display: flex !important;
+  flex: 1 1 0 !important;
+  align-items: stretch !important;
+  gap: 3px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 190px !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+.mixer-side-card {
+  flex: 0 0 clamp(48px, 7vw, 68px);
+  width: clamp(48px, 7vw, 68px);
+  min-width: 0;
+  min-height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 3px;
+  overflow: hidden;
+  color: #dbeafe;
+  background: linear-gradient(180deg, #172235 0%, #0b111c 52%, #111827 100%);
+  border: 1px solid #334155;
+  border-radius: 3px;
+  box-shadow: inset 0 0 12px rgba(0,0,0,.42);
+  font-family: Arial, sans-serif;
+}
+.mixer-side-card-title {
+  width: 100%;
+  padding: 5px 1px;
+  text-align: center;
+  color: #111827;
+  background: #38bdf8;
+  border-radius: 2px;
+  font-size: clamp(8px, 1.3vw, 10px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+.mixer-side-card-indicator {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 7px rgba(34,197,94,.65);
+  margin-top: 3px;
+}
+.mixer-side-card-name {
+  font-size: clamp(7px, 1.15vw, 9px);
+  font-weight: 800;
+  color: #f8fafc;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.mixer-side-card-line {
+  width: 72%;
+  height: 2px;
+  flex: 0 0 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+}
+.mixer-side-card-label {
+  color: #93c5fd;
+  font-size: clamp(6px, .95vw, 8px);
+  font-weight: 800;
+  text-align: center;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 1px;
+  margin: 2px 0;
+}
+.mixer-side-card-items {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+}
+.mixer-side-card-items span {
+  display: block;
+  padding: 4px 1px;
+  text-align: center;
+  color: #cbd5e1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 2px;
+  font-size: clamp(6px, .9vw, 8px);
+  line-height: 1;
+  font-weight: 700;
+}
+.mixer-side-card-footer {
+  margin-top: auto;
+  width: 100%;
+  padding-top: 5px;
+  border-top: 1px solid #334155;
+  color: #64748b;
+  text-align: center;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+.mixer-bank-layout > #mixer-bank-container {
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 190px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+@media (max-width: 520px) {
+  .mixer-bank-layout { gap: 2px !important; }
+  .mixer-side-card {
+    flex-basis: 43px;
+    width: 43px;
+    padding: 6px 2px;
+    gap: 5px;
+  }
+  .mixer-side-card-items { gap: 3px; }
+  .mixer-side-card-items span { padding: 4px 0; font-size: 6px; }
+}
+
+  </style>
 </head>
 <body>
 
@@ -2839,7 +2967,20 @@
 
       <div class="section-group-title">Input Master &amp; Speaker Outputs (Sub, Low, Mid, High)</div>
 
-      <div class="mixer-bank" id="mixer-bank-container"></div>
+      <div class="mixer-bank-layout" id="mixer-bank-layout">
+        <aside class="mixer-side-card" aria-label="Panel DSP channel">
+          <div class="mixer-side-card-title">DSP</div>
+          <div class="mixer-side-card-indicator"></div>
+          <div class="mixer-side-card-name">INPUT A</div>
+          <div class="mixer-side-card-line"></div>
+          <div class="mixer-side-card-label">PROCESSOR</div>
+          <div class="mixer-side-card-items">
+            <span>PREAMP</span><span>HPF</span><span>GATE</span><span>PEQ</span><span>GEQ</span><span>COMP</span>
+          </div>
+          <div class="mixer-side-card-footer">DLMS</div>
+        </aside>
+        <div class="mixer-bank" id="mixer-bank-container"></div>
+      </div>
     </div>
 
     <div id="panel-settings" class="feature-panel">

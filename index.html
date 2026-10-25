@@ -2412,7 +2412,7 @@
 }
 
 
-/* Panel processor kiri memakai gaya sidebar atas dan memanjang penuh di sisi channel. */
+/* Panel kiri bawah kosong; lebar disamakan dengan sidebar processor di atas. */
 .mixer-bank-layout {
   display: flex !important;
   flex: 1 1 0 !important;
@@ -2425,27 +2425,20 @@
   overflow: hidden !important;
 }
 .mixer-lower-sidebar {
-  flex: 0 0 clamp(48px, 7vw, 68px) !important;
-  width: clamp(48px, 7vw, 68px) !important;
+  flex: 0 0 clamp(76px, 11vw, 150px) !important;
+  width: clamp(76px, 11vw, 150px) !important;
   min-width: 0 !important;
   min-height: 100% !important;
   height: 100% !important;
   align-self: stretch !important;
   box-sizing: border-box !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding: 3px !important;
-  gap: 3px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  gap: 0 !important;
   border-radius: 3px !important;
 }
-.mixer-lower-sidebar .tc-side-btn {
-  width: 100%;
-  flex: 0 0 auto;
-  padding: 5px 1px;
-  font-size: clamp(6px, .9vw, 8px);
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-}
+/* Pastikan panel kiri bawah tetap benar-benar kosong. */
+.mixer-lower-sidebar > * { display: none !important; }
 .mixer-bank-layout > #mixer-bank-container {
   flex: 1 1 0 !important;
   width: 0 !important;
@@ -2456,15 +2449,23 @@
   overflow-x: auto !important;
   overflow-y: hidden !important;
 }
-@media (max-width: 520px) {
-  .mixer-bank-layout { gap: 2px !important; }
+@media (min-width: 761px) and (orientation: landscape) {
   .mixer-lower-sidebar {
-    flex-basis: 43px !important;
-    width: 43px !important;
-    padding: 2px !important;
-    gap: 3px !important;
+    flex-basis: clamp(100px, 11vw, 165px) !important;
+    width: clamp(100px, 11vw, 165px) !important;
   }
-  .mixer-lower-sidebar .tc-side-btn { padding: 4px 0; font-size: 6px; }
+}
+@media (max-width: 760px) and (orientation: landscape) {
+  .mixer-lower-sidebar {
+    flex-basis: clamp(54px, 11vw, 82px) !important;
+    width: clamp(54px, 11vw, 82px) !important;
+  }
+}
+@media (max-width: 520px) and (orientation: portrait) {
+  .mixer-lower-sidebar {
+    flex-basis: clamp(50px, 16vw, 76px) !important;
+    width: clamp(50px, 16vw, 76px) !important;
+  }
 }
 
   </style>
@@ -3091,14 +3092,6 @@ function updateSidebarForChannel(id) {
   }
   sidebar.innerHTML = html;
 
-  // Sinkronkan menu sidebar atas ke panel kiri di samping channel tanpa menduplikasi ID.
-  const lowerSidebar = document.getElementById("mixer-processor-sidebar");
-  if (lowerSidebar) {
-    lowerSidebar.innerHTML = html.replace(/ id="side-([^"]+)"/g, ' data-side="side-$1"');
-    lowerSidebar.querySelectorAll(".tc-side-btn").forEach(button => {
-      button.classList.toggle("active", button.textContent.trim().toLowerCase() === String(currentProcessorTab || "").trim().toLowerCase());
-    });
-  }
 }
 
 function geqFrequencyHz(label) {
@@ -3243,11 +3236,9 @@ function switchProcessorPage(pageName) {
 
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
-    const lowerBtn = document.querySelector('#mixer-processor-sidebar [data-side="side-' + name + '"]');
     const page = document.getElementById("proc-page-" + name);
     const knobs = document.getElementById("knobs-group-" + name);
     if (btn) btn.classList.toggle("active", name === pageName);
-    if (lowerBtn) lowerBtn.classList.toggle("active", name === pageName);
     if (page) page.style.display = (name === pageName) ? "block" : "none";
     if (knobs) knobs.style.display = (name === pageName) ? "grid" : "none";
   });

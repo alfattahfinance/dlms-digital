@@ -4002,11 +4002,18 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   const standard = getNormalizedCoords(e, graph);
   if (!standard) return;
 
-  // Balikkan transformasi layer grafik: translate(-30,-0.5) scale(2,1.75).
-  // X harus ditambah 30 (bukan 15), Y harus menambah 0.875 sebelum dibagi skala.
-  // Offset yang keliru membuat titik dan nilai parameter meloncat, lalu indikator knop ikut meloncat.
-  const svgX = Math.max(30, Math.min(300, (standard.x + 60) / 2));
-  const svgY = Math.max(10, Math.min(190, (standard.y + 0.875) / 1.75));
+  // PEQ memakai viewBox 330x215 tanpa transformasi legacy; halaman lain memakai
+  // viewBox 600x350 dengan layer grafik translate(-30,-0.5) scale(2,1.75).
+  // Konversi harus mengikuti sistem koordinat SVG masing-masing agar titik/knop tidak meloncat.
+  let svgX, svgY;
+  if (tab === "peq") {
+    const rect = graph.getBoundingClientRect();
+    svgX = Math.max(30, Math.min(300, ((Number(e.clientX) - rect.left) / rect.width) * 330));
+    svgY = Math.max(10, Math.min(190, ((Number(e.clientY) - rect.top) / rect.height) * 215));
+  } else {
+    svgX = Math.max(30, Math.min(300, (standard.x + 60) / 2));
+    svgY = Math.max(10, Math.min(190, (standard.y + 0.875) / 1.75));
+  }
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 
@@ -4037,10 +4044,14 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
       updateParam("hpf-freq_" + channelId, p.hpf_freq);
     }
   } else if (tab === "gate") {
-    const normalizedGateY = 1 - normalizedY;
-    const mappedThr = -80 + (((normalizedX + normalizedGateY) / 2) * 80);
+    // Posisi X menentukan threshold; posisi Y menentukan level akhir (threshold + range).
+    // Jangan merata-ratakan X dan Y menjadi threshold karena itu membuat knop meloncat diagonal.
+    const mappedThr = -80 + normalizedX * 80;
+    const mappedFloor = -((svgY - 10) / 180) * 60;
     p.gate_thr = Number(Math.max(-80, Math.min(0, mappedThr)).toFixed(1));
+    p.gate_rng = Number(Math.max(-60, Math.min(0, mappedFloor - p.gate_thr)).toFixed(1));
     updateParam("gate-thr_" + channelId, p.gate_thr);
+    updateParam("gate-rng_" + channelId, p.gate_rng);
   } else if (tab === "peq") {
     const bandIndex = Math.max(0, Math.min(4, (Number(dragNode) || p.peq_band) - 1));
     p.peq_band = bandIndex + 1;

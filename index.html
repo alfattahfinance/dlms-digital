@@ -1999,6 +1999,93 @@
       .chassis-rack > .player-bar { order: 3; flex: 1 1 100%; }
       .chassis-rack > .player-bar #now-playing { display: none; }
     }
+
+    .music-page-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(3px);
+      box-sizing: border-box;
+    }
+    .music-page {
+      width: min(520px, 100%);
+      color: #eee;
+      background: #171b22;
+      border: 1px solid #515967;
+      border-radius: 7px;
+      box-shadow: 0 16px 45px rgba(0,0,0,.65);
+      overflow: hidden;
+    }
+    .music-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #252b35;
+      border-bottom: 1px solid #444c58;
+    }
+    .music-page-header h2 {
+      margin: 0;
+      color: var(--amber);
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    .music-page-close {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #626b79;
+      border-radius: 4px;
+      background: #343b46;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .music-page-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+    }
+    #audio-file-input { display: none; }
+    .music-file-button {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 8px 12px;
+      border-radius: 4px;
+      background: var(--neon-blue);
+      color: #071018;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .music-now-playing {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    #audio-player {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      height: 38px;
+      filter: invert(90%) hue-rotate(180deg);
+    }
+    @media (max-width: 520px) {
+      .music-page-body { padding: 12px; gap: 10px; }
+      .music-page-header h2 { font-size: 11px; }
+      #audio-player { height: 34px; }
+    }
   </style>
 </head>
 <body>
@@ -2015,14 +2102,9 @@
       <span>PROCESSOR CONSOLE</span>
     </div>
 
-  <div class="player-bar" aria-label="Pemutar musik">
-    <label class="chassis-icon-btn music-icon-btn" for="audio-file-input" title="Pilih file musik" aria-label="Pilih file musik">
+  <button class="tab-btn chassis-icon-btn music-icon-btn" type="button" title="Pemutar musik" aria-label="Buka pemutar musik" onclick="toggleMusicPage(true)">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-    </label>
-    <input type="file" id="audio-file-input" accept="audio/*">
-    <audio id="audio-player" controls crossorigin="anonymous"></audio>
-    <span id="now-playing" style="color:var(--amber); font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Belum ada file dipilih</span>
-  </div>
+    </button>
 
     <div class="chassis-actions" role="group" aria-label="Menu utama">
       <button class="tab-btn chassis-icon-btn active" type="button"
@@ -2040,6 +2122,21 @@
         <span id="ip-display">Localhost / Direct</span>
       </div>
     </div>
+  </div>
+
+  <div id="music-page-overlay" class="music-page-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="music-page-title">
+    <section class="music-page">
+      <header class="music-page-header">
+        <h2 id="music-page-title">PEMUTAR MUSIK</h2>
+        <button type="button" class="music-page-close" onclick="toggleMusicPage(false)" aria-label="Tutup pemutar musik">×</button>
+      </header>
+      <div class="music-page-body">
+        <label class="music-file-button" for="audio-file-input">♫ Pilih File Musik</label>
+        <input type="file" id="audio-file-input" accept="audio/*">
+        <div id="now-playing" class="music-now-playing">Belum ada file dipilih</div>
+        <audio id="audio-player" controls crossorigin="anonymous"></audio>
+      </div>
+    </section>
   </div>
 
   <div class="fader-workspace">
@@ -4076,6 +4173,12 @@ function toggleOn(id, evt) {
   const isOff = onStates[id];
   document.getElementById("on-" + id)?.classList.toggle("off", isOff);
   sendDeviceCommand("/power?ch=" + encodeURIComponent(id) + "&state=" + (isOff ? "0" : "1"));
+}
+
+function toggleMusicPage(show) {
+  const page = document.getElementById("music-page-overlay");
+  if (!page) return;
+  page.style.display = show ? "flex" : "none";
 }
 
 function switchTab(tabName, clickedButton) {

@@ -1571,6 +1571,54 @@
       align-items: stretch;
       justify-content: center;
     }
+
+    /* Fit the DLMS touchscreen to the graph viewport without clipping the curve. */
+    .touchscreen-console {
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      align-items: stretch;
+    }
+    .tc-center-graph {
+      height: 100%;
+      min-height: 0;
+      align-self: stretch;
+      justify-content: stretch;
+      padding: 3px;
+    }
+    .tc-center-graph > .processor-subpage,
+    .tc-center-graph > .sq-graph-box,
+    .tc-center-graph > #gate-graph-box,
+    .tc-center-graph > #comp-graph-box {
+      flex: 1 1 0;
+      min-height: 0;
+      height: 100%;
+    }
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box {
+      flex: 1 1 0;
+      min-height: 0;
+      height: 100%;
+      aspect-ratio: auto;
+    }
+    .tc-center-graph svg {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      .touchscreen-console {
+        height: clamp(210px, 39dvh, 320px);
+        max-height: 46dvh;
+      }
+    }
+    @media (max-width: 760px) and (orientation: landscape) {
+      .touchscreen-console {
+        height: clamp(125px, 31dvh, 205px);
+        max-height: 36dvh;
+      }
+    }
+
     .processor-subpage {
       box-sizing: border-box;
       width: 100% !important;

@@ -1834,6 +1834,45 @@
       .tc-right-knobs-panel { flex-basis: clamp(82px, 25vw, 120px); }
     }
 
+
+    .chassis-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .chassis-icon-btn {
+      width: 25px;
+      height: 23px;
+      padding: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    .chassis-icon-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .chassis-status {
+      margin-left: 3px;
+      white-space: nowrap;
+    }
+    @media (max-width: 520px) {
+      .chassis-rack { gap: 5px; padding: 2px 8px; }
+      .chassis-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .chassis-actions { gap: 3px; }
+      .chassis-icon-btn { width: 23px; height: 22px; }
+      .chassis-status { font-size: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -1849,9 +1888,21 @@
       DLMD DLMS DSP &bull; PROCESSOR CONSOLE
     </div>
 
-    <div class="chassis-status">
-      <span class="status-dot" id="connection-dot"></span>
-      <span id="ip-display">Localhost / Direct</span>
+    <div class="chassis-actions" role="group" aria-label="Menu utama">
+      <button class="tab-btn chassis-icon-btn active" type="button"
+        aria-label="Output Matrix dan Input" title="Output Matrix &amp; Input"
+        onclick="switchTab('mixer',this)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="tab-btn chassis-icon-btn" type="button"
+        aria-label="Koneksi Wi-Fi" title="Koneksi Wi-Fi"
+        onclick="switchTab('settings',this)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8.8a15.5 15.5 0 0 1 20 0"/><path d="M5.5 12.3a10.2 10.2 0 0 1 13 0"/><path d="M9 15.8a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <div class="chassis-status">
+        <span class="status-dot" id="connection-dot"></span>
+        <span id="ip-display">Localhost / Direct</span>
+      </div>
     </div>
   </div>
 
@@ -1860,11 +1911,6 @@
     <input type="file" id="audio-file-input" accept="audio/*">
     <audio id="audio-player" controls crossorigin="anonymous"></audio>
     <span id="now-playing" style="color:var(--amber); font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Belum ada file dipilih</span>
-  </div>
-
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('mixer',this)">Output Matrix &amp; Input</button>
-    <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ Koneksi Wi-Fi</button>
   </div>
 
   <div class="fader-workspace">

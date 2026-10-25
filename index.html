@@ -1402,7 +1402,8 @@
     @media (min-width: 760px) {
       .app-container { padding: 6px; gap: 5px; }
       .touchscreen-console { height: clamp(180px, 34dvh, 280px); max-height: 44dvh; gap: 8px; padding: 6px; }
-      .tc-sidebar { width: clamp(100px, 13vw, 150px); }
+      /* Compact the DSP selector so it takes less horizontal space. */
+      .tc-sidebar { width: clamp(82px, 10vw, 122px); flex: 0 0 clamp(82px, 10vw, 122px); }
       .tc-right-knobs-panel { width: clamp(165px, 19vw, 220px); }
       .channel-strip { flex-basis: 0; min-width: 0; }
       .ch-name { font-size: .72rem; }

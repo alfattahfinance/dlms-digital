@@ -4002,9 +4002,11 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   const standard = getNormalizedCoords(e, graph);
   if (!standard) return;
 
-  // Koreksi langsung skala SVG ke sistem koordinat internal grafik (30->300, 10->190)
-  const svgX = Math.max(30, Math.min(300, standard.x / 2 + 15));
-  const svgY = Math.max(10, Math.min(190, (standard.y + 0.5) / 1.75));
+  // Balikkan transformasi layer grafik: translate(-30,-0.5) scale(2,1.75).
+  // X harus ditambah 30 (bukan 15), Y harus menambah 0.875 sebelum dibagi skala.
+  // Offset yang keliru membuat titik dan nilai parameter meloncat, lalu indikator knop ikut meloncat.
+  const svgX = Math.max(30, Math.min(300, (standard.x + 60) / 2));
+  const svgY = Math.max(10, Math.min(190, (standard.y + 0.875) / 1.75));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 

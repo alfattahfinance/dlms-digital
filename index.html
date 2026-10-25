@@ -3429,7 +3429,7 @@ function drawBackgroundGrid(svg, host, page) {
     label.setAttribute("text-anchor",anchor);
     label.setAttribute("dominant-baseline","middle");
     label.setAttribute("class","sq-grid-text");
-    label.setAttribute("font-size",(6.1*baseScale).toFixed(2));
+    label.setAttribute("font-size",Math.max(6.5,7.2*baseScale).toFixed(2));
     label.setAttribute("font-family","Arial, sans-serif");
     label.setAttribute("font-weight","400");
     label.setAttribute("fill","rgba(255,255,255,0.45)");
@@ -3445,7 +3445,8 @@ function drawBackgroundGrid(svg, host, page) {
   yTicks.forEach(tick => {
     const y=yToCoord(tick.v);
     addLine(30,y,300,y,tick.v===0);
-    addLabel(tick.label,33,y,"start");
+    // Angka dB di luar sisi kiri area plot.
+    addLabel(tick.label,24,y,"end");
   });
   if (levelGraph) {
     const minDb=page==="gate" ? -80 : -60;
@@ -3453,7 +3454,8 @@ function drawBackgroundGrid(svg, host, page) {
     ticks.forEach(db => {
       const x=30+((db-minDb)/(0-minDb))*270;
       addLine(x,10,x,190);
-      addLabel(String(db),x,185,"middle");
+      // Angka input dB di bawah plot agar tidak bertumpuk dengan grid.
+      addLabel(String(db),x,195,"middle");
     });
     addLabel("INPUT dB",165,194,"middle");
   } else {
@@ -3462,7 +3464,8 @@ function drawBackgroundGrid(svg, host, page) {
       addLine(x,10,x,190);
       if ([20,100,1000,10000,20000].includes(freq)) {
         const label=freq>=1000 ? (freq===20000 ? "20k" : (freq/1000)+"k") : String(freq);
-        addLabel(label,x,185,freq===20 ? "start" : (freq===20000 ? "end" : "middle"));
+        // Label frekuensi di bawah garis grid paling bawah.
+        addLabel(label,x,195,freq===20 ? "start" : (freq===20000 ? "end" : "middle"));
       }
     });
     addLabel("FREQUENCY Hz",165,194,"middle");
@@ -3931,7 +3934,7 @@ function applyResponsiveGraphScale(host) {
     line.style.opacity="1";
   });
   svg.querySelectorAll(".sq-grid-text").forEach(label=>{
-    label.style.fontSize=(6.1*scaleFactor).toFixed(3)+"px";
+    label.style.fontSize=Math.max(6.5,7.2*scaleFactor).toFixed(3)+"px";
     label.style.fill="rgba(255,255,255,0.45)";
     label.style.stroke="none";
     label.style.paintOrder="normal";

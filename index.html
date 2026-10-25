@@ -4004,7 +4004,7 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
 
   // Koreksi langsung skala SVG ke sistem koordinat internal grafik (30->300, 10->190)
   const svgX = Math.max(30, Math.min(300, standard.x / 2 + 15));
-  const svgY = Math.max(10, Math.min(190, standard.y / 1.75));
+  const svgY = Math.max(10, Math.min(190, (standard.y + 0.5) / 1.75));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 
@@ -4088,6 +4088,9 @@ function initInteractiveGraphs() {
     let activeDragNode = null;
     let activePointerId = null;
     let activeChannelId = null;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartPreampGain = 0;
 
     function onPointerDown(e) {
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -4138,9 +4141,11 @@ function initInteractiveGraphs() {
       activeChannelId = dlmsState.activeChannel;
       isDragging = true;
       activePointerId = e.pointerId;
+      dragStartX = clientX;
+      dragStartY = clientY;
+      dragStartPreampGain = Number(getChannelState(activeChannelId)?.processor?.pre_gain ?? 0);
 
-      // Simpan jarak sentuhan dari pusat titik. Ketukan tidak mengubah parameter;
-      // saat digeser, titik mengikuti jari tanpa meloncat ke posisi sentuhan.
+      // Simpan offset dari pusat node supaya sentuhan tidak membuat titik meloncat.
       const dragRect = selectedNode?.getBoundingClientRect?.();
       const hasNodeCenter = dragRect && (dragRect.width || dragRect.height);
       const dragOffsetX = hasNodeCenter ? clientX - (dragRect.left + dragRect.width / 2) : 0;
@@ -4160,6 +4165,20 @@ function initInteractiveGraphs() {
       if (typeof e.getCoalescedEvents === "function") {
         const samples = e.getCoalescedEvents();
         if (samples && samples.length) point = samples[samples.length - 1];
+      }
+      if (tab === "preamp") {
+        // PREAMP tidak memiliki node kontrol tersendiri: ubah gain relatif terhadap
+        // posisi awal jari agar ketukan/awal geser tidak memindahkan kurva ke nilai lain.
+        const rect = svg.getBoundingClientRect();
+        if (!rect.height) return;
+        const deltaGain = ((dragStartY - point.clientY) / rect.height) * (GRAPH_COORD_HEIGHT / 1.75) * (70 / 180);
+        const state = getChannelState(activeChannelId);
+        if (state) {
+          state.processor.pre_gain = Number(Math.max(-10, Math.min(60, dragStartPreampGain + deltaGain)).toFixed(1));
+          updateParam("pre-gain_" + activeChannelId, state.processor.pre_gain);
+          scheduleAppRender();
+        }
+        return;
       }
       const offsetX = Number(svg.dataset.dragOffsetX) || 0;
       const offsetY = Number(svg.dataset.dragOffsetY) || 0;

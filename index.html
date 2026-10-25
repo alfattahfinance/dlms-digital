@@ -417,6 +417,17 @@
       filter: none !important;
     }
 
+    /* Satu titik saja: pusat transparan, garis sesuai warna kurva. */
+    .screen-real-knob > circle {
+      fill: transparent !important;
+      stroke-width: 2.2;
+      vector-effect: non-scaling-stroke;
+    }
+    .screen-real-knob.is-selected > circle {
+      fill: var(--node-active-fill, rgba(54,244,255,0.14)) !important;
+      stroke-width: 2.8;
+    }
+
     .sq-graph-box {
       overflow: hidden;
       contain: none;
@@ -2786,19 +2797,13 @@
                   <path id="hpf-curve-path" class="neon-line-blue" d="M 30 150 L 100 150 L 230 40 L 300 40"/>
                   
                   <!-- Titik Node HPF -->
-                  <g id="node-hpf-group" class="screen-real-knob" transform="translate(100, 150)">
-                    <circle r="10" fill="#000" opacity="0.6"/>
-                    <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
-                    <circle r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="0.8"/>
-                    <circle r="2" fill="#ffffff"/>
+                  <g id="node-hpf-group" class="screen-real-knob" style="--node-active-fill:rgba(0,229,255,0.16)" transform="translate(100, 150)">
+                    <circle r="6" fill="transparent" stroke="#00e5ff" stroke-width="2.2"/>
                   </g>
 
                   <!-- Titik Node LPF yang identik dengan HPF -->
-                  <g id="node-lpf-group" class="screen-real-knob" transform="translate(230, 40)">
-                    <circle r="10" fill="#000" opacity="0.6"/>
-                    <circle r="9" fill="url(#knobBodyBlue)" stroke="#00e5ff" stroke-width="1.8"/>
-                    <circle r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="0.8"/>
-                    <circle r="2" fill="#ffffff"/>
+                  <g id="node-lpf-group" class="screen-real-knob" style="--node-active-fill:rgba(0,229,255,0.16)" transform="translate(230, 40)">
+                    <circle r="6" fill="transparent" stroke="#00e5ff" stroke-width="2.2"/>
                   </g>
                 </g>
               </svg>
@@ -2824,11 +2829,8 @@
                 <path id="gate-fill-path" class="sq-curve-fill" style="fill:url(#gateGrad);" d="M 30 100 L 130 100 L 130 40 L 300 40 Z"/>
                 <path id="gate-curve-path" class="neon-line-emerald" d="M 30 170 L 130 170 L 130 40 L 300 40"/>
                 
-                <g id="node-gate-group" class="screen-real-knob" transform="translate(130, 170)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyEmerald)" stroke="#00ffaa" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
+                <g id="node-gate-group" class="screen-real-knob" style="--node-active-fill:rgba(61,255,208,0.16)" transform="translate(130, 170)">
+                  <circle r="6" fill="transparent" stroke="#3dffd0" stroke-width="2.2"/>
                 </g>
               </g>
               </svg>
@@ -2927,11 +2929,8 @@
                 <path id="sq-fill-path" class="sq-curve-fill" style="fill:url(#sqCurveGrad);" d="M 30 100 L 190 105 L 300 105 Z"/>
                 <path id="sq-curve-path" class="sq-curve-line" d="M 30 190 L 190 105 L 300 105"/>
 
-                <g id="node-thresh-group" class="screen-real-knob" transform="translate(190, 105)">
-                  <circle r="10" fill="#000" opacity="0.5"/>
-                  <circle r="9" fill="url(#knobBodyAmber)" stroke="#ffbb00" stroke-width="1.8"/>
-                  <circle r="5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-                  <circle r="2" fill="#ffffff"/>
+                <g id="node-thresh-group" class="screen-real-knob" style="--node-active-fill:rgba(255,187,0,0.16)" transform="translate(190, 105)">
+                  <circle r="6" fill="transparent" stroke="#ffbb00" stroke-width="2.2"/>
                 </g>
 
               </g>
@@ -3359,8 +3358,12 @@ function initializePermanentDSPNodes() {
     g.setAttribute("id", id); g.setAttribute("class", "screen-real-knob");
     g.setAttribute("transform", "translate(" + x + "," + y + ")");
     const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("r", String(radius)); c.setAttribute("fill", "#101010");
-    c.setAttribute("stroke", color); c.setAttribute("stroke-width", "2");
+    c.setAttribute("r", String(Math.min(radius, 6)));
+    c.setAttribute("fill", "transparent");
+    c.setAttribute("stroke", color);
+    c.setAttribute("stroke-width", "2.2");
+    c.setAttribute("vector-effect", "non-scaling-stroke");
+    g.style.setProperty("--node-active-fill", color === "#ff2a6d" ? "rgba(255,42,109,0.16)" : "rgba(54,244,255,0.16)");
     g.appendChild(c); return g;
   };
   const hpfSvg = svgFor("hpf");
@@ -3937,15 +3940,7 @@ function initGraphGlowLayers(svg) {
     svg.querySelectorAll(selector).forEach(path=>observer.observe(path,{attributes:true,attributeFilter:["d","class"]}));
     svg.__dlmsGlowObserver=observer;
   }
-  svg.querySelectorAll(".screen-real-knob").forEach(node=>{
-    if(node.querySelector(".dlms-node-halo")) return;
-    const halo=node.ownerDocument.createElementNS("http://www.w3.org/2000/svg","circle");
-    halo.setAttribute("class","dlms-node-halo"); halo.setAttribute("r","11");
-    halo.setAttribute("fill","rgba(255,255,255,0.025)");
-    halo.setAttribute("stroke","rgba(255,255,255,0.32)");
-    halo.setAttribute("stroke-width","0.8"); halo.setAttribute("pointer-events","none");
-    node.insertBefore(halo,node.firstChild);
-  });
+  // Titik kontrol dibuat satu lingkaran; tidak menambahkan halo duplikat.
 }
 
 function applyResponsiveGraphScale(host) {
@@ -4132,6 +4127,13 @@ function initInteractiveGraphs() {
       if (!pickedNode) return;
 
       e.preventDefault();
+      svg.querySelectorAll(".screen-real-knob.is-selected").forEach(node => node.classList.remove("is-selected"));
+      const selectedNode = pickedNode === "hpf" ? svg.querySelector("#node-hpf-group")
+        : pickedNode === "lpf" ? svg.querySelector("#node-lpf-group")
+        : pickedNode === "gate" ? svg.querySelector("#node-gate-group")
+        : pickedNode === "threshold" ? svg.querySelector("#node-thresh-group")
+        : /^[1-5]$/.test(String(pickedNode)) ? svg.querySelector("#node-peq-band-" + pickedNode) : null;
+      if (selectedNode) selectedNode.classList.add("is-selected");
       activeDragNode = pickedNode;
       activeChannelId = dlmsState.activeChannel;
       isDragging = true;
@@ -4158,6 +4160,7 @@ function initInteractiveGraphs() {
       activeDragNode = null;
       activePointerId = null;
       activeChannelId = null;
+      svg.querySelectorAll(".screen-real-knob.is-selected").forEach(node => node.classList.remove("is-selected"));
       try { if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); } catch (err) {}
     }
 

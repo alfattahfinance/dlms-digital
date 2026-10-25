@@ -4415,10 +4415,17 @@ function drawRTAGlowWave() {
     const binHz = sampleRate / rtaAnalyser.fftSize;
     const minHz = 20;
     const maxHz = Math.max(minHz, Math.min(20000, sampleRate / 2));
-    const plotLeft = 0;
-    const plotRight = w;
-    const plotTop = 0;
-    const plotBottom = h;
+    // Batasi RTA ke area plot di dalam bingkai, bukan ke seluruh kartu.
+    // HPF memakai SVG 600x350; PEQ memakai viewBox 330x215.
+    const plotBounds = key === "hpf"
+      ? { left: 30, right: 570, top: 17.5, bottom: 332.5 }
+      : key === "peq"
+        ? { left: (30 / 330) * w, right: (300 / 330) * w, top: (10 / 215) * h, bottom: (190 / 215) * h }
+        : { left: Math.min(12, w * 0.04), right: w - Math.min(12, w * 0.04), top: Math.min(8, h * 0.04), bottom: h - Math.min(8, h * 0.04) };
+    const plotLeft = plotBounds.left;
+    const plotRight = plotBounds.right;
+    const plotTop = plotBounds.top;
+    const plotBottom = plotBounds.bottom;
     const plotWidth = Math.max(1, plotRight - plotLeft);
     const plotHeight = Math.max(1, plotBottom - plotTop);
     const points = [];
@@ -4437,6 +4444,10 @@ function drawRTAGlowWave() {
 
     const color = rtaColorByPage[key];
     ctx.save();
+    // Clip seluruh glow/gelombang agar tidak melewati bingkai plot.
+    ctx.beginPath();
+    ctx.rect(plotLeft, plotTop, plotWidth, plotHeight);
+    ctx.clip();
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length - 1; i++) {

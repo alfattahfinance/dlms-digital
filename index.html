@@ -2086,7 +2086,28 @@
       .music-page-header h2 { font-size: 11px; }
       #audio-player { height: 34px; }
     }
-  </style>
+  
+    /* Chassis rack: taller, flush to the top and bottom bars */
+    .app-container {
+      padding: 0 !important;
+      gap: 0 !important;
+    }
+    .chassis-rack {
+      min-height: 42px;
+      padding: 5px 12px;
+      margin: 0;
+      border-radius: 0;
+    }
+    @media (max-width: 520px) {
+      .app-container { padding: 0 !important; gap: 0 !important; }
+      .chassis-rack { min-height: 38px; padding: 4px 6px; }
+    }
+    @media (orientation: landscape) and (max-height: 600px) {
+      .app-container { padding: 0 !important; gap: 0 !important; }
+      .chassis-rack { min-height: 34px; padding: 3px 8px; }
+    }
+    
+</style>
 </head>
 <body>
 

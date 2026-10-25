@@ -3243,9 +3243,11 @@ function switchProcessorPage(pageName) {
 
   ["preamp", "hpf", "gate", "peq", "geq", "comp"].forEach(name => {
     const btn = document.getElementById("side-" + name);
+    const lowerBtn = document.querySelector('#mixer-processor-sidebar [data-side="side-' + name + '"]');
     const page = document.getElementById("proc-page-" + name);
     const knobs = document.getElementById("knobs-group-" + name);
     if (btn) btn.classList.toggle("active", name === pageName);
+    if (lowerBtn) lowerBtn.classList.toggle("active", name === pageName);
     if (page) page.style.display = (name === pageName) ? "block" : "none";
     if (knobs) knobs.style.display = (name === pageName) ? "grid" : "none";
   });

@@ -1754,6 +1754,86 @@
       .sq-graph-box, #gate-graph-box, #comp-graph-box { max-width: 100%; }
     }
 
+
+    /* Balanced DSP workspace: graph and knob panel share one aligned viewport. */
+    .touchscreen-console {
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      align-items: stretch;
+      gap: clamp(4px, 0.55vw, 8px);
+      padding: clamp(3px, 0.45vw, 6px);
+    }
+    .tc-sidebar {
+      flex: 0 0 clamp(76px, 11vw, 150px);
+      min-width: 0;
+      min-height: 0;
+    }
+    .tc-center-graph {
+      flex: 1 1 0;
+      width: 0;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      padding: clamp(3px, 0.45vw, 6px);
+      box-sizing: border-box;
+    }
+    .tc-right-knobs-panel {
+      flex: 0 0 clamp(112px, 15vw, 205px);
+      width: auto;
+      min-width: 0;
+      min-height: 0;
+      max-height: 100%;
+      box-sizing: border-box;
+    }
+    .tc-center-graph > .processor-subpage {
+      flex: 1 1 0;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+    }
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box {
+      box-sizing: border-box;
+      width: 100% !important;
+      min-width: 0;
+      min-height: 0;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .tc-center-graph svg {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    @media (min-width: 761px) and (orientation: landscape) {
+      .touchscreen-console {
+        height: clamp(220px, 32dvh, 300px);
+        max-height: 36dvh;
+      }
+      .tc-sidebar { flex-basis: clamp(100px, 11vw, 165px); }
+      .tc-right-knobs-panel { flex-basis: clamp(150px, 15vw, 220px); }
+    }
+    @media (max-width: 760px) and (orientation: landscape) {
+      .touchscreen-console {
+        height: clamp(125px, 31dvh, 205px);
+        max-height: 36dvh;
+      }
+      .tc-sidebar { flex-basis: clamp(54px, 11vw, 82px); }
+      .tc-right-knobs-panel { flex-basis: clamp(88px, 17vw, 135px); }
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      .touchscreen-console {
+        height: clamp(210px, 39dvh, 320px);
+        max-height: 46dvh;
+      }
+      .tc-sidebar { flex-basis: clamp(50px, 16vw, 76px); }
+      .tc-right-knobs-panel { flex-basis: clamp(82px, 25vw, 120px); }
+    }
+
   </style>
 </head>
 <body>

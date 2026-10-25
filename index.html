@@ -2321,7 +2321,12 @@
 }
 
 
-/* Perpanjang kartu menu processor sampai batas bawah console dan sejajarkan awal channel */
+/* Panjangkan kartu menu processor hingga sejajar dengan ujung bawah bank channel */
+.fader-workspace {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
 .touchscreen-console {
   align-items: stretch !important;
   padding-bottom: 0 !important;
@@ -2335,6 +2340,16 @@
   box-sizing: border-box !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+}
+/* Pada tampilan mixer, sidebar dan bank channel mengisi tinggi workspace yang sama. */
+#panel-mixer {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+}
+#panel-mixer .mixer-bank,
+#panel-mixer #mixer-bank-container {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 /* Channel bank rata dengan tepi kiri console; cegah strip melebar ke kanan */
 .mixer-bank {

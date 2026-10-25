@@ -1209,6 +1209,50 @@
     .tc-right-knobs-panel > .knobs-grid[style*="display: none"] { display: none !important; }
     .tc-right-knobs-panel > div:last-child { flex: 0 0 auto; }
     .tc-right-knobs-panel .physical-knob-container { touch-action: none; }
+
+    /* PEQ: reduce the stacked-card look while keeping all four controls. */
+    #knobs-group-peq {
+      gap: 3px;
+      padding: 0;
+      max-height: none;
+      overflow: visible;
+    }
+    #knobs-group-peq .physical-knob-container {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 2px 1px;
+      min-width: 0;
+    }
+    #knobs-group-peq .physical-knob-container label {
+      color: #c5cbd4;
+      margin-bottom: 0;
+    }
+    #knobs-group-peq .physical-knob-container span {
+      color: #ffd15c;
+      font-size: .48rem;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    @media (min-width: 760px) {
+      #knobs-group-peq {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-content: center;
+      }
+      #knobs-group-peq .physical-knob {
+        --knob-size: 38px;
+      }
+    }
+    @media (max-width: 520px) {
+      #knobs-group-peq .physical-knob {
+        --knob-size: clamp(24px, 6.5vw, 30px);
+      }
+      #knobs-group-peq .physical-knob-container span {
+        font-size: 7px;
+      }
+    }
+
     @media (orientation: landscape) and (max-height: 600px) {
       .tc-right-knobs-panel { gap: 4px; padding: 3px; }
       .tc-right-knobs-panel .knobs-grid { gap: 3px; }

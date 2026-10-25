@@ -4139,13 +4139,32 @@ function initInteractiveGraphs() {
       isDragging = true;
       activePointerId = e.pointerId;
       try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+
+      // Terapkan posisi awal saat sentuhan/klik mulai, lalu terus ikuti gerakan pointer.
+      // Ini menghindari interaksi yang terasa hanya maju/mundur satu langkah per ketukan.
+      scheduleAppRender({
+        event: { clientX: e.clientX, clientY: e.clientY },
+        tab,
+        dragNode: activeDragNode,
+        box,
+        svg,
+        channelId: activeChannelId
+      });
     }
 
     function onPointerMove(e) {
       if (!isDragging || e.pointerId !== activePointerId) return;
       e.preventDefault();
+
+      // Pada layar sentuh, browser dapat menggabungkan beberapa pergeseran.
+      // Ambil koordinat gerakan paling baru agar titik mengikuti jari secara kontinu.
+      let point = e;
+      if (typeof e.getCoalescedEvents === "function") {
+        const samples = e.getCoalescedEvents();
+        if (samples && samples.length) point = samples[samples.length - 1];
+      }
       scheduleAppRender({
-        event: { clientX: e.clientX, clientY: e.clientY },
+        event: { clientX: point.clientX, clientY: point.clientY },
         tab,
         dragNode: activeDragNode,
         box,

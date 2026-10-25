@@ -543,12 +543,7 @@
       padding: 0;
       --geq-band-width: 22px;
       background-color: transparent;
-      background-image:
-        linear-gradient(to bottom,
-          transparent calc(25% - 0.5px), rgba(255,255,255,0.14) 25%, transparent calc(25% + 0.5px),
-          transparent calc(50% - 0.65px), rgba(255,255,255,0.36) 50%, transparent calc(50% + 0.65px),
-          transparent calc(75% - 0.5px), rgba(255,255,255,0.14) 75%, transparent calc(75% + 0.5px)),
-        repeating-linear-gradient(to right, rgba(255,255,255,0.11) 0 1px, transparent 1px var(--geq-band-width));
+      background-image: none;
     }
 
     .geq-slider-col {
@@ -2868,7 +2863,7 @@
                     <line x1="273" y1="10" x2="273" y2="190"/>
                   </g>
                   <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
-                  <g class="sq-grid-text" text-anchor="end">
+                  <g class="sq-grid-text" text-anchor="end" style="font-size:7px;">
                     <text x="26" y="13">+18</text>
                     <text x="26" y="43">+12</text>
                     <text x="26" y="73">+6</text>
@@ -2877,17 +2872,17 @@
                     <text x="26" y="163">-12</text>
                     <text x="26" y="193">-18</text>
                   </g>
-                  <g class="sq-grid-text" text-anchor="middle">
-                    <text x="30" y="210">20</text>
-                    <text x="66" y="210">50</text>
-                    <text x="93" y="210">100</text>
-                    <text x="120" y="210">200</text>
-                    <text x="156" y="210">500</text>
-                    <text x="183" y="210">1k</text>
-                    <text x="210" y="210">2k</text>
-                    <text x="246" y="210">5k</text>
-                    <text x="273" y="210">10k</text>
-                    <text x="300" y="210">20k Hz</text>
+                  <g class="sq-grid-text" text-anchor="middle" style="font-size:7px;">
+                    <text x="30" y="207">20</text>
+                    <text x="66" y="207">50</text>
+                    <text x="93" y="207">100</text>
+                    <text x="120" y="207">200</text>
+                    <text x="156" y="207">500</text>
+                    <text x="183" y="207">1k</text>
+                    <text x="210" y="207">2k</text>
+                    <text x="246" y="207">5k</text>
+                    <text x="273" y="207">10k</text>
+                    <text x="298" y="207" text-anchor="end">20k Hz</text>
                   </g>
                 </g>
                 <path id="peq-fill-path" class="sq-curve-fill" style="fill:url(#peqGrad);" d="M 30 100 L 300 100 L 300 100 L 30 100 Z"/>

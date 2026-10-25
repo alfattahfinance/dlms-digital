@@ -2351,7 +2351,7 @@
   flex: 1 1 auto !important;
   min-height: 0 !important;
 }
-/* Kecilkan tinggi channel agar panel menu kiri dapat sejajar sampai ujung bawah channel. */
+/* Kembalikan tinggi channel seperti sebelumnya; pertahankan lebar channel yang lebih ramping. */
 #panel-mixer {
   display: flex !important;
   flex-direction: column !important;
@@ -2359,13 +2359,13 @@
 }
 #panel-mixer .mixer-bank,
 #panel-mixer #mixer-bank-container {
-  flex: 0 1 auto !important;
-  height: clamp(180px, 49vh, 440px) !important;
-  min-height: 0 !important;
-  max-height: calc(100% - 4px) !important;
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 190px !important;
+  max-height: none !important;
   box-sizing: border-box !important;
 }
-/* Channel bank tetap rata kiri dan strip dipersempit agar tidak mengambil tinggi berlebih. */
+/* Channel bank tetap rata kiri dan strip memakai tinggi penuh area mixer. */
 .mixer-bank {
   box-sizing: border-box !important;
   width: 100% !important;
@@ -2390,7 +2390,8 @@
 @media (max-width: 520px) {
   #panel-mixer .mixer-bank,
   #panel-mixer #mixer-bank-container {
-    height: clamp(165px, 44vh, 360px) !important;
+    height: auto !important;
+    min-height: 165px !important;
   }
   .channel-strip {
     flex-basis: clamp(48px, 11vw, 60px) !important;

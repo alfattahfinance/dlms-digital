@@ -4138,18 +4138,16 @@ function initInteractiveGraphs() {
       activeChannelId = dlmsState.activeChannel;
       isDragging = true;
       activePointerId = e.pointerId;
-      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
 
-      // Terapkan posisi awal saat sentuhan/klik mulai, lalu terus ikuti gerakan pointer.
-      // Ini menghindari interaksi yang terasa hanya maju/mundur satu langkah per ketukan.
-      scheduleAppRender({
-        event: { clientX: e.clientX, clientY: e.clientY },
-        tab,
-        dragNode: activeDragNode,
-        box,
-        svg,
-        channelId: activeChannelId
-      });
+      // Simpan jarak sentuhan dari pusat titik. Ketukan tidak mengubah parameter;
+      // saat digeser, titik mengikuti jari tanpa meloncat ke posisi sentuhan.
+      const dragRect = selectedNode?.getBoundingClientRect?.();
+      const hasNodeCenter = dragRect && (dragRect.width || dragRect.height);
+      const dragOffsetX = hasNodeCenter ? clientX - (dragRect.left + dragRect.width / 2) : 0;
+      const dragOffsetY = hasNodeCenter ? clientY - (dragRect.top + dragRect.height / 2) : 0;
+      svg.dataset.dragOffsetX = String(dragOffsetX);
+      svg.dataset.dragOffsetY = String(dragOffsetY);
+      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
     }
 
     function onPointerMove(e) {
@@ -4163,8 +4161,10 @@ function initInteractiveGraphs() {
         const samples = e.getCoalescedEvents();
         if (samples && samples.length) point = samples[samples.length - 1];
       }
+      const offsetX = Number(svg.dataset.dragOffsetX) || 0;
+      const offsetY = Number(svg.dataset.dragOffsetY) || 0;
       scheduleAppRender({
-        event: { clientX: point.clientX, clientY: point.clientY },
+        event: { clientX: point.clientX - offsetX, clientY: point.clientY - offsetY },
         tab,
         dragNode: activeDragNode,
         box,

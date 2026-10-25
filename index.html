@@ -2275,6 +2275,50 @@
   .chassis-icon-btn svg { width: 12px !important; height: 12px !important; }
 }
 
+
+/* Rapikan lebar strip channel dan panjangkan panel menu kiri */
+.mixer-bank {
+  min-width: 0 !important;
+  width: 100% !important;
+  gap: 3px !important;
+  padding: 0 !important;
+  align-items: stretch !important;
+}
+.channel-strip {
+  flex: 0 0 clamp(66px, 18vw, 88px) !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
+  padding: 3px !important;
+}
+.tc-sidebar {
+  align-self: stretch !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-radius: 2px !important;
+  overflow-y: auto !important;
+  box-sizing: border-box;
+}
+.touchscreen-console {
+  align-items: stretch !important;
+}
+@media (max-width: 520px) {
+  .channel-strip {
+    flex-basis: clamp(62px, 17vw, 78px) !important;
+    padding: 2px !important;
+    gap: 2px !important;
+  }
+  .mixer-bank { gap: 2px !important; }
+  .tc-sidebar { padding: 2px !important; }
+}
+@media (min-width: 760px) {
+  .channel-strip {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+}
+
 </style>
 </head>
 <body>

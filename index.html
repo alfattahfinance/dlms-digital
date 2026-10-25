@@ -2412,6 +2412,62 @@
 }
 
 
+/* Selaraskan area semua halaman grafik kurva di TC agar memenuhi ruang yang sama. */
+#panel-mixer > .touchscreen-console > .tc-center-graph {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+#panel-mixer .tc-center-graph > .processor-subpage {
+  position: relative !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+#panel-mixer .tc-center-graph .sq-graph-box,
+#panel-mixer .tc-center-graph #gate-graph-box,
+#panel-mixer .tc-center-graph #comp-graph-box,
+#panel-mixer .tc-center-graph #geq-container-box {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+#panel-mixer .tc-center-graph .sq-graph-box > svg,
+#panel-mixer .tc-center-graph #gate-graph-box > svg,
+#panel-mixer .tc-center-graph #comp-graph-box > svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+#panel-mixer #proc-page-geq .geq-container {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
 /* Kurangi lapisan latar/kartu bertumpuk di area TC, tanpa mengubah grafik atau kontrol. */
 #panel-mixer > .touchscreen-console {
   background: transparent !important;

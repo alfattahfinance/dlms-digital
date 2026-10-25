@@ -2412,6 +2412,23 @@
 }
 
 
+/* Kurangi lapisan latar/kartu bertumpuk di area TC, tanpa mengubah grafik atau kontrol. */
+#panel-mixer > .touchscreen-console {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+#panel-mixer > .touchscreen-console > .tc-center-graph {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+#panel-mixer > .touchscreen-console > .tc-right-knobs-panel {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 /* Satu panel processor kiri memanjang dari atas hingga bawah area mixer. */
 #panel-mixer {
   --processor-sidebar-width: clamp(76px, 11vw, 150px);

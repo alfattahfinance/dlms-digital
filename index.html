@@ -2613,17 +2613,34 @@
   #panel-mixer { --processor-sidebar-width: clamp(50px, 16vw, 76px); }
 }
 
-    /* Final correction: trim only the curve graph's right edge.
-       Keep the TC chassis, sidebar, knob panel and DSP handlers unchanged. */
-    .tc-center-graph .sq-graph-box,
-    .tc-center-graph #gate-graph-box,
-    .tc-center-graph #comp-graph-box {
-      width: calc(100% - clamp(5px, 0.7vw, 8px)) !important;
-      max-width: calc(100% - clamp(5px, 0.7vw, 8px)) !important;
-      margin-left: 0 !important;
-      margin-right: auto !important;
-      overflow: hidden !important;
+    /* Rebuild curve-page sizing around the PEQ reference:
+       every SVG graph box fills the same center-graph viewport.
+       Do not crop the right edge; keep curve coordinates and handlers intact. */
+    #panel-mixer .tc-center-graph .sq-graph-box,
+    #panel-mixer .tc-center-graph #gate-graph-box,
+    #panel-mixer .tc-center-graph #comp-graph-box {
+      display: block !important;
+      position: relative !important;
+      flex: 1 1 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      margin: 0 !important;
       box-sizing: border-box !important;
+      overflow: hidden !important;
+      aspect-ratio: auto !important;
+    }
+    #panel-mixer .tc-center-graph .sq-graph-box > svg,
+    #panel-mixer .tc-center-graph #gate-graph-box > svg,
+    #panel-mixer .tc-center-graph #comp-graph-box > svg {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
     }
 
   </style>

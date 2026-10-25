@@ -1756,6 +1756,18 @@
     }
 
 
+    /* Trim only the right edge of each curve frame so it aligns more closely with the plot area.
+       The touchscreen console and right-side knob panel keep their existing dimensions. */
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box {
+      width: calc(100% - clamp(4px, 0.65vw, 8px)) !important;
+      max-width: calc(100% - clamp(4px, 0.65vw, 8px)) !important;
+      margin-right: auto !important;
+      margin-left: 0 !important;
+      box-sizing: border-box !important;
+    }
+
     /* Balanced DSP workspace: graph and knob panel share one aligned viewport. */
     .touchscreen-console {
       box-sizing: border-box;

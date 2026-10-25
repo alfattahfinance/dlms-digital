@@ -2412,33 +2412,45 @@
 }
 
 
-/* Panel kiri bawah kosong; lebar disamakan dengan sidebar processor di atas. */
+/* Satu panel processor kiri memanjang dari atas hingga bawah area mixer. */
+#panel-mixer {
+  --processor-sidebar-width: clamp(76px, 11vw, 150px);
+  position: relative !important;
+  min-height: 0;
+}
+#processor-sidebar {
+  position: absolute !important;
+  z-index: 5;
+  left: 2px;
+  top: 2px;
+  bottom: 2px;
+  width: var(--processor-sidebar-width) !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+}
+#panel-mixer > .touchscreen-console {
+  box-sizing: border-box !important;
+  padding-left: calc(var(--processor-sidebar-width) + 8px) !important;
+}
+#panel-mixer > .touchscreen-console > #processor-sidebar {
+  flex: none !important;
+}
+#panel-mixer > .touchscreen-console > .tc-center-graph {
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
 .mixer-bank-layout {
   display: flex !important;
   flex: 1 1 0 !important;
   align-items: stretch !important;
-  gap: 3px !important;
-  width: 100% !important;
+  gap: 0 !important;
+  width: calc(100% - var(--processor-sidebar-width) - 8px) !important;
+  margin-left: calc(var(--processor-sidebar-width) + 8px) !important;
   height: 100% !important;
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: hidden !important;
 }
-.mixer-lower-sidebar {
-  flex: 0 0 clamp(76px, 11vw, 150px) !important;
-  width: clamp(76px, 11vw, 150px) !important;
-  min-width: 0 !important;
-  min-height: 100% !important;
-  height: 100% !important;
-  align-self: stretch !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  gap: 0 !important;
-  border-radius: 3px !important;
-}
-/* Pastikan panel kiri bawah tetap benar-benar kosong. */
-.mixer-lower-sidebar > * { display: none !important; }
 .mixer-bank-layout > #mixer-bank-container {
   flex: 1 1 0 !important;
   width: 0 !important;
@@ -2450,22 +2462,13 @@
   overflow-y: hidden !important;
 }
 @media (min-width: 761px) and (orientation: landscape) {
-  .mixer-lower-sidebar {
-    flex-basis: clamp(100px, 11vw, 165px) !important;
-    width: clamp(100px, 11vw, 165px) !important;
-  }
+  #panel-mixer { --processor-sidebar-width: clamp(100px, 11vw, 165px); }
 }
 @media (max-width: 760px) and (orientation: landscape) {
-  .mixer-lower-sidebar {
-    flex-basis: clamp(54px, 11vw, 82px) !important;
-    width: clamp(54px, 11vw, 82px) !important;
-  }
+  #panel-mixer { --processor-sidebar-width: clamp(54px, 11vw, 82px); }
 }
 @media (max-width: 520px) and (orientation: portrait) {
-  .mixer-lower-sidebar {
-    flex-basis: clamp(50px, 16vw, 76px) !important;
-    width: clamp(50px, 16vw, 76px) !important;
-  }
+  #panel-mixer { --processor-sidebar-width: clamp(50px, 16vw, 76px); }
 }
 
   </style>
@@ -2896,7 +2899,6 @@
 
 
       <div class="mixer-bank-layout" id="mixer-bank-layout">
-        <aside class="tc-sidebar mixer-lower-sidebar" id="mixer-processor-sidebar" aria-label="Panel processor mixer"></aside>
         <div class="mixer-bank" id="mixer-bank-container"></div>
       </div>
     </div>

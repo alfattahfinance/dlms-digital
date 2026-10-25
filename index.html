@@ -2319,6 +2319,52 @@
   }
 }
 
+
+/* Perpanjang kartu menu processor sampai batas bawah console dan sejajarkan awal channel */
+.touchscreen-console {
+  align-items: stretch !important;
+  padding-bottom: 0 !important;
+}
+.tc-sidebar#processor-sidebar {
+  align-self: stretch !important;
+  height: auto !important;
+  min-height: 100% !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 4px !important;
+  box-sizing: border-box !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+/* Channel bank rata dengan tepi kiri console; cegah strip melebar ke kanan */
+.mixer-bank {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow-x: auto !important;
+}
+.channel-strip {
+  flex: 0 0 clamp(58px, 15vw, 74px) !important;
+  min-width: 0 !important;
+  max-width: clamp(58px, 15vw, 74px) !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 520px) {
+  .channel-strip {
+    flex-basis: clamp(54px, 14.5vw, 66px) !important;
+    max-width: clamp(54px, 14.5vw, 66px) !important;
+  }
+}
+@media (min-width: 760px) {
+  .channel-strip {
+    flex: 1 1 0 !important;
+    max-width: none !important;
+  }
+}
+
 </style>
 </head>
 <body>

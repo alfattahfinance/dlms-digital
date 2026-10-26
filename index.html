@@ -3553,14 +3553,18 @@ function drawBackgroundGrid(svg, host, page) {
     group.appendChild(label);
   };
   const preampGraph = page === "preamp";
+  const hpfGraph = page === "hpf";
   const levelGraph = page==="gate" || page==="comp" || page==="limiter";
   const yTicks = preampGraph
     ? [{v:60,label:"+60"},{v:50,label:"+50"},{v:40,label:"+40"},{v:30,label:"+30"},{v:20,label:"+20"},{v:10,label:"+10"},{v:0,label:"0"},{v:-10,label:"-10"}]
-    : levelGraph
-      ? [{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"},{v:-45,label:"-45"},{v:-60,label:"-60"}]
-      : [{v:30,label:"+30"},{v:15,label:"+15"},{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"}];
+    : hpfGraph
+      ? [{v:0,label:"0"},{v:-6,label:"-6"},{v:-12,label:"-12"},{v:-18,label:"-18"},{v:-24,label:"-24"},{v:-30,label:"-30"},{v:-36,label:"-36"}]
+      : levelGraph
+        ? [{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"},{v:-45,label:"-45"},{v:-60,label:"-60"}]
+        : [{v:30,label:"+30"},{v:15,label:"+15"},{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"}];
   const yToCoord = value => preampGraph
     ? 10 + ((60 - value) / 70) * 180
+    : hpfGraph ? 10 + ((0 - value) / 36) * 180
     : levelGraph ? 10+((0-value)/60)*180 : 10+((30-value)/60)*180;
   yTicks.forEach(tick => {
     const y=yToCoord(tick.v);
@@ -3675,7 +3679,9 @@ function updateActiveProcessorUI() {
       const mag = 1 / Math.sqrt(1 + Math.pow(ratio, 2 * order));
       return Math.max(-36, 20 * Math.log10(Math.max(1e-6, mag)));
     };
-    const responseY = db => 190 - ((Math.max(-30, Math.min(30, db)) + 30) / 60) * 180;
+    // HPF/LPF response: 0 dB berada di atas, -36 dB di bawah.
+    // Frekuensi cutoff berada pada sekitar -3 dB sesuai respons filter.
+    const responseY = db => 10 + ((0 - Math.max(-36, Math.min(0, db))) / 36) * 180;
     
     const combinedPts = [];
     for (let i = 0; i <= 180; i++) {
@@ -4130,15 +4136,20 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     updateParam("active-thr_" + channelId, c.thr);
   } else if (tab === "hpf") {
     const isLPF = dragNode === "lpf";
+    // Sumbu X grafik selalu logaritmik 20 Hz–20 kHz.
+    // HPF dibatasi 20–1000 Hz; LPF dibatasi 100–20000 Hz.
+    // Saat node digeser melewati batasnya, nilainya berhenti di batas,
+    // tidak membalik arah atau mengubah skala grafik.
     const minFreq = isLPF ? 100 : 20;
     const maxFreq = isLPF ? 20000 : 1000;
-    const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
+    const mappedFreq = 20 * Math.pow(1000, normalizedX);
     if (!Number.isFinite(mappedFreq) || mappedFreq <= 0) return;
+    const boundedFreq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
     if (isLPF) {
-      p.lpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
+      p.lpf_freq = boundedFreq;
       updateParam("lpf-freq_" + channelId, p.lpf_freq);
     } else {
-      p.hpf_freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
+      p.hpf_freq = boundedFreq;
       updateParam("hpf-freq_" + channelId, p.hpf_freq);
     }
   } else if (tab === "gate") {

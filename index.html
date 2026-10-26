@@ -2474,15 +2474,15 @@
   align-items: stretch !important;
 }
 
-/* Samakan latar dan bingkai grafik dengan gaya plot PEQ.
-   Bingkai dibuat nyata, bukan hanya mengatur border-color pada border: 0. */
+/* Samakan bingkai luar dan latar area grafik dengan halaman PEQ. */
 #panel-mixer .tc-center-graph #preamp-graph-box,
 #panel-mixer .tc-center-graph #hpf-graph-box,
 #panel-mixer .tc-center-graph #gate-graph-box,
 #panel-mixer .tc-center-graph #comp-graph-box {
-  background: #101113 !important;
-  border: 1px solid rgba(98, 102, 109, .9) !important;
-  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(71, 85, 105, .55) !important;
+  border-radius: 4px !important;
   box-shadow: none !important;
 }
 #panel-mixer .tc-center-graph #preamp-graph-box > svg,
@@ -2490,11 +2490,7 @@
 #panel-mixer .tc-center-graph #gate-graph-box > svg,
 #panel-mixer .tc-center-graph #comp-graph-box > svg {
   background: transparent !important;
-}
-#panel-mixer .tc-center-graph #geq-container-box {
-  background: #101113 !important;
-  border: 1px solid rgba(98, 102, 109, .9) !important;
-  border-radius: 0 !important;
+  background-color: transparent !important;
 }
 
 /* Samakan bingkai dan ukuran area grafik lain dengan halaman PEQ. */

@@ -3995,21 +3995,37 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   const graph = svg || (box && box.querySelector("svg"));
   if (!graph) return;
 
-  const standard = getNormalizedCoords(e, graph);
-  if (!standard) return;
-
-  // PEQ memakai viewBox 330x215 tanpa transformasi legacy; halaman lain memakai
-  // viewBox 600x350 dengan layer grafik translate(-30,-0.5) scale(2,1.75).
-  // Konversi harus mengikuti sistem koordinat SVG masing-masing agar titik/knop tidak meloncat.
+  // Ambil posisi sentuh menggunakan matriks SVG sebenar. Ini mengelakkan
+  // titik bergerak terlalu maju/naik akibat skala atau bingkai responsif.
   let svgX, svgY;
-  if (tab === "peq") {
-    const rect = graph.getBoundingClientRect();
-    svgX = Math.max(30, Math.min(300, ((Number(e.clientX) - rect.left) / rect.width) * 330));
-    svgY = Math.max(10, Math.min(190, ((Number(e.clientY) - rect.top) / rect.height) * 215));
+  const coordinateLayer = tab === "peq"
+    ? graph
+    : graph.querySelector(".graph-legacy-coordinate-layer");
+  const screenMatrix = coordinateLayer?.getScreenCTM?.();
+  if (screenMatrix && typeof graph.createSVGPoint === "function") {
+    const point = graph.createSVGPoint();
+    point.x = Number(e.clientX);
+    point.y = Number(e.clientY);
+    const localPoint = point.matrixTransform(screenMatrix.inverse());
+    svgX = localPoint.x;
+    svgY = localPoint.y;
   } else {
-    svgX = Math.max(30, Math.min(300, (standard.x + 60) / 2));
-    svgY = Math.max(10, Math.min(190, (standard.y + 0.875) / 1.75));
+    const standard = getNormalizedCoords(e, graph);
+    if (!standard) return;
+    if (tab === "peq") {
+      const rect = graph.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      svgX = ((Number(e.clientX) - rect.left) / rect.width) * 330;
+      svgY = ((Number(e.clientY) - rect.top) / rect.height) * 215;
+    } else {
+      // Invers tepat bagi translate(-30,-0.5) scale(2,1.75).
+      svgX = (standard.x + 30) / 2;
+      svgY = (standard.y + 0.5) / 1.75;
+    }
   }
+  if (!Number.isFinite(svgX) || !Number.isFinite(svgY)) return;
+  svgX = Math.max(30, Math.min(300, svgX));
+  svgY = Math.max(10, Math.min(190, svgY));
   const normalizedX = Math.max(0, Math.min(1, (svgX - 30) / 270));
   const normalizedY = Math.max(0, Math.min(1, (svgY - 10) / 180));
 

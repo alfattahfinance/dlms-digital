@@ -3699,6 +3699,51 @@ function updateActiveProcessorUI() {
 
     document.getElementById("node-hpf-group")?.setAttribute("transform", `translate(${hpfX.toFixed(2)}, ${hpfY.toFixed(2)})`);
     document.getElementById("node-lpf-group")?.setAttribute("transform", `translate(${lpfX.toFixed(2)}, ${lpfY.toFixed(2)})`);
+
+    // Garis cutoff dinamis: mengikuti frekuensi aktual, tetapi tidak mengambil alih sentuhan/drag.
+    const hpfLayer = document.querySelector("#proc-page-hpf .sq-graph-box svg .graph-legacy-coordinate-layer");
+    if (hpfLayer) {
+      hpfLayer.querySelector("[data-hpf-cutoff-guides]")?.remove();
+      const ns = "http://www.w3.org/2000/svg";
+      const guides = document.createElementNS(ns, "g");
+      guides.setAttribute("data-hpf-cutoff-guides", "true");
+      guides.setAttribute("aria-hidden", "true");
+      guides.style.pointerEvents = "none";
+      const addGuide = (x, color, label) => {
+        const line = document.createElementNS(ns, "line");
+        line.setAttribute("x1", x.toFixed(2));
+        line.setAttribute("x2", x.toFixed(2));
+        line.setAttribute("y1", "10");
+        line.setAttribute("y2", "190");
+        line.setAttribute("stroke", color);
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "3 3");
+        line.setAttribute("opacity", "0.72");
+        line.setAttribute("vector-effect", "non-scaling-stroke");
+        guides.appendChild(line);
+        const text = document.createElementNS(ns, "text");
+        text.setAttribute("x", (x > 250 ? x - 4 : x + 4).toFixed(2));
+        text.setAttribute("y", "18");
+        text.setAttribute("text-anchor", x > 250 ? "end" : "start");
+        text.setAttribute("fill", color);
+        text.setAttribute("font-size", "7");
+        text.setAttribute("font-family", "Arial, sans-serif");
+        text.setAttribute("font-weight", "700");
+        text.setAttribute("paint-order", "stroke");
+        text.setAttribute("stroke", "#07101a");
+        text.setAttribute("stroke-width", "1.8");
+        text.setAttribute("stroke-linejoin", "round");
+        text.textContent = label;
+        guides.appendChild(text);
+      };
+      const fmtFreq = freq => freq < 1000 ? Math.round(freq) + " Hz" :
+        (Number.isInteger(freq / 1000) ? String(freq / 1000) : (freq / 1000).toFixed(1)) + " kHz";
+      addGuide(hpfX, "#36f4ff", "HPF " + fmtFreq(hpfFreq));
+      addGuide(lpfX, "#ff559e", "LPF " + fmtFreq(lpfFreq));
+      const curve = hpfLayer.querySelector("#hpf-curve-path");
+      hpfLayer.insertBefore(guides, curve || hpfLayer.firstChild);
+    }
+
     document.getElementById("hpf-curve-path")?.setAttribute("d", combinedD);
     document.getElementById("hpf-fill-path")?.setAttribute("d", combinedD + " L 300 190 L 30 190 Z");
   } else if (currentProcessorTab === 'gate' && !isOut) {

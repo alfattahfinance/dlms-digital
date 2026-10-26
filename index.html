@@ -3998,30 +3998,30 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
   // Ambil posisi sentuh menggunakan matriks SVG sebenar. Ini mengelakkan
   // titik bergerak terlalu maju/naik akibat skala atau bingkai responsif.
   let svgX, svgY;
-  const coordinateLayer = tab === "peq"
-    ? graph
-    : graph.querySelector(".graph-legacy-coordinate-layer");
-  const screenMatrix = coordinateLayer?.getScreenCTM?.();
+  // Selalu konversi dari layar ke koordinat viewBox SVG utama terlebih dahulu.
+  // Jangan memakai CTM grup kurva secara langsung: transformasi grup pada HPF
+  // dapat membuat posisi sentuh tampak maju/mundur pada beberapa ukuran layar.
+  const screenMatrix = graph.getScreenCTM?.();
   if (screenMatrix && typeof graph.createSVGPoint === "function") {
     const point = graph.createSVGPoint();
     point.x = Number(e.clientX);
     point.y = Number(e.clientY);
-    const localPoint = point.matrixTransform(screenMatrix.inverse());
-    svgX = localPoint.x;
-    svgY = localPoint.y;
-  } else {
-    const standard = getNormalizedCoords(e, graph);
-    if (!standard) return;
+    const viewPoint = point.matrixTransform(screenMatrix.inverse());
     if (tab === "peq") {
-      const rect = graph.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      svgX = ((Number(e.clientX) - rect.left) / rect.width) * 330;
-      svgY = ((Number(e.clientY) - rect.top) / rect.height) * 215;
+      svgX = viewPoint.x;
+      svgY = viewPoint.y;
     } else {
-      // Invers tepat bagi translate(-30,-0.5) scale(2,1.75).
-      svgX = (standard.x + 30) / 2;
-      svgY = (standard.y + 0.5) / 1.75;
+      // Balikkan transformasi layer: translate(-30,-0.5) scale(2,1.75).
+      svgX = (viewPoint.x + 30) / 2;
+      svgY = (viewPoint.y + 0.5) / 1.75;
     }
+  } else {
+    const rect = graph.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const viewX = ((Number(e.clientX) - rect.left) / rect.width) * (tab === "peq" ? 330 : 600);
+    const viewY = ((Number(e.clientY) - rect.top) / rect.height) * (tab === "peq" ? 215 : 350);
+    svgX = tab === "peq" ? viewX : (viewX + 30) / 2;
+    svgY = tab === "peq" ? viewY : (viewY + 0.5) / 1.75;
   }
   if (!Number.isFinite(svgX) || !Number.isFinite(svgY)) return;
   svgX = Math.max(30, Math.min(300, svgX));

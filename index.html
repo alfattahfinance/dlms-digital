@@ -3832,9 +3832,10 @@ function updateActiveProcessorUI() {
       if (!node) return;
       const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
-      // Setiap titik mewakili gain band itu sendiri; kurva neon tetap jumlah semua band.
-      const bandGain = Math.max(-12, Math.min(12, Number(band.gain) || 0));
-      const nodeY = peqY(bandGain);
+      // Titik kontrol diletakkan tepat pada kurva respons gabungan di frekuensi band.
+      // Dengan begitu titik tidak tampak lepas dari garis neon ketika band lain aktif.
+      const totalDb = Math.max(-12, Math.min(12, totalPeqDbAt(freq)));
+      const nodeY = peqY(totalDb);
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
       node.style.opacity = "1";
     });

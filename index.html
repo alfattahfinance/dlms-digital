@@ -3832,11 +3832,15 @@ function updateActiveProcessorUI() {
       if (!node) return;
       const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
-      // Titik kontrol diletakkan tepat pada kurva respons gabungan di frekuensi band.
-      // Dengan begitu titik tidak tampak lepas dari garis neon ketika band lain aktif.
-      const totalDb = Math.max(-12, Math.min(12, totalPeqDbAt(freq)));
-      const nodeY = peqY(totalDb);
+      // Titik kontrol menunjukkan gain band-nya sendiri; garis neon menunjukkan
+      // respons gabungan kelima band. Keduanya sengaja tidak dipaksa bertumpuk.
+      const bandGain = Math.max(-12, Math.min(12, Number(band.gain) || 0));
+      const nodeY = peqY(bandGain);
+      const bandColors = ["#36f4ff", "#ffd166", "#ff4d6d", "#b388ff", "#7dff8a"];
+      const bandColor = bandColors[index];
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
+      node.querySelector("circle")?.setAttribute("stroke", bandColor);
+      node.style.setProperty("--node-active-fill", bandColor + "33");
       node.style.opacity = "1";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);

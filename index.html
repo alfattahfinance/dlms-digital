@@ -410,9 +410,15 @@
       stroke-width: 3;
       filter: drop-shadow(0 0 2px rgba(255,79,163,.95)) drop-shadow(0 0 6px rgba(255,40,145,.72)) !important;
     }
-    #peq-curve-path, #peq-fill-path { transition: d 90ms linear; }
-    #peq-fill-path { opacity: .34; }
-    /* PEQ: isi titik memakai warna band semi-transparan; lingkar luar hanya saat dipilih. */
+    /* Garis neon bergerak bebas; isian gelombang tetap tertutup sampai garis 0 dB. */
+    #peq-curve-path { transition: d 70ms linear; }
+    #peq-fill-path {
+      opacity: .34;
+      transition: none !important;
+      stroke: none !important;
+      pointer-events: none;
+    }
+    /* PEQ: warna band transparan; tanda putih hanya untuk band terpilih. */
     #proc-page-peq .screen-real-knob > circle {
       fill: var(--node-band-fill, rgba(54,244,255,.45)) !important;
       stroke: none !important;
@@ -3858,9 +3864,10 @@ function updateActiveProcessorUI() {
       const bandColor = bandColors[index];
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
       const nodeCircle = node.querySelector("circle");
-      nodeCircle?.setAttribute("stroke", Number(p.peq_band) === index + 1 ? "#ffffff" : "none");
+      nodeCircle?.setAttribute("stroke", "none");
       nodeCircle?.setAttribute("fill", bandColor + "88");
-      nodeCircle?.setAttribute("r", String(Number(p.peq_band) === index + 1 ? 7.5 : 5.5));
+      nodeCircle?.setAttribute("r", "6");
+      // Penanda putih berasal dari class is-selected, bukan pembesaran titik.
       node.style.color = bandColor;
       node.style.setProperty("--node-band-fill", bandColor + "88");
       node.style.setProperty("--node-active-fill", bandColor + "88");

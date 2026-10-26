@@ -3832,10 +3832,10 @@ function updateActiveProcessorUI() {
       if (!node) return;
       const freq = Math.max(20, Math.min(20000, Number(band.freq) || 1000));
       const nodeX = 30 + 270 * Math.log(freq / 20) / Math.log(1000);
-      // Titik kontrol menunjukkan gain band-nya sendiri; garis neon menunjukkan
-      // respons gabungan kelima band. Keduanya sengaja tidak dipaksa bertumpuk.
-      const bandGain = Math.max(-12, Math.min(12, Number(band.gain) || 0));
-      const nodeY = peqY(bandGain);
+      // Titik ditampilkan tepat di garis respons gabungan pada frekuensi band.
+      // Parameter band lain tetap independen; hanya posisi visual mengikuti kurva total.
+      const totalDbAtBand = Math.max(-12, Math.min(12, totalPeqDbAt(freq)));
+      const nodeY = peqY(totalDbAtBand);
       const bandColors = ["#36f4ff", "#ffd166", "#ff4d6d", "#b388ff", "#7dff8a"];
       const bandColor = bandColors[index];
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
@@ -4235,10 +4235,14 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     const band = p.peq_bands[bandIndex];
     const minFreq = 20, maxFreq = 20000;
     const mappedFreq = minFreq * Math.pow(maxFreq / minFreq, normalizedX);
-    const mappedGain = 12 - normalizedY * 24;
-    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0 || !Number.isFinite(mappedGain)) return;
+    const desiredTotalDb = 12 - normalizedY * 24;
+    if (!Number.isFinite(mappedFreq) || mappedFreq <= 0 || !Number.isFinite(desiredTotalDb)) return;
     band.freq = Math.round(Math.max(minFreq, Math.min(maxFreq, mappedFreq)));
-    band.gain = Number(Math.max(-12, Math.min(12, mappedGain)).toFixed(1));
+    // Hitung kontribusi band lain pada frekuensi baru, agar titik yang digeser
+    // tetap menempel pada kurva total tanpa mengubah parameter band lain.
+    const otherBandsDb = p.peq_bands.reduce((sum, other, index) =>
+      index === bandIndex ? sum : sum + peqBandDbAt(other, band.freq), 0);
+    band.gain = Number(Math.max(-12, Math.min(12, desiredTotalDb - otherBandsDb)).toFixed(1));
     p.peq_freq = band.freq; p.peq_gain = band.gain; p.peq_q = band.q;
     updateParam("peq-band_" + channelId, p.peq_band);
     updateParam("peq-freq_" + channelId, p.peq_freq);

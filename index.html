@@ -406,9 +406,20 @@
     }
 
     .neon-line-peq {
-      stroke: #ff559e;
+      stroke: #ff4fa3;
       stroke-width: 3;
-      filter: none !important;
+      filter: drop-shadow(0 0 2px rgba(255,79,163,.95)) drop-shadow(0 0 6px rgba(255,40,145,.72)) !important;
+    }
+    #peq-curve-path, #peq-fill-path { transition: d 90ms linear; }
+    #peq-fill-path { opacity: .34; }
+    #proc-page-peq .screen-real-knob > circle {
+      fill: rgba(18,20,32,.92) !important;
+      stroke-width: 2.6;
+    }
+    #proc-page-peq .screen-real-knob.is-selected > circle {
+      fill: var(--node-active-fill, rgba(54,244,255,.22)) !important;
+      stroke-width: 3.4;
+      filter: drop-shadow(0 0 3px currentColor);
     }
 
     .screen-real-knob {
@@ -2915,8 +2926,11 @@
                 <rect class="peq-outer-panel-bg" x="0" y="0" width="330" height="215" fill="#090d16" fill-opacity="0"/>
                 <defs>
                   <linearGradient id="peqGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgb(255,0,150)" stop-opacity="0.42"/>
-                    <stop offset="100%" stop-color="rgb(255,0,150)" stop-opacity="0.03"/>
+                    <stop offset="0%" stop-color="#ff4fa3" stop-opacity="0.03"/>
+                    <stop offset="30%" stop-color="#ff4fa3" stop-opacity="0.12"/>
+                    <stop offset="50%" stop-color="#ff4fa3" stop-opacity="0.42"/>
+                    <stop offset="70%" stop-color="#ff4fa3" stop-opacity="0.12"/>
+                    <stop offset="100%" stop-color="#ff4fa3" stop-opacity="0.03"/>
                   </linearGradient>
                 </defs>
                 <g id="peq-grid-layer">
@@ -3839,8 +3853,12 @@ function updateActiveProcessorUI() {
       const bandColors = ["#36f4ff", "#ffd166", "#ff4d6d", "#b388ff", "#7dff8a"];
       const bandColor = bandColors[index];
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
-      node.querySelector("circle")?.setAttribute("stroke", bandColor);
-      node.style.setProperty("--node-active-fill", bandColor + "33");
+      const nodeCircle = node.querySelector("circle");
+      nodeCircle?.setAttribute("stroke", bandColor);
+      nodeCircle?.setAttribute("fill", bandColor + "22");
+      nodeCircle?.setAttribute("r", String(Number(p.peq_band) === index + 1 ? 7.5 : 5.5));
+      node.style.color = bandColor;
+      node.style.setProperty("--node-active-fill", bandColor + "44");
       node.style.opacity = "1";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);

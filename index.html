@@ -2747,7 +2747,7 @@
                   </radialGradient>
                 </defs>
                 <rect class="curve-outer-panel-bg" x="0" y="0" width="600" height="350" fill="#090d16" fill-opacity="0"/>
-                <g class="graph-legacy-coordinate-layer" transform="translate(-30,-0.5) scale(2,1.75)">
+                <g class="graph-legacy-coordinate-layer" transform="scale(1.8181818,1.6277778)">
                   <rect class="curve-plot-frame" x="30" y="10" width="270" height="180" fill="#c0c5ce" fill-opacity=".18" stroke="#c0c5ce" stroke-opacity="1" stroke-width="1"/>
 
                 <line x1="40" y1="10" x2="40" y2="190" class="sq-grid-line"/>
@@ -2778,7 +2778,7 @@
                   </linearGradient>
                 </defs>
                 <rect class="curve-outer-panel-bg" x="0" y="0" width="600" height="350" fill="#090d16" fill-opacity="0"/>
-                <g class="graph-legacy-coordinate-layer" transform="translate(-30,-0.5) scale(2,1.75)">
+                <g class="graph-legacy-coordinate-layer" transform="scale(1.8181818,1.6277778)">
                   <rect class="curve-plot-frame" x="30" y="10" width="270" height="180" fill="#c0c5ce" fill-opacity=".18" stroke="#c0c5ce" stroke-opacity="1" stroke-width="1"/>
                   <line x1="90" y1="10" x2="90" y2="190" class="sq-grid-line"/>
                   <line x1="170" y1="10" x2="170" y2="190" class="sq-grid-line"/>
@@ -2816,7 +2816,7 @@
                   </linearGradient>
                 </defs>
                 <rect class="curve-outer-panel-bg" x="0" y="0" width="600" height="350" fill="#090d16" fill-opacity="0"/>
-                <g class="graph-legacy-coordinate-layer" transform="translate(-30,-0.5) scale(2,1.75)">
+                <g class="graph-legacy-coordinate-layer" transform="scale(1.8181818,1.6277778)">
                   <rect class="curve-plot-frame" x="30" y="10" width="270" height="180" fill="#c0c5ce" fill-opacity=".18" stroke="#c0c5ce" stroke-opacity="1" stroke-width="1"/>
                 <line x1="30" y1="100" x2="300" y2="100" class="zero-fixed-line"/>
                 <line x1="110" y1="10" x2="110" y2="190" class="sq-grid-line"/>
@@ -2910,7 +2910,7 @@
                   </linearGradient>
                 </defs>
                 <rect class="curve-outer-panel-bg" x="0" y="0" width="600" height="350" fill="#090d16" fill-opacity="0"/>
-                <g class="graph-legacy-coordinate-layer" transform="translate(-30,-0.5) scale(2,1.75)">
+                <g class="graph-legacy-coordinate-layer" transform="scale(1.8181818,1.6277778)">
                   <rect class="curve-plot-frame" x="30" y="10" width="270" height="180" fill="#c0c5ce" fill-opacity=".18" stroke="#c0c5ce" stroke-opacity="1" stroke-width="1"/>
                 <line x1="80" y1="10" x2="80" y2="190" class="sq-grid-line"/>
                 <line x1="165" y1="10" x2="165" y2="190" class="sq-grid-line"/>
@@ -4012,16 +4012,16 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
       svgY = viewPoint.y;
     } else {
       // Balikkan transformasi layer: translate(-30,-0.5) scale(2,1.75).
-      svgX = (viewPoint.x + 30) / 2;
-      svgY = (viewPoint.y + 0.5) / 1.75;
+      svgX = viewPoint.x / 1.8181818;
+      svgY = viewPoint.y / 1.6277778;
     }
   } else {
     const rect = graph.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const viewX = ((Number(e.clientX) - rect.left) / rect.width) * (tab === "peq" ? 330 : 600);
     const viewY = ((Number(e.clientY) - rect.top) / rect.height) * (tab === "peq" ? 215 : 350);
-    svgX = tab === "peq" ? viewX : (viewX + 30) / 2;
-    svgY = tab === "peq" ? viewY : (viewY + 0.5) / 1.75;
+    svgX = tab === "peq" ? viewX : viewX / 1.8181818;
+    svgY = tab === "peq" ? viewY : viewY / 1.6277778;
   }
   if (!Number.isFinite(svgX) || !Number.isFinite(svgY)) return;
   svgX = Math.max(30, Math.min(300, svgX));
@@ -4216,7 +4216,7 @@ function initInteractiveGraphs() {
           const maxFreq = isLPF ? 20000 : 1000;
           // Area plot HPF menggunakan 540 unit dari viewBox 600.
           const logSpan = Math.log(20000 / 20);
-          const deltaLog = (dx / rect.width) * (600 / 540) * logSpan;
+          const deltaLog = (dx / rect.width) * (600 / (1.8181818 * 270)) * logSpan;
           const freq = Math.max(minFreq, Math.min(maxFreq, dragStartFrequency * Math.exp(deltaLog)));
           if (isLPF) {
             state.processor.lpf_freq = Math.round(freq);
@@ -4250,7 +4250,7 @@ function initInteractiveGraphs() {
         // posisi awal jari agar ketukan/awal geser tidak memindahkan kurva ke nilai lain.
         const rect = svg.getBoundingClientRect();
         if (!rect.height) return;
-        const deltaGain = ((dragStartY - point.clientY) / rect.height) * (GRAPH_COORD_HEIGHT / 1.75) * (70 / 180);
+        const deltaGain = ((dragStartY - point.clientY) / rect.height) * (GRAPH_COORD_HEIGHT / 1.6277778) * (70 / 180);
         const state = getChannelState(activeChannelId);
         if (state) {
           state.processor.pre_gain = Number(Math.max(-10, Math.min(60, dragStartPreampGain + deltaGain)).toFixed(1));

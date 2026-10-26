@@ -412,14 +412,17 @@
     }
     #peq-curve-path, #peq-fill-path { transition: d 90ms linear; }
     #peq-fill-path { opacity: .34; }
+    /* PEQ: isi titik memakai warna band semi-transparan; lingkar luar hanya saat dipilih. */
     #proc-page-peq .screen-real-knob > circle {
-      fill: rgba(18,20,32,.92) !important;
-      stroke-width: 2.6;
+      fill: var(--node-band-fill, rgba(54,244,255,.45)) !important;
+      stroke: none !important;
+      stroke-width: 0 !important;
+      filter: none !important;
     }
     #proc-page-peq .screen-real-knob.is-selected > circle {
-      fill: var(--node-active-fill, rgba(54,244,255,.22)) !important;
-      stroke-width: 3.4;
-      filter: drop-shadow(0 0 3px currentColor);
+      stroke: #ffffff !important;
+      stroke-width: 2.2 !important;
+      filter: drop-shadow(0 0 2px rgba(255,255,255,.75)) !important;
     }
 
     .screen-real-knob {
@@ -428,7 +431,7 @@
       filter: none !important;
     }
 
-    /* Satu titik saja: pusat transparan, garis sesuai warna kurva. */
+    /* Default titik grafik lain tetap mengikuti gaya yang sudah ada. */
     .screen-real-knob > circle {
       fill: transparent !important;
       stroke-width: 2.2;
@@ -438,6 +441,7 @@
       fill: var(--node-active-fill, rgba(54,244,255,0.14)) !important;
       stroke-width: 2.8;
     }
+    /* Khusus PEQ, aturan di atas ditimpa oleh gaya titik band di #proc-page-peq. */
 
     .sq-graph-box {
       overflow: hidden;
@@ -3854,11 +3858,12 @@ function updateActiveProcessorUI() {
       const bandColor = bandColors[index];
       node.setAttribute("transform", `translate(${nodeX.toFixed(2)}, ${nodeY.toFixed(2)})`);
       const nodeCircle = node.querySelector("circle");
-      nodeCircle?.setAttribute("stroke", bandColor);
-      nodeCircle?.setAttribute("fill", bandColor + "22");
+      nodeCircle?.setAttribute("stroke", Number(p.peq_band) === index + 1 ? "#ffffff" : "none");
+      nodeCircle?.setAttribute("fill", bandColor + "88");
       nodeCircle?.setAttribute("r", String(Number(p.peq_band) === index + 1 ? 7.5 : 5.5));
       node.style.color = bandColor;
-      node.style.setProperty("--node-active-fill", bandColor + "44");
+      node.style.setProperty("--node-band-fill", bandColor + "88");
+      node.style.setProperty("--node-active-fill", bandColor + "88");
       node.style.opacity = "1";
     });
     document.getElementById("peq-curve-path")?.setAttribute("d", peqD);

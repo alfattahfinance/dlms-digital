@@ -3552,24 +3552,30 @@ function drawBackgroundGrid(svg, host, page) {
     label.textContent=value;
     group.appendChild(label);
   };
+  const preampGraph = page === "preamp";
   const levelGraph = page==="gate" || page==="comp" || page==="limiter";
-  const yTicks = levelGraph
-    ? [{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"},{v:-45,label:"-45"},{v:-60,label:"-60"}]
-    : [{v:30,label:"+30"},{v:15,label:"+15"},{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"}];
-  const yToCoord = value => levelGraph ? 10+((0-value)/60)*180 : 10+((30-value)/60)*180;
+  const yTicks = preampGraph
+    ? [{v:60,label:"+60"},{v:50,label:"+50"},{v:40,label:"+40"},{v:30,label:"+30"},{v:20,label:"+20"},{v:10,label:"+10"},{v:0,label:"0"},{v:-10,label:"-10"}]
+    : levelGraph
+      ? [{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"},{v:-45,label:"-45"},{v:-60,label:"-60"}]
+      : [{v:30,label:"+30"},{v:15,label:"+15"},{v:0,label:"0"},{v:-15,label:"-15"},{v:-30,label:"-30"}];
+  const yToCoord = value => preampGraph
+    ? 10 + ((60 - value) / 70) * 180
+    : levelGraph ? 10+((0-value)/60)*180 : 10+((30-value)/60)*180;
   yTicks.forEach(tick => {
     const y=yToCoord(tick.v);
     addLine(30,y,300,y,tick.v===0);
-    // Angka dB di luar sisi kiri area plot.
-    addLabel(tick.label,24,y,"end");
+    addLabel(tick.label + (preampGraph ? " dB" : ""),24,y,"end");
   });
-  if (levelGraph) {
+  if (preampGraph) {
+    [30,120,210,300].forEach(x => addLine(x,10,x,190));
+    addLabel("INPUT GAIN (dB)",165,205,"middle");
+  } else if (levelGraph) {
     const minDb=page==="gate" ? -80 : -60;
     const ticks=page==="gate" ? [-80,-60,-40,-20,0] : [-60,-45,-30,-15,0];
     ticks.forEach(db => {
       const x=30+((db-minDb)/(0-minDb))*270;
       addLine(x,10,x,190);
-      // Angka input dB di bawah plot agar tidak bertumpuk dengan grid.
       addLabel(String(db),x,195,"middle");
     });
     addLabel("INPUT dB",165,194,"middle");
@@ -3579,7 +3585,6 @@ function drawBackgroundGrid(svg, host, page) {
       addLine(x,10,x,190);
       if ([20,100,1000,10000,20000].includes(freq)) {
         const label=freq>=1000 ? (freq===20000 ? "20k" : (freq/1000)+"k") : String(freq);
-        // Label frekuensi di bawah garis grid paling bawah.
         addLabel(label,x,195,freq===20 ? "start" : (freq===20000 ? "end" : "middle"));
       }
     });
@@ -3639,8 +3644,9 @@ function updateActiveProcessorUI() {
     updateKnobRotation("ind-pre-pad", p.pre_pad, -20, 0);
     updateKnobRotation("ind-pre-phase", p.pre_phase, 0, 1);
 
-    let posY = 190 - ((Math.max(-30, Math.min(30, Number(p.pre_gain) || 0)) + 30) / 60) * 180;
-    posY = Math.max(15, Math.min(185, posY));
+    // Gain input -10..+60 dB: posisi garis mengikuti skala Preamp.
+    let posY = 10 + ((60 - Math.max(-10, Math.min(60, Number(p.pre_gain) || 0))) / 70) * 180;
+    posY = Math.max(10, Math.min(190, posY));
     
     document.getElementById("node-preamp-group")?.setAttribute("transform", `translate(165, ${posY})`);
     document.getElementById("preamp-curve-path")?.setAttribute("d", `M 30 ${posY} L 300 ${posY}`);

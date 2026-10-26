@@ -4535,7 +4535,8 @@ function drawRTAGlowWave() {
     // Batasi RTA ke area plot di dalam bingkai, bukan ke seluruh kartu.
     // HPF memakai SVG 600x350; PEQ memakai viewBox 330x215.
     const plotBounds = key === "hpf"
-      ? { left: 30, right: 570, top: 17.5, bottom: 332.5 }
+      // Samakan proporsi area RTA HPF dengan bingkai plot PEQ setelah skala SVG.
+      ? { left: (30 / 330) * w, right: (300 / 330) * w, top: (10 / 215) * h, bottom: (190 / 215) * h }
       : key === "peq"
         ? { left: (30 / 330) * w, right: (300 / 330) * w, top: (10 / 215) * h, bottom: (190 / 215) * h }
         : { left: Math.min(12, w * 0.04), right: w - Math.min(12, w * 0.04), top: Math.min(8, h * 0.04), bottom: h - Math.min(8, h * 0.04) };

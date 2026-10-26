@@ -4116,6 +4116,8 @@ function initInteractiveGraphs() {
     let dragStartX = 0;
     let dragStartY = 0;
     let dragStartPreampGain = 0;
+    let dragStartFrequency = 0;
+    let dragStartPeqGain = 0;
 
     function onPointerDown(e) {
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -4168,7 +4170,15 @@ function initInteractiveGraphs() {
       activePointerId = e.pointerId;
       dragStartX = clientX;
       dragStartY = clientY;
-      dragStartPreampGain = Number(getChannelState(activeChannelId)?.processor?.pre_gain ?? 0);
+      const startProcessor = getChannelState(activeChannelId)?.processor;
+      dragStartPreampGain = Number(startProcessor?.pre_gain ?? 0);
+      if (tab === "hpf" && startProcessor) {
+        dragStartFrequency = Number(activeDragNode === "lpf" ? startProcessor.lpf_freq : startProcessor.hpf_freq) || 20;
+      } else if (tab === "peq" && startProcessor) {
+        const bandIndex = Math.max(0, Math.min(4, Number(activeDragNode) - 1));
+        dragStartFrequency = Number(startProcessor.peq_bands?.[bandIndex]?.freq) || 1000;
+        dragStartPeqGain = Number(startProcessor.peq_bands?.[bandIndex]?.gain) || 0;
+      }
 
       // Simpan offset dari pusat node supaya sentuhan tidak membuat titik meloncat.
       const dragRect = selectedNode?.getBoundingClientRect?.();
@@ -4190,6 +4200,50 @@ function initInteractiveGraphs() {
       if (typeof e.getCoalescedEvents === "function") {
         const samples = e.getCoalescedEvents();
         if (samples && samples.length) point = samples[samples.length - 1];
+      }
+      if (tab === "hpf" || tab === "peq") {
+        // HPF/PEQ digerakkan relatif dari nilai awal, bukan dipetakan ulang dari
+        // posisi vertikal kurva. Ini mencegah titik meloncat ketika disentuh.
+        const rect = svg.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const state = getChannelState(activeChannelId);
+        if (!state) return;
+        const dx = point.clientX - dragStartX;
+        const dy = point.clientY - dragStartY;
+        if (tab === "hpf") {
+          const isLPF = activeDragNode === "lpf";
+          const minFreq = isLPF ? 100 : 20;
+          const maxFreq = isLPF ? 20000 : 1000;
+          // Area plot HPF menggunakan 540 unit dari viewBox 600.
+          const logSpan = Math.log(20000 / 20);
+          const deltaLog = (dx / rect.width) * (600 / 540) * logSpan;
+          const freq = Math.max(minFreq, Math.min(maxFreq, dragStartFrequency * Math.exp(deltaLog)));
+          if (isLPF) {
+            state.processor.lpf_freq = Math.round(freq);
+            updateParam("lpf-freq_" + activeChannelId, state.processor.lpf_freq);
+          } else {
+            state.processor.hpf_freq = Math.round(freq);
+            updateParam("hpf-freq_" + activeChannelId, state.processor.hpf_freq);
+          }
+        } else {
+          const bandIndex = Math.max(0, Math.min(4, Number(activeDragNode) - 1));
+          const band = state.processor.peq_bands?.[bandIndex];
+          if (!band) return;
+          const deltaLog = (dx / rect.width) * (330 / 270) * Math.log(20000 / 20);
+          const freq = Math.max(20, Math.min(20000, dragStartFrequency * Math.exp(deltaLog)));
+          const gainDelta = -(dy / rect.height) * (215 / 180) * 24;
+          band.freq = Math.round(freq);
+          band.gain = Number(Math.max(-12, Math.min(12, dragStartPeqGain + gainDelta)).toFixed(1));
+          state.processor.peq_band = bandIndex + 1;
+          state.processor.peq_freq = band.freq;
+          state.processor.peq_gain = band.gain;
+          state.processor.peq_q = band.q;
+          updateParam("peq-band_" + activeChannelId, state.processor.peq_band);
+          updateParam("peq-freq_" + activeChannelId, state.processor.peq_freq);
+          updateParam("peq-gain_" + activeChannelId, state.processor.peq_gain);
+        }
+        scheduleAppRender();
+        return;
       }
       if (tab === "preamp") {
         // PREAMP tidak memiliki node kontrol tersendiri: ubah gain relatif terhadap

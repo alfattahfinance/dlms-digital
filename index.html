@@ -5487,10 +5487,39 @@ if (document.readyState === "loading") {
 }
 #panel-curves .tc-center-graph .sq-graph-box > svg,
 #panel-curves .tc-center-graph #gate-graph-box > svg,
-#panel-curves .tc-center-graph #comp-graph-box > svg,
-#panel-curves .tc-center-graph #geq-container-box .geq-sliders-wrapper {
+#panel-curves .tc-center-graph #comp-graph-box > svg {
   background-color: #101113 !important;
   border-radius: 2px !important;
+}
+
+/* GEQ: transparan-kan bidang fader supaya lapisan RTA di belakangnya terlihat. */
+#panel-curves .tc-center-graph #geq-container-box {
+  position: relative !important;
+  isolation: isolate !important;
+}
+#panel-curves .tc-center-graph #geq-container-box > canvas.rta-canvas {
+  position: absolute !important;
+  inset: 3px !important;
+  width: calc(100% - 6px) !important;
+  height: calc(100% - 6px) !important;
+  z-index: 2 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  mix-blend-mode: screen !important;
+}
+#panel-curves .tc-center-graph #geq-container-box > .geq-sliders-wrapper,
+#panel-curves .tc-center-graph #geq-container-box > .geq-scale-side {
+  position: relative !important;
+  z-index: 3 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+#panel-curves .tc-center-graph #geq-container-box .geq-slider-col,
+#panel-curves .tc-center-graph #geq-container-box .geq-slider-track {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 

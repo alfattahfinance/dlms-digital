@@ -5830,5 +5830,69 @@ if (document.readyState === "loading") {
 }
 
 </style>
+
+<style id="dlms-portrait-compact-graph-fix">
+/* Portrait: keep DSP graphs wide and compact. Unused tall-screen space stays blank below. */
+@media (max-width: 520px) and (orientation: portrait) {
+  #panel-curves {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    align-self: start !important;
+  }
+  #panel-curves > .touchscreen-console {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    grid-template-rows: auto auto auto !important;
+    align-content: start !important;
+    align-items: start !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-self: start !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 46vw !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 22vh !important;
+    align-self: start !important;
+  }
+  /* GEQ remains a short, horizontally scrollable fader bank, not a tall page. */
+  #panel-curves #proc-page-geq,
+  #panel-curves #geq-container-box {
+    min-height: 0 !important;
+    height: clamp(220px, 62vw, 270px) !important;
+    max-height: 270px !important;
+  }
+}
+</style>
+
 </body>
 </html>

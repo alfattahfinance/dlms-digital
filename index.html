@@ -7279,7 +7279,61 @@ if (document.readyState === "loading") {
   }
 }
 /* Tidak mengubah layout lanskap. */
-</style>
+
+    /* Restore the wider landscape control-card layout without changing portrait or mixer layout. */
+    @media (orientation: landscape) {
+      #panel-curves > .touchscreen-console {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        gap: 7px !important;
+      }
+      #panel-curves > .touchscreen-console > #processor-sidebar {
+        flex: 0 0 clamp(82px, 10vw, 132px) !important;
+        width: clamp(82px, 10vw, 132px) !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+        flex: 0 0 clamp(116px, 18vw, 190px) !important;
+        width: clamp(116px, 18vw, 190px) !important;
+        min-width: 116px !important;
+        padding: 6px !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+      }
+      #panel-curves .tc-right-knobs-panel > .knobs-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: clamp(5px, 0.8vw, 9px) !important;
+        max-height: none !important;
+        height: auto !important;
+        align-content: start !important;
+      }
+      #panel-curves .tc-right-knobs-panel .physical-knob-container {
+        min-width: 0 !important;
+        width: 100% !important;
+        min-height: 72px !important;
+        padding: 5px 3px !important;
+        box-sizing: border-box !important;
+      }
+      #panel-curves .tc-right-knobs-panel .physical-knob {
+        width: clamp(28px, 4vw, 42px) !important;
+        height: clamp(28px, 4vw, 42px) !important;
+        max-width: 100% !important;
+      }
+      #panel-curves .tc-right-knobs-panel .physical-knob-container label,
+      #panel-curves .tc-right-knobs-panel .physical-knob-container span {
+        max-width: 100% !important;
+        overflow-wrap: anywhere !important;
+        text-align: center !important;
+      }
+    }
+
+  </style>
 
 </body>
 </html>

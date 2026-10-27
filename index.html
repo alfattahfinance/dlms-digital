@@ -3438,6 +3438,12 @@ function onGeqSliderChange(index, val, channelId = dlmsState.activeChannel) {
   let numVal = parseFloat(val);
   if (!Number.isFinite(numVal)) return;
   state.geq[index] = numVal;
+
+  // Apply this band's gain to the live Web Audio filter for this input.
+  const geqNodes = filters[channelId + "_geq"];
+  if (geqNodes && geqNodes[index] && audioCtx) {
+    geqNodes[index].gain.setTargetAtTime(numVal, audioCtx.currentTime, 0.015);
+  }
   
   const valLbl = document.getElementById(`geq-val-${index}`);
   if (valLbl) {
@@ -3453,6 +3459,10 @@ function resetGEQ() {
   if (!state) return;
   state.geq = new Array(geqFrequencies.length).fill(0);
   channelGeqValues[channelId] = state.geq;
+  const geqNodes = filters[channelId + "_geq"];
+  if (geqNodes && audioCtx) {
+    geqNodes.forEach(node => node.gain.setTargetAtTime(0, audioCtx.currentTime, 0.015));
+  }
   updateGeqUI();
   updateParam(`geq_${channelId}_reset`, '0');
   redrawActiveVisuals();
@@ -4573,7 +4583,8 @@ function setupAudioDSPNodes(audioElement) {
   audioCtx = new AudioContextClass();
   audioSourceNode = audioCtx.createMediaElementSource(audioElement);
 
-  audioSourceNode.connect(audioCtx.destination);
+  // Analyze the source before processing, but route audible audio through the
+  // per-input 31-band GEQ chains instead of connecting the source directly.
   rtaAnalyser = audioCtx.createAnalyser();
   rtaAnalyser.fftSize = 4096;
   rtaAnalyser.smoothingTimeConstant = 0.84;
@@ -4587,8 +4598,31 @@ function setupAudioDSPNodes(audioElement) {
     analysers[id] = analyser;
   });
 
-  audioSourceNode.connect(analysers.ina);
-  audioSourceNode.connect(analysers.inb);
+  const splitter = audioCtx.createChannelSplitter(2);
+  const merger = audioCtx.createChannelMerger(2);
+  audioSourceNode.connect(splitter);
+
+  ["ina", "inb"].forEach((id, channelIndex) => {
+    let previousNode = audioCtx.createGain();
+    previousNode.gain.value = 1;
+    splitter.connect(previousNode, channelIndex);
+    const inputAnalyser = analysers[id];
+    previousNode.connect(inputAnalyser);
+
+    const geqNodes = geqFrequencies.map((label, index) => {
+      const band = audioCtx.createBiquadFilter();
+      band.type = "peaking";
+      band.frequency.value = geqFrequencyHz(label);
+      band.Q.value = 4.318;
+      band.gain.value = channelGeqValues[id][index] || 0;
+      previousNode.connect(band);
+      previousNode = band;
+      return band;
+    });
+    previousNode.connect(merger, 0, channelIndex);
+    filters[id + "_geq"] = geqNodes;
+  });
+  merger.connect(audioCtx.destination);
 
   const makeOutputMeterPath = (id, type, frequency, q = 1) => {
     const filter = audioCtx.createBiquadFilter();

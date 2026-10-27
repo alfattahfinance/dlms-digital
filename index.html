@@ -5432,6 +5432,23 @@ if (document.readyState === "loading") {
       background-color: #101113;
       border-radius: 2px;
     }
+
+    /* Samakan bingkai luar semua halaman grafik dengan warna panel/sidebar chassis. */
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box,
+    .tc-center-graph #geq-container-box {
+      border: 1px solid #606060 !important;
+      background: #303030 !important;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.08), 0 2px 4px rgba(0,0,0,.45) !important;
+    }
+    /* Pertahankan area grafik bagian dalam tetap gelap; hanya bingkai luarnya yang berubah. */
+    .tc-center-graph .sq-graph-box > svg,
+    .tc-center-graph #gate-graph-box > svg,
+    .tc-center-graph #comp-graph-box > svg,
+    .tc-center-graph #geq-container-box .geq-sliders-wrapper {
+      background-color: #101113;
+    }
 </style>
 
 </body>

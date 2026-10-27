@@ -2379,11 +2379,29 @@
   flex: 1 1 auto !important;
   min-height: 0 !important;
 }
-/* Kembalikan tinggi channel seperti sebelumnya; pertahankan lebar channel yang lebih ramping. */
+/* Panel mixer hanya terlihat saat tab MIXER aktif.
+   Jangan paksa display:flex pada panel yang sedang disembunyikan oleh switchTab(). */
 #panel-mixer {
-  display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
+}
+#panel-mixer.active-panel {
+  display: flex !important;
+}
+#panel-mixer:not(.active-panel) {
+  display: none !important;
+}
+#panel-curves.active-panel {
+  display: flex !important;
+}
+#panel-curves:not(.active-panel) {
+  display: none !important;
+}
+#panel-settings.active-panel {
+  display: flex !important;
+}
+#panel-settings:not(.active-panel) {
+  display: none !important;
 }
 :is(#panel-mixer, #panel-curves) .mixer-bank,
 #panel-mixer #mixer-bank-container {

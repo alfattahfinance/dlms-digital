@@ -326,10 +326,29 @@
       opacity: .28;
     }
 
-    #geq-container-box { position: relative; }
-    #geq-container-box > .rta-canvas { z-index: 0; }
+    /* RTA berada di atas latar grafik agar terlihat, tetapi tidak menghalangi sentuhan. */
+    #hpf-graph-box, #peq-graph-box, #geq-container-box {
+      position: relative;
+      isolation: isolate;
+    }
+    #hpf-graph-box > .rta-canvas,
+    #peq-graph-box > .rta-canvas,
+    #geq-container-box > .rta-canvas {
+      position: absolute !important;
+      inset: 0 !important;
+      display: block !important;
+      z-index: 2 !important;
+      width: 100% !important;
+      height: 100% !important;
+      opacity: 1 !important;
+      visibility: visible;
+      pointer-events: none !important;
+      mix-blend-mode: screen;
+    }
+    #hpf-graph-box > svg,
+    #peq-graph-box > svg { position: relative; z-index: 1; }
     #geq-container-box .geq-scale-side,
-    #geq-container-box .geq-sliders-wrapper { position: relative; z-index: 1; }
+    #geq-container-box .geq-sliders-wrapper { position: relative; z-index: 3; }
 
     .processor-subpage {
       box-sizing: border-box;
@@ -4754,7 +4773,9 @@ function setupAudioDSPNodes(audioElement) {
   // per-input 31-band GEQ chains instead of connecting the source directly.
   rtaAnalyser = audioCtx.createAnalyser();
   rtaAnalyser.fftSize = 4096;
-  rtaAnalyser.smoothingTimeConstant = 0.84;
+  rtaAnalyser.smoothingTimeConstant = 0.72;
+  rtaAnalyser.minDecibels = -90;
+  rtaAnalyser.maxDecibels = -20;
   rtaFrequencyData = new Uint8Array(rtaAnalyser.frequencyBinCount);
   audioSourceNode.connect(rtaAnalyser);
 
@@ -4963,7 +4984,9 @@ function drawRTAGlowWave() {
       const t = i / (count - 1);
       const hz = minHz * Math.pow(maxHz / minHz, t);
       const bin = Math.max(0, Math.min(rtaFrequencyData.length - 1, Math.round(hz / binHz)));
-      const magnitude = rtaFrequencyData[bin] / 255;
+      // Tingkatkan keterbacaan spektrum pada audio pelan tanpa mengubah sinyal audio.
+      const rawMagnitude = rtaFrequencyData[bin] / 255;
+      const magnitude = Math.pow(rawMagnitude, 0.72);
       points.push({
         x: plotLeft + plotWidth * t,
         y: plotBottom - magnitude * plotHeight

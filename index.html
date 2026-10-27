@@ -5304,29 +5304,67 @@ if (document.readyState === "loading") {
 </html>
 
 
-/* Samakan tinggi tombol processor dengan tinggi viewport grafik pada halaman DSP/kurva. */
+/* Menu DSP/kurva mengikuti tinggi aktual viewport grafik, bukan tinggi tetap lama. */
+#panel-curves {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
 #panel-curves > .touchscreen-console {
+  flex: 1 1 0 !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  margin: 0 !important;
   align-items: stretch !important;
+  box-sizing: border-box !important;
 }
 #panel-curves > .touchscreen-console > #processor-sidebar {
+  flex: 0 0 clamp(64px, 11vw, 112px) !important;
+  width: clamp(64px, 11vw, 112px) !important;
   height: 100% !important;
   min-height: 0 !important;
+  max-height: 100% !important;
   align-self: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
   gap: 3px !important;
-  overflow-y: hidden !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
   flex: 1 1 0 !important;
-  height: 0 !important;
+  height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
   line-height: 1.15 !important;
   padding: 3px 2px !important;
+  margin: 0 !important;
   box-sizing: border-box !important;
+}
+#panel-curves > .touchscreen-console > .tc-center-graph {
+  flex: 1 1 0 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  align-self: stretch !important;
+}
+@media (max-width: 520px) {
+  #panel-curves > .touchscreen-console > #processor-sidebar {
+    flex-basis: clamp(54px, 15vw, 76px) !important;
+    width: clamp(54px, 15vw, 76px) !important;
+    gap: 2px !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+    font-size: clamp(7px, 2vw, 10px) !important;
+    padding: 2px 1px !important;
+  }
 }
 @media (max-height: 420px) {
   #panel-curves > .touchscreen-console > #processor-sidebar {

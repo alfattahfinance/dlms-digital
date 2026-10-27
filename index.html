@@ -5771,6 +5771,64 @@ if (document.readyState === "loading") {
     max-height: 24vh !important;
   }
 }
+
+/* GEQ 31-band: fader lebih panjang/besar dan seluruh pita dapat digeser horizontal. */
+#panel-curves .tc-center-graph #geq-container-box {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+}
+#panel-curves .tc-center-graph #geq-container-box > #geq-sliders-wrapper {
+  flex: 0 0 1000px !important;
+  width: 1000px !important;
+  min-width: 1000px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+#panel-curves .tc-center-graph #geq-container-box .geq-slider-col {
+  width: 28px !important;
+}
+#panel-curves .tc-center-graph #geq-container-box input[type="range"].geq-range {
+  width: min(65vh, 260px) !important;
+  min-width: 180px !important;
+  height: 34px !important;
+}
+#panel-curves .tc-center-graph #geq-container-box input[type="range"].geq-range::-webkit-slider-runnable-track {
+  height: 6px !important;
+}
+#panel-curves .tc-center-graph #geq-container-box input[type="range"].geq-range::-webkit-slider-thumb {
+  width: 24px !important;
+  height: 20px !important;
+  margin-top: -7px !important;
+}
+#panel-curves .tc-center-graph #geq-container-box .geq-val-label {
+  font-size: 9px !important;
+  height: 14px !important;
+  line-height: 14px !important;
+}
+#panel-curves .tc-center-graph #geq-container-box .geq-freq-label {
+  font-size: 9px !important;
+}
+@media (max-width: 520px) and (orientation: portrait) {
+  #panel-curves .tc-center-graph #geq-container-box {
+    height: clamp(240px, 65vw, 340px) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+  #panel-curves .tc-center-graph #geq-container-box > #geq-sliders-wrapper {
+    flex-basis: 1000px !important;
+    width: 1000px !important;
+    min-width: 1000px !important;
+  }
+  #panel-curves .tc-center-graph #geq-container-box input[type="range"].geq-range {
+    width: min(48vh, 250px) !important;
+    min-width: 180px !important;
+  }
+}
+
 </style>
 </body>
 </html>

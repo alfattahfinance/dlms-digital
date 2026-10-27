@@ -1370,7 +1370,7 @@
     .mixer-bank { overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
     .channel-strip { flex: 1 0 clamp(76px, 12vw, 150px); }
     .feature-panel { overscroll-behavior: contain; }
-    .geq-container { overflow-x: auto; overflow-y: hidden; }
+    .geq-container { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
     .geq-sliders-wrapper { flex: 0 0 max(700px, calc(100% - 26px)); min-width: 700px; }
     .geq-slider-col { width: 22px; }
     button, input, select, label { touch-action: manipulation; }
@@ -2374,7 +2374,7 @@
   flex: 1 1 0 !important;
   min-height: 0 !important;
 }
-#panel-mixer .mixer-bank,
+:is(#panel-mixer, #panel-curves) .mixer-bank,
 #panel-mixer #mixer-bank-container {
   flex: 1 1 auto !important;
   min-height: 0 !important;
@@ -2385,7 +2385,7 @@
   flex-direction: column !important;
   min-height: 0 !important;
 }
-#panel-mixer .mixer-bank,
+:is(#panel-mixer, #panel-curves) .mixer-bank,
 #panel-mixer #mixer-bank-container {
   flex: 1 1 0 !important;
   height: auto !important;
@@ -2416,7 +2416,7 @@
   box-sizing: border-box !important;
 }
 @media (max-width: 520px) {
-  #panel-mixer .mixer-bank,
+  :is(#panel-mixer, #panel-curves) .mixer-bank,
   #panel-mixer #mixer-bank-container {
     height: auto !important;
     min-height: 165px !important;
@@ -2441,7 +2441,7 @@
 
 
 /* Selaraskan area semua halaman grafik kurva di TC agar memenuhi ruang yang sama. */
-#panel-mixer > .touchscreen-console > .tc-center-graph {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console > .tc-center-graph {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -2451,7 +2451,7 @@
   padding: 0 !important;
   overflow: hidden !important;
 }
-#panel-mixer .tc-center-graph > .processor-subpage {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > .processor-subpage {
   position: relative !important;
   flex: 1 1 0 !important;
   width: 100% !important;
@@ -2465,10 +2465,10 @@
   overflow: hidden !important;
   box-sizing: border-box !important;
 }
-#panel-mixer .tc-center-graph .sq-graph-box,
-#panel-mixer .tc-center-graph #gate-graph-box,
-#panel-mixer .tc-center-graph #comp-graph-box,
-#panel-mixer .tc-center-graph #geq-container-box {
+:is(#panel-mixer, #panel-curves) .tc-center-graph .sq-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #geq-container-box {
   position: relative !important;
   display: block !important;
   width: 100% !important;
@@ -2482,9 +2482,9 @@
   box-sizing: border-box !important;
   overflow: hidden !important;
 }
-#panel-mixer .tc-center-graph .sq-graph-box > svg,
-#panel-mixer .tc-center-graph #gate-graph-box > svg,
-#panel-mixer .tc-center-graph #comp-graph-box > svg {
+:is(#panel-mixer, #panel-curves) .tc-center-graph .sq-graph-box > svg,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box > svg,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box > svg {
   display: block !important;
   width: 100% !important;
   height: 100% !important;
@@ -2497,31 +2497,31 @@
 }
 
 /* Samakan bingkai luar dan latar area grafik dengan halaman PEQ. */
-#panel-mixer .tc-center-graph #preamp-graph-box,
-#panel-mixer .tc-center-graph #hpf-graph-box,
-#panel-mixer .tc-center-graph #gate-graph-box,
-#panel-mixer .tc-center-graph #comp-graph-box {
+:is(#panel-mixer, #panel-curves) .tc-center-graph #preamp-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #hpf-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box {
   background: transparent !important;
   background-color: transparent !important;
   border: 1px solid rgba(71, 85, 105, .55) !important;
   border-radius: 4px !important;
   box-shadow: none !important;
 }
-#panel-mixer .tc-center-graph #preamp-graph-box > svg,
-#panel-mixer .tc-center-graph #hpf-graph-box > svg,
-#panel-mixer .tc-center-graph #gate-graph-box > svg,
-#panel-mixer .tc-center-graph #comp-graph-box > svg {
+:is(#panel-mixer, #panel-curves) .tc-center-graph #preamp-graph-box > svg,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #hpf-graph-box > svg,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box > svg,
+:is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box > svg {
   background: transparent !important;
   background-color: transparent !important;
 }
 
 /* Samakan bingkai dan ukuran area grafik lain dengan halaman PEQ. */
-#panel-mixer .tc-center-graph > #proc-page-preamp,
-#panel-mixer .tc-center-graph > #proc-page-hpf,
-#panel-mixer .tc-center-graph > #proc-page-gate,
-#panel-mixer .tc-center-graph > #proc-page-peq,
-#panel-mixer .tc-center-graph > #proc-page-comp,
-#panel-mixer .tc-center-graph > #proc-page-geq {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-preamp,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-hpf,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-gate,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-peq,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-comp,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-geq {
   flex: 1 1 0 !important;
   min-width: 0 !important;
   min-height: 0 !important;
@@ -2533,11 +2533,11 @@
   padding: 0 !important;
   box-sizing: border-box !important;
 }
-#panel-mixer .tc-center-graph > #proc-page-preamp > .sq-graph-box,
-#panel-mixer .tc-center-graph > #proc-page-hpf > .sq-graph-box,
-#panel-mixer .tc-center-graph > #proc-page-gate > .sq-graph-box,
-#panel-mixer .tc-center-graph > #proc-page-peq > .sq-graph-box,
-#panel-mixer .tc-center-graph > #proc-page-comp > .sq-graph-box {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-preamp > .sq-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-hpf > .sq-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-gate > .sq-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-peq > .sq-graph-box,
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-comp > .sq-graph-box {
   display: block !important;
   flex: 1 1 0 !important;
   width: 100% !important;
@@ -2551,7 +2551,7 @@
   aspect-ratio: auto !important;
   overflow: hidden !important;
 }
-#panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-geq > #geq-container-box {
   display: flex !important;
   flex: 1 1 0 !important;
   width: 100% !important;
@@ -2568,29 +2568,29 @@
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y;
 }
-#panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box > #geq-sliders-wrapper {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-geq > #geq-container-box > #geq-sliders-wrapper {
   flex: 0 0 max(700px, calc(100% - 26px)) !important;
   width: max(700px, calc(100% - 26px)) !important;
   min-width: 700px !important;
   max-width: none !important;
 }
-#panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box > .geq-scale-side {
+:is(#panel-mixer, #panel-curves) .tc-center-graph > #proc-page-geq > #geq-container-box > .geq-scale-side {
   flex: 0 0 24px !important;
 }
 
 /* Kurangi lapisan latar/kartu bertumpuk di area TC, tanpa mengubah grafik atau kontrol. */
-#panel-mixer > .touchscreen-console {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
-#panel-mixer > .touchscreen-console > .tc-center-graph {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console > .tc-center-graph {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
   border-radius: 0 !important;
 }
-#panel-mixer > .touchscreen-console > .tc-right-knobs-panel {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console > .tc-right-knobs-panel {
   background: transparent !important;
   box-shadow: none !important;
 }
@@ -2611,14 +2611,14 @@
   box-sizing: border-box !important;
   overflow-y: auto !important;
 }
-#panel-mixer > .touchscreen-console {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console {
   box-sizing: border-box !important;
   padding-left: calc(var(--processor-sidebar-width) + 8px) !important;
 }
-#panel-mixer > .touchscreen-console > #processor-sidebar {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console > #processor-sidebar {
   flex: none !important;
 }
-#panel-mixer > .touchscreen-console > .tc-center-graph {
+:is(#panel-mixer, #panel-curves) > .touchscreen-console > .tc-center-graph {
   min-width: 0 !important;
   flex: 1 1 0 !important;
 }
@@ -2657,9 +2657,9 @@
     /* Rebuild curve-page sizing around the PEQ reference:
        every SVG graph box fills the same center-graph viewport.
        Do not crop the right edge; keep curve coordinates and handlers intact. */
-    #panel-mixer .tc-center-graph .sq-graph-box,
-    #panel-mixer .tc-center-graph #gate-graph-box,
-    #panel-mixer .tc-center-graph #comp-graph-box {
+    :is(#panel-mixer, #panel-curves) .tc-center-graph .sq-graph-box,
+    :is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box,
+    :is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box {
       display: block !important;
       position: relative !important;
       flex: 1 1 0 !important;
@@ -2674,9 +2674,9 @@
       overflow: hidden !important;
       aspect-ratio: auto !important;
     }
-    #panel-mixer .tc-center-graph .sq-graph-box > svg,
-    #panel-mixer .tc-center-graph #gate-graph-box > svg,
-    #panel-mixer .tc-center-graph #comp-graph-box > svg {
+    :is(#panel-mixer, #panel-curves) .tc-center-graph .sq-graph-box > svg,
+    :is(#panel-mixer, #panel-curves) .tc-center-graph #gate-graph-box > svg,
+    :is(#panel-mixer, #panel-curves) .tc-center-graph #comp-graph-box > svg {
       display: block !important;
       width: 100% !important;
       max-width: 100% !important;
@@ -2705,6 +2705,11 @@
     </button>
 
     <div class="chassis-actions" role="group" aria-label="Menu utama">
+      <button class="tab-btn chassis-icon-btn" type="button"
+        aria-label="Halaman grafik DSP" title="Halaman Grafik DSP"
+        onclick="switchTab('curves',this)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18"/><path d="M4 16l4-5 4 2 7-9"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="13" r="1"/><circle cx="19" cy="4" r="1"/></svg><span class="chassis-btn-label">DSP / EQ</span>
+      </button>
       <button class="tab-btn chassis-icon-btn active" type="button"
         aria-label="Output Matrix dan Input" title="Output Matrix &amp; Input"
         onclick="switchTab('mixer',this)">
@@ -3210,6 +3215,8 @@
         <div class="mixer-bank" id="mixer-bank-container"></div>
       </div>
     </div>
+
+    <div id="panel-curves" class="feature-panel" style="display:none; flex-direction:column; min-height:0; overflow:hidden;"></div>
 
     <div id="panel-settings" class="feature-panel">
       <div class="section-group-title">Konfigurasi Perangkat Wi-Fi</div>
@@ -4903,6 +4910,11 @@ function renderRealtimeMeters() {
 }
 
 function initDLMD() {
+  const curvePanel = document.getElementById("panel-curves");
+  const curveConsole = document.querySelector("#panel-mixer > .touchscreen-console");
+  if (curvePanel && curveConsole && curveConsole.parentElement !== curvePanel) {
+    curvePanel.appendChild(curveConsole);
+  }
   try {
     let savedName = localStorage.getItem("dlmd_name") || "DCX2496-PRO";
     document.getElementById("dlmd-name").value = savedName;
@@ -5135,7 +5147,7 @@ function toggleMusicPage(show) {
 }
 
 function switchTab(tabName, clickedButton) {
-  ["mixer", "settings"].forEach(name => {
+  ["mixer", "curves", "settings"].forEach(name => {
     const panel = document.getElementById("panel-" + name);
     if (panel) {
       panel.classList.toggle("active-panel", name === tabName);
@@ -5145,6 +5157,13 @@ function switchTab(tabName, clickedButton) {
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   if (clickedButton) clickedButton.classList.add("active");
   if (tabName === 'mixer') setTimeout(syncFaderDimensions, 20);
+  if (tabName === 'curves') {
+    requestAnimationFrame(() => {
+      Object.values(rtaCanvases).forEach(resizeRTACanvas);
+      scheduleResponsiveLayout();
+      updateActiveProcessorUI();
+    });
+  }
 }
 
 function saveConnectionSettings() {

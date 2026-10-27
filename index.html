@@ -3063,6 +3063,77 @@
       }
     }
 
+    
+    /* Final fix: portrait curve pages stay landscape-shaped and compact.
+       Keep the 31-band GEQ's existing horizontal-scroll layout unchanged. */
+    @media (orientation: portrait) {
+      #panel-curves > .touchscreen-console {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        align-items: start !important;
+        align-content: start !important;
+        overflow: visible !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        flex: 0 0 auto !important;
+        align-self: start !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      #panel-curves .tc-center-graph > #proc-page-preamp,
+      #panel-curves .tc-center-graph > #proc-page-hpf,
+      #panel-curves .tc-center-graph > #proc-page-gate,
+      #panel-curves .tc-center-graph > #proc-page-peq,
+      #panel-curves .tc-center-graph > #proc-page-comp {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box {
+        display: block !important;
+        position: relative !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: min(44dvh, 340px) !important;
+        aspect-ratio: 16 / 9 !important;
+        overflow: hidden !important;
+      }
+      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box > svg,
+      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box > svg,
+      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box > svg,
+      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box > svg,
+      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box > svg {
+        position: absolute !important;
+        inset: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+      }
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box,
+      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box {
+        max-height: min(42dvh, 300px) !important;
+      }
+    }
+
   </style>
 </head>
 <body>

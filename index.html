@@ -3134,6 +3134,152 @@
       }
     }
 
+
+    /* Final responsive hardware-style control knobs */
+    .tc-right-knobs-panel {
+      gap: 6px;
+      min-width: 0;
+    }
+    .tc-right-knobs-panel > .knobs-grid,
+    .knobs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      justify-items: stretch;
+      gap: 6px;
+      min-width: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      padding: 3px;
+    }
+    .physical-knob-container {
+      position: relative;
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      padding: 5px 3px 4px;
+      gap: 2px;
+      border: 1px solid #475569;
+      border-radius: 7px;
+      background: linear-gradient(155deg, #303b49 0%, #1a222d 62%, #111720 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 2px 4px rgba(0,0,0,.28);
+      cursor: ns-resize;
+      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .physical-knob-container:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 1px;
+    }
+    .physical-knob-container:active,
+    .physical-knob-container.is-adjusting {
+      border-color: #38bdf8;
+      background: linear-gradient(155deg, #35485b 0%, #1b2938 65%, #111923 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 0 1px rgba(56,189,248,.16);
+      cursor: grabbing;
+    }
+    .physical-knob-container label {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      overflow: hidden;
+      color: #d1dbe8;
+      font-size: clamp(7px, .65vw, 9px);
+      line-height: 1.15;
+      letter-spacing: .035em;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .physical-knob {
+      --knob-size: clamp(28px, 3.4vw, 42px);
+      width: var(--knob-size);
+      height: var(--knob-size);
+      flex: 0 0 var(--knob-size);
+      box-sizing: border-box;
+      border: 1px solid #050a12;
+      background: radial-gradient(circle at 50% 50%, #465364 0%, #202a38 64%, #0b111b 66%, #080d14 100%);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.16), inset 0 -2px 3px rgba(0,0,0,.75), 0 2px 3px rgba(0,0,0,.55);
+      transition: filter .12s ease;
+    }
+    .physical-knob::before {
+      inset: 3px;
+      border: 1px solid #64748b;
+      background: radial-gradient(circle at 32% 24%, #7b8796 0%, #465365 20%, #2a3544 52%, #18212d 78%, #0d131d 100%);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.18);
+    }
+    .physical-knob::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(226,232,240,.13);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .knob-indicator {
+      top: 5px;
+      width: 3px;
+      height: clamp(7px, .8vw, 10px);
+      border: 0;
+      border-radius: 3px;
+      background: linear-gradient(to bottom, #ffffff 0%, #7dd3fc 68%, #38bdf8 100%);
+      box-shadow: 0 0 4px rgba(56,189,248,.7);
+      transform-origin: 50% calc((var(--knob-size) / 2) - 5px);
+    }
+    .physical-knob-container span {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      margin: 1px 0 0;
+      overflow: hidden;
+      color: #fbbf24;
+      font-size: clamp(8px, .72vw, 10px);
+      line-height: 1.15;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .physical-knob-container[style*="grid-column: span 2"] {
+      grid-column: 1 / -1 !important;
+      flex-direction: row;
+      justify-content: center;
+      gap: 8px;
+    }
+    .physical-knob-container[style*="grid-column: span 2"] label {
+      width: auto;
+    }
+    @media (max-width: 600px) {
+      .tc-right-knobs-panel > .knobs-grid,
+      .knobs-grid {
+        gap: 4px;
+        padding: 2px;
+      }
+      .physical-knob-container {
+        padding: 4px 2px 3px;
+        border-radius: 5px;
+      }
+      .physical-knob {
+        --knob-size: clamp(25px, 7vw, 32px);
+      }
+      .physical-knob::before { inset: 2px; }
+      .physical-knob::after { inset: 4px; }
+      .knob-indicator { top: 4px; height: 7px; }
+      .physical-knob-container label { font-size: 7px; }
+      .physical-knob-container span { font-size: 8px; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+      .tc-right-knobs-panel > .knobs-grid,
+      .knobs-grid { gap: 3px; padding: 2px; }
+      .physical-knob-container { padding: 3px 2px; }
+      .physical-knob { --knob-size: clamp(23px, 7.5vh, 31px); }
+      .physical-knob-container label { font-size: 7px; }
+      .physical-knob-container span { font-size: 8px; }
+    }
+
   </style>
 </head>
 <body>

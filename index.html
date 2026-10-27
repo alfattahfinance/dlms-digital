@@ -5709,5 +5709,68 @@ if (document.readyState === "loading") {
 
 </style>
 
+
+<style id="dlms-portrait-horizontal-graph-final">
+/* Portrait: DSP graph tetap berbentuk bidang lebar (kiri-kanan), bukan panel tinggi.
+   Tombol halaman tetap berupa strip horizontal; area grafik memakai lebar layar. */
+@media (max-width: 520px) and (orientation: portrait) {
+  #panel-curves > .touchscreen-console {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(0, auto) auto !important;
+    align-content: start !important;
+    gap: 4px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    align-self: start !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: block;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
+    max-height: 48vw !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+  #panel-curves #proc-page-geq {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  #panel-curves #geq-container-box {
+    width: 100% !important;
+    height: clamp(220px, 58vw, 300px) !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+    max-height: 24vh !important;
+  }
+}
+</style>
 </body>
 </html>

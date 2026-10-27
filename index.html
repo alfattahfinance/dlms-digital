@@ -2552,6 +2552,7 @@
   overflow: hidden !important;
 }
 #panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box {
+  display: flex !important;
   flex: 1 1 0 !important;
   width: 100% !important;
   height: 100% !important;
@@ -2561,6 +2562,20 @@
   max-height: 100% !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+#panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box > #geq-sliders-wrapper {
+  flex: 0 0 max(700px, calc(100% - 26px)) !important;
+  width: max(700px, calc(100% - 26px)) !important;
+  min-width: 700px !important;
+  max-width: none !important;
+}
+#panel-mixer .tc-center-graph > #proc-page-geq > #geq-container-box > .geq-scale-side {
+  flex: 0 0 24px !important;
 }
 
 /* Kurangi lapisan latar/kartu bertumpuk di area TC, tanpa mengubah grafik atau kontrol. */

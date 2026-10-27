@@ -5302,3 +5302,38 @@ if (document.readyState === "loading") {
 
 </body>
 </html>
+
+
+/* Samakan tinggi tombol processor dengan tinggi viewport grafik pada halaman DSP/kurva. */
+#panel-curves > .touchscreen-console {
+  align-items: stretch !important;
+}
+#panel-curves > .touchscreen-console > #processor-sidebar {
+  height: 100% !important;
+  min-height: 0 !important;
+  align-self: stretch !important;
+  gap: 3px !important;
+  overflow-y: hidden !important;
+}
+#panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+  flex: 1 1 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  line-height: 1.15 !important;
+  padding: 3px 2px !important;
+  box-sizing: border-box !important;
+}
+@media (max-height: 420px) {
+  #panel-curves > .touchscreen-console > #processor-sidebar {
+    gap: 2px !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+    font-size: clamp(7px, 1.7vh, 10px) !important;
+    padding: 1px !important;
+  }
+}

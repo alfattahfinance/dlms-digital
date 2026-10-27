@@ -2702,6 +2702,108 @@
       max-height: 100% !important;
     }
 
+  
+    /* Layout cleanup: channel bank starts at the chassis edge; processor buttons sit beside the graph without a large card. */
+    #panel-mixer .mixer-bank-layout {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    #panel-mixer {
+      --processor-sidebar-width: 0px;
+    }
+    #panel-curves {
+      --processor-sidebar-width: clamp(54px, 9vw, 94px);
+      position: relative !important;
+      min-width: 0 !important;
+    }
+    #panel-curves > .touchscreen-console {
+      position: relative !important;
+      display: flex !important;
+      gap: 5px !important;
+      padding: 2px !important;
+      padding-left: 0 !important;
+      overflow: hidden !important;
+      min-width: 0 !important;
+    }
+    #panel-curves > .touchscreen-console > #processor-sidebar {
+      position: relative !important;
+      inset: auto !important;
+      z-index: 3 !important;
+      flex: 0 0 var(--processor-sidebar-width) !important;
+      width: var(--processor-sidebar-width) !important;
+      min-width: 0 !important;
+      height: 100% !important;
+      align-self: stretch !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 4px !important;
+      padding: 0 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      background: transparent !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+    }
+    #panel-curves > .touchscreen-console > .tc-center-graph {
+      flex: 1 1 0 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+    #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+      flex: 0 0 clamp(78px, 16vw, 150px) !important;
+      width: clamp(78px, 16vw, 150px) !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+    }
+    /* GEQ: keep all 31 bands on a wider inner track and scroll horizontally on small screens. */
+    #panel-curves #proc-page-geq,
+    #panel-curves #geq-container-box {
+      min-width: 0 !important;
+      max-width: none !important;
+    }
+    #panel-curves #geq-container-box {
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      overscroll-behavior-x: contain !important;
+      -webkit-overflow-scrolling: touch !important;
+      touch-action: pan-x pan-y !important;
+      scrollbar-width: thin !important;
+      scrollbar-color: #46515e #101318 !important;
+    }
+    #panel-curves #geq-sliders-wrapper {
+      flex: 0 0 max(700px, calc(100% - 26px)) !important;
+      width: max(700px, calc(100% - 26px)) !important;
+      min-width: 700px !important;
+      max-width: none !important;
+    }
+    @media (max-width: 520px) {
+      #panel-curves { --processor-sidebar-width: 56px; }
+      #panel-curves > .touchscreen-console { gap: 3px !important; }
+      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+        flex-basis: 78px !important;
+        width: 78px !important;
+      }
+      #panel-curves .tc-side-btn {
+        font-size: 8px !important;
+        padding: 5px 2px !important;
+      }
+    }
+
   </style>
 </head>
 <body>

@@ -7333,7 +7333,143 @@ if (document.readyState === "loading") {
       }
     }
 
-  </style>
+  
+/* Final responsive layout: in portrait, put processor buttons above the graph
+   so the graph uses the device width instead of becoming a tall narrow column.
+   Landscape rules remain unchanged. */
+@media (orientation: portrait) {
+  #panel-curves > .touchscreen-console {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto !important;
+    grid-template-areas: "side" "graph" "knobs" !important;
+    align-items: start !important;
+    gap: 6px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 5px !important;
+    overflow: visible !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar {
+    grid-area: side !important;
+    position: relative !important;
+    inset: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 4px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 3px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    min-height: 34px !important;
+    padding: 7px 10px !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(9px, 2.7vw, 12px) !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    grid-area: graph !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 16 / 9 !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg,
+  #panel-curves .tc-center-graph .sq-graph-box > canvas,
+  #panel-curves .tc-center-graph #gate-graph-box > canvas,
+  #panel-curves .tc-center-graph #comp-graph-box > canvas {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+  #panel-curves #proc-page-geq {
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  #panel-curves #geq-container-box {
+    width: 100% !important;
+    height: clamp(190px, 52vw, 270px) !important;
+    min-height: 190px !important;
+    max-height: 270px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-x: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+  #panel-curves #geq-container-box > #geq-sliders-wrapper {
+    flex: 0 0 max(760px, 100%) !important;
+    width: max(760px, 100%) !important;
+    min-width: 760px !important;
+    max-width: none !important;
+    height: 100% !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+    grid-area: knobs !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+}
+@media (max-width: 520px) and (orientation: portrait) {
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    aspect-ratio: 16 / 9 !important;
+    max-height: none !important;
+  }
+}
+
+</style>
 
 </body>
 </html>

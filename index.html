@@ -3021,6 +3021,48 @@
       }
     }
 
+    /* Final portrait sizing: slightly taller graph viewport without stretching it
+       to the full device height. Landscape sizing is intentionally unchanged. */
+    @media (orientation: portrait) {
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        flex: 0 0 auto !important;
+      }
+      #panel-curves .tc-center-graph > .processor-subpage {
+        height: auto !important;
+        min-height: 0 !important;
+      }
+      #panel-curves .tc-center-graph .sq-graph-box,
+      #panel-curves .tc-center-graph #gate-graph-box,
+      #panel-curves .tc-center-graph #comp-graph-box,
+      #panel-curves .tc-center-graph #geq-container-box {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: min(48dvh, 360px) !important;
+        aspect-ratio: 3 / 2 !important;
+      }
+      #panel-curves #geq-container-box {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        align-items: stretch !important;
+      }
+      #panel-curves #geq-sliders-wrapper {
+        height: 100% !important;
+        min-height: 0 !important;
+      }
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      #panel-curves .tc-center-graph .sq-graph-box,
+      #panel-curves .tc-center-graph #gate-graph-box,
+      #panel-curves .tc-center-graph #comp-graph-box,
+      #panel-curves .tc-center-graph #geq-container-box {
+        max-height: 44dvh !important;
+      }
+    }
+
   </style>
 </head>
 <body>

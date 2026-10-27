@@ -3463,6 +3463,16 @@
     }
   </style>
 
+  <style id="processor-knobs-page-isolation-fix">
+    /* Hanya knob milik halaman DSP aktif yang boleh terlihat. */
+    .tc-right-knobs-panel > [id^="knobs-group-"][style*="display: none"] {
+      display: none !important;
+    }
+    .tc-right-knobs-panel > [id^="knobs-group-"][style*="display: grid"] {
+      display: grid !important;
+    }
+  </style>
+
 </head>
 <body>
 
@@ -4348,9 +4358,16 @@ function switchProcessorPage(pageName) {
     const btn = document.getElementById("side-" + name);
     const page = document.getElementById("proc-page-" + name);
     const knobs = document.getElementById("knobs-group-" + name);
-    if (btn) btn.classList.toggle("active", name === pageName);
-    if (page) page.style.display = (name === pageName) ? "block" : "none";
-    if (knobs) knobs.style.display = (name === pageName) ? "grid" : "none";
+    const isActivePage = name === pageName;
+    if (btn) btn.classList.toggle("active", isActivePage);
+    if (page) page.style.display = isActivePage ? "block" : "none";
+    if (knobs) {
+      knobs.style.display = isActivePage ? "grid" : "none";
+      knobs.setAttribute("aria-hidden", isActivePage ? "false" : "true");
+      knobs.querySelectorAll(".physical-knob-container").forEach(control => {
+        control.tabIndex = isActivePage ? 0 : -1;
+      });
+    }
   });
   if (pageName === 'geq') updateGeqUI();
   updateActiveProcessorUI();

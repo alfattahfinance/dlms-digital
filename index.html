@@ -3154,6 +3154,16 @@
           </div>
 
           <div id="knobs-group-comp" class="knobs-grid" style="display:none;">
+            <div class="physical-knob-container" data-knob-param="active-thr" data-knob-min="-60" data-knob-max="0" data-knob-step="0.5">
+              <label id="lbl-thr">Threshold</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-thr"></div></div>
+              <span id="tc-val-thr">-30.5 dB</span>
+            </div>
+            <div class="physical-knob-container" data-knob-param="active-ratio" data-knob-min="1" data-knob-max="20" data-knob-step="0.5">
+              <label id="lbl-ratio">Ratio</label>
+              <div class="physical-knob"><div class="knob-indicator" id="ind-active-ratio"></div></div>
+              <span id="tc-val-ratio">1.5:1</span>
+            </div>
             <div class="physical-knob-container" data-knob-param="active-atk" data-knob-min="0.5" data-knob-max="100" data-knob-step="0.5">
               <label id="lbl-atk">Attack</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-atk"></div></div>
@@ -3163,16 +3173,6 @@
               <label id="lbl-rel">Release</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-active-rel"></div></div>
               <span id="tc-val-rel">141 ms</span>
-            </div>
-            <div class="physical-knob-container" data-knob-param="active-ratio" data-knob-min="1" data-knob-max="20" data-knob-step="0.5">
-              <label id="lbl-ratio">Ratio</label>
-              <div class="physical-knob"><div class="knob-indicator" id="ind-active-ratio"></div></div>
-              <span id="tc-val-ratio">1.5:1</span>
-            </div>
-            <div class="physical-knob-container" data-knob-param="active-thr" data-knob-min="-60" data-knob-max="0" data-knob-step="0.5">
-              <label id="lbl-thr">Thr</label>
-              <div class="physical-knob"><div class="knob-indicator" id="ind-active-thr"></div></div>
-              <span id="tc-val-thr">-30.5 dB</span>
             </div>
           </div>
 
@@ -3383,7 +3383,7 @@ function updateSidebarForChannel(id) {
     html += `<div class="tc-side-btn" id="side-preamp" onclick="switchProcessorPage('preamp')">Preamp</div>`;
     html += `<div class="tc-side-btn" id="side-hpf" onclick="switchProcessorPage('hpf')">Crossover</div>`;
     html += `<div class="tc-side-btn" id="side-peq" onclick="switchProcessorPage('peq')">PEQ</div>`;
-    html += `<div class="tc-side-btn" id="side-comp" onclick="switchProcessorPage('comp')">Limiter</div>`;
+
   }
   sidebar.innerHTML = html;
 
@@ -3512,6 +3512,7 @@ function enforceDSPNodePolicy(pageName) {
 }
 
 function switchProcessorPage(pageName) {
+  if (pageName === "comp" && !isInputChannel(currentFocusedChannel)) pageName = "preamp";
   currentProcessorTab = pageName;
   enforceDSPNodePolicy(pageName);
 
@@ -3879,10 +3880,10 @@ function updateActiveProcessorUI() {
   } else if (currentProcessorTab === 'geq') {
     updateGeqUI();
   } else if (currentProcessorTab === 'comp') {
-    document.getElementById("lbl-atk").textContent = isOut ? "Hold" : "Attack";
-    document.getElementById("lbl-rel").textContent = isOut ? "Decay" : "Release";
-    document.getElementById("lbl-ratio").textContent = isOut ? "Over" : "Ratio";
-    document.getElementById("lbl-thr").textContent = isOut ? "Limit" : "Thr";
+    setTxt("lbl-atk", "Attack");
+    setTxt("lbl-rel", "Release");
+    setTxt("lbl-ratio", "Ratio");
+    setTxt("lbl-thr", "Threshold");
 
     setTxt("tc-val-atk", Number(c.atk).toFixed(1) + " ms");
     setTxt("tc-val-rel", Math.round(c.rel) + " ms");

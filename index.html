@@ -3297,6 +3297,55 @@
       .physical-knob-container span { font-size: 8px; }
     }
 
+
+    /* Final knob layout: square cards, larger controls, vertical order in landscape. */
+    .tc-right-knobs-panel .knobs-grid,
+    .tc-right-knobs-panel > .knobs-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      overflow-x: hidden;
+    }
+    .tc-right-knobs-panel .physical-knob-container {
+      aspect-ratio: 1 / 1;
+      min-height: 0;
+      box-sizing: border-box;
+      justify-content: center;
+      padding: 5px 3px;
+      border-radius: 4px;
+    }
+    .tc-right-knobs-panel .physical-knob {
+      --knob-size: clamp(30px, 4vw, 44px);
+    }
+    @media (orientation: landscape) {
+      .tc-right-knobs-panel .knobs-grid,
+      .tc-right-knobs-panel > .knobs-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .tc-right-knobs-panel .physical-knob-container {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+      }
+      .tc-right-knobs-panel .physical-knob {
+        --knob-size: clamp(30px, 5.5vw, 44px);
+      }
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      .tc-right-knobs-panel .physical-knob-container {
+        padding: 4px 2px;
+      }
+      .tc-right-knobs-panel .physical-knob {
+        --knob-size: clamp(28px, 8vw, 36px);
+      }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+      .tc-right-knobs-panel .physical-knob-container {
+        padding: 3px 2px;
+      }
+      .tc-right-knobs-panel .physical-knob {
+        --knob-size: clamp(28px, 6vw, 36px);
+      }
+    }
+
   </style>
 </head>
 <body>

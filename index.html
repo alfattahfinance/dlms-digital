@@ -2927,6 +2927,100 @@
       }
     }
 
+
+    /* Portrait: keep the curve viewport landscape-shaped and compact.
+       Intentionally leave unused space below on tall devices; landscape rules stay untouched. */
+    @media (orientation: portrait) {
+      #panel-curves {
+        min-height: 0 !important;
+        overflow: hidden !important;
+      }
+      #panel-curves > .touchscreen-console {
+        min-height: 0 !important;
+        align-content: start !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        flex: 0 0 auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        align-self: start !important;
+        overflow: hidden !important;
+      }
+      #panel-curves .tc-center-graph > .processor-subpage {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+      }
+      #panel-curves .tc-center-graph .sq-graph-box,
+      #panel-curves .tc-center-graph #gate-graph-box,
+      #panel-curves .tc-center-graph #comp-graph-box,
+      #panel-curves .tc-center-graph #geq-container-box {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        aspect-ratio: 16 / 9 !important;
+      }
+      #panel-curves .tc-center-graph .sq-graph-box > svg,
+      #panel-curves .tc-center-graph #gate-graph-box > svg,
+      #panel-curves .tc-center-graph #comp-graph-box > svg {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #panel-curves #geq-container-box {
+        display: flex !important;
+        align-items: stretch !important;
+      }
+      #panel-curves #geq-sliders-wrapper {
+        height: 100% !important;
+        min-height: 0 !important;
+      }
+    }
+    @media (max-width: 760px) and (orientation: portrait) {
+      #panel-curves > .touchscreen-console {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: auto auto auto !important;
+        align-content: start !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+      }
+      #panel-curves > .touchscreen-console > #processor-sidebar {
+        grid-row: 1 !important;
+        grid-column: 1 !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        grid-row: 2 !important;
+        grid-column: 1 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+        grid-row: 3 !important;
+        grid-column: 1 !important;
+      }
+    }
+    @media (max-width: 520px) and (orientation: portrait) {
+      #panel-curves > .touchscreen-console {
+        grid-template-rows: auto auto auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        min-height: 0 !important;
+      }
+      #panel-curves #proc-page-geq,
+      #panel-curves #geq-container-box {
+        min-height: 0 !important;
+      }
+    }
+
   </style>
 </head>
 <body>

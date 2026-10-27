@@ -2848,6 +2848,85 @@
       }
     }
 
+    /* Portrait phone: put DSP page buttons in a compact horizontal strip,
+       give the graph the full usable width, and move controls underneath. */
+    @media (max-width: 520px) and (orientation: portrait) {
+      #panel-curves {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+      }
+      #panel-curves > .touchscreen-console {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: auto minmax(180px, 1fr) auto !important;
+        align-content: stretch !important;
+        align-items: stretch !important;
+        gap: 5px !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        padding: 3px !important;
+        overflow: hidden !important;
+      }
+      #panel-curves > .touchscreen-console > #processor-sidebar {
+        grid-row: 1 !important;
+        grid-column: 1 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 38px !important;
+        flex: none !important;
+        gap: 4px !important;
+        padding: 3px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+      }
+      #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 66px !important;
+        min-height: 30px !important;
+        padding: 6px 8px !important;
+        white-space: nowrap !important;
+        font-size: 10px !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        grid-row: 2 !important;
+        grid-column: 1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 180px !important;
+        height: auto !important;
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+        grid-row: 3 !important;
+        grid-column: 1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 26vh !important;
+        min-height: 70px !important;
+        flex: none !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+      }
+      #panel-curves #proc-page-geq,
+      #panel-curves #geq-container-box {
+        min-height: 180px !important;
+        height: 100% !important;
+      }
+      #panel-curves #geq-sliders-wrapper {
+        min-width: 700px !important;
+      }
+    }
+
   </style>
 </head>
 <body>

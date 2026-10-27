@@ -3451,7 +3451,7 @@
       .physical-knob {
         --knob-size: clamp(30px, 8vw, 40px);
       }
-      #knobs-group-peq .physical-knob {
+      #knobs-group-peq .-knob {
         --knob-size: clamp(30px, 8vw, 40px) !important;
       }
     }
@@ -7130,7 +7130,7 @@ if (document.readyState === "loading") {
 
 
 <style id="dlms-portrait-responsive-final">
-/* Koreksi akhir mode potret: menu mendatar, grafik melebar ke samping,
+/* Koreksi akhir mode Ki Ki: menu mendatar, grafik melebar ke samping,
    tinggi dibatasi mengikuti lebar, kontrol tidak menimpa grafik. */
 @media (orientation: portrait) {
   #panel-curves {
@@ -7322,40 +7322,7 @@ if (document.readyState === "loading") {
         overflow-y: auto !important;
         overflow-x: hidden !important;
       }
-      /* Landscape: each knob stays in its own full-width card; do not place knobs side by side. */
-      #panel-curves .tc-right-knobs-panel > .knobs-grid {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) !important;
-        grid-auto-flow: row !important;
-        gap: clamp(5px, 0.8vw, 9px) !important;
-        max-height: none !important;
-        height: auto !important;
-        align-content: start !important;
-      }
-      #panel-curves .tc-right-knobs-panel .physical-knob-container {
-        grid-column: 1 / -1 !important;
-      }
-      #panel-curves .tc-right-knobs-panel .physical-knob-container {
-        min-width: 0 !important;
-        width: 100% !important;
-        min-height: 72px !important;
-        padding: 5px 3px !important;
-        box-sizing: border-box !important;
-      }
-      #panel-curves .tc-right-knobs-panel .physical-knob {
-        width: clamp(28px, 4vw, 42px) !important;
-        height: clamp(28px, 4vw, 42px) !important;
-        max-width: 100% !important;
-      }
-      #panel-curves .tc-right-knobs-panel .physical-knob-container label,
-      #panel-curves .tc-right-knobs-panel .physical-knob-container span {
-        max-width: 100% !important;
-        overflow-wrap: anywhere !important;
-        text-align: center !important;
-      }
-    }
-
-  
+    
 /* Final responsive layout: in portrait, put processor buttons above the graph
    so the graph uses the device width instead of becoming a tall narrow column.
    Landscape rules remain unchanged. */
@@ -7482,10 +7449,10 @@ if (document.readyState === "loading") {
     overflow-y: hidden !important;
   }
 }
-@media (max-width: 520px) and (orientation: portrait) {
+@media (max-width: 350px) and (orientation: portrait) {
   #panel-curves .tc-center-graph .sq-graph-box,
   #panel-curves .tc-center-graph #gate-graph-box,
-  #panel-curves .tc-center-graph #comp-graph-box {
+  #panel-curves .tc-ce#45486Fnter-graph #comp-graph-box {
     aspect-ratio: 16 / 9 !important;
     max-height: none !important;
   }

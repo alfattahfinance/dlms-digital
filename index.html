@@ -5339,6 +5339,70 @@ if (document.readyState === "loading") {
 }
 </style>
 
+
+<style id="dlms-landscape-graph-sizing">
+/* Landscape: give the DSP graph more vertical room as well as width. */
+@media (max-width: 1100px) and (orientation: landscape) {
+  .fader-workspace { min-height: 0 !important; height: 100% !important; }
+  #panel-curves {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #panel-curves > .touchscreen-console {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: stretch !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    height: 100% !important;
+    min-height: 0 !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    align-items: stretch !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+  }
+  #panel-curves #proc-page-geq,
+  #panel-curves #geq-container-box {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  #panel-curves #geq-container-box {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+  #panel-curves #geq-sliders-wrapper {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+}
+@media (max-width: 760px) and (orientation: landscape) and (max-height: 520px) {
+  #panel-curves > .touchscreen-console > .tc-center-graph { padding: 1px !important; }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box,
+  #panel-curves #geq-container-box { min-height: 0 !important; }
+}
+</style>
+
 </body>
 </html>
 

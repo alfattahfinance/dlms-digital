@@ -6624,5 +6624,93 @@ if (document.readyState === "loading") {
 }
 </style>
 
+
+
+<style id="dlms-final-portrait-graph-visibility">
+/* Final portrait correction: explicitly size the graph viewport so it cannot
+   collapse when the console grid has auto-sized rows. Landscape is unchanged. */
+@media (orientation: portrait) {
+  #panel-curves > .touchscreen-console {
+    grid-template-columns: clamp(50px, 13vw, 76px) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    grid-template-areas: "side graph" "side knobs" !important;
+    align-items: start !important;
+    align-content: start !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    grid-area: graph !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: clamp(150px, 43vw, 300px) !important;
+    min-height: 150px !important;
+    max-height: 300px !important;
+    aspect-ratio: auto !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg,
+  #panel-curves .tc-center-graph .sq-graph-box > canvas,
+  #panel-curves .tc-center-graph #gate-graph-box > canvas,
+  #panel-curves .tc-center-graph #comp-graph-box > canvas {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+  #panel-curves #proc-page-geq {
+    grid-area: graph !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  #panel-curves #geq-container-box {
+    display: flex !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: clamp(190px, 43vw, 280px) !important;
+    min-height: 190px !important;
+    max-height: 280px !important;
+    aspect-ratio: auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  #panel-curves #geq-container-box > #geq-sliders-wrapper {
+    flex: 0 0 1000px !important;
+    width: 1000px !important;
+    min-width: 1000px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+}
+</style>
+
 </body>
 </html>

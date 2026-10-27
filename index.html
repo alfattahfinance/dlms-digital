@@ -3078,7 +3078,7 @@
 
           <div id="knobs-group-hpf" class="knobs-grid" style="display:none;">
             <div class="physical-knob-container" data-knob-param="hpf-freq" data-knob-min="20" data-knob-max="1000" data-knob-step="1">
-              <label>HPF Freq</label>
+              <label>LOW CUT (HPF)</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-hpf-freq"></div></div>
               <span id="tc-val-hpffreq">80 Hz</span>
             </div>
@@ -3088,7 +3088,7 @@
               <span id="tc-val-hpfslope">24 dB/oct</span>
             </div>
             <div class="physical-knob-container" data-knob-param="lpf-freq" data-knob-min="100" data-knob-max="20000" data-knob-step="10">
-              <label>LPF Freq</label>
+              <label>HIGH CUT (LPF)</label>
               <div class="physical-knob"><div class="knob-indicator" id="ind-lpf-freq"></div></div>
               <span id="tc-val-lpffreq">18000 Hz</span>
             </div>
@@ -3778,8 +3778,8 @@ function updateActiveProcessorUI() {
       };
       const fmtFreq = freq => freq < 1000 ? Math.round(freq) + " Hz" :
         (Number.isInteger(freq / 1000) ? String(freq / 1000) : (freq / 1000).toFixed(1)) + " kHz";
-      addGuide(hpfX, "#36f4ff", "HPF " + fmtFreq(hpfFreq));
-      addGuide(lpfX, "#ff559e", "LPF " + fmtFreq(lpfFreq));
+      addGuide(hpfX, "#36f4ff", "LOW CUT " + fmtFreq(hpfFreq));
+      addGuide(lpfX, "#ff559e", "HIGH CUT " + fmtFreq(lpfFreq));
       const curve = hpfLayer.querySelector("#hpf-curve-path");
       hpfLayer.insertBefore(guides, curve || hpfLayer.firstChild);
     }
@@ -4197,14 +4197,25 @@ function handleGraphMove(e, tab, dragNode, box, svg, channelId = dlmsState.activ
     const point = graph.createSVGPoint();
     point.x = Number(e.clientX);
     point.y = Number(e.clientY);
-    const viewPoint = point.matrixTransform(screenMatrix.inverse());
-    if (tab === "peq") {
-      svgX = viewPoint.x;
-      svgY = viewPoint.y;
+    // HPF memakai transformasi koordinat pada layer grafik. Petakan sentuhan
+    // langsung ke sistem koordinat layer tersebut agar frekuensi tidak meloncat
+    // pada layar responsif; titik LOW CUT/HIGH CUT hanya membaca sumbu X.
+    const hpfLayer = tab === "hpf" ? graph.querySelector(".graph-legacy-coordinate-layer") : null;
+    const layerMatrix = hpfLayer?.getScreenCTM?.();
+    if (layerMatrix) {
+      const layerPoint = point.matrixTransform(layerMatrix.inverse());
+      svgX = layerPoint.x;
+      svgY = layerPoint.y;
     } else {
-      // Balikkan transformasi layer: translate(-30,-0.5) scale(2,1.75).
-      svgX = viewPoint.x / 1.8181818;
-      svgY = viewPoint.y / 1.6277778;
+      const viewPoint = point.matrixTransform(screenMatrix.inverse());
+      if (tab === "peq") {
+        svgX = viewPoint.x;
+        svgY = viewPoint.y;
+      } else {
+        // Balikkan skala layer grafik lama untuk halaman selain PEQ/HPF.
+        svgX = viewPoint.x / 1.8181818;
+        svgY = viewPoint.y / 1.6277778;
+      }
     }
   } else {
     const rect = graph.getBoundingClientRect();

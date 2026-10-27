@@ -2865,29 +2865,108 @@
       }
     }
 
-    /* Portrait phone: put DSP page buttons in a compact horizontal strip,
-       give the graph the full usable width, and move controls underneath. */
-    @media (max-width: 520px) and (orientation: portrait) {
+    /* Consolidated portrait layout:
+       keep the curve viewport landscape-shaped and compact on phones/tablets.
+       The chassis may leave unused space below on tall portrait screens. */
+    @media (orientation: portrait) {
       #panel-curves {
-        height: 100% !important;
         min-height: 0 !important;
         overflow: hidden !important;
       }
       #panel-curves > .touchscreen-console {
         display: grid !important;
         grid-template-columns: minmax(0, 1fr) !important;
-        grid-template-rows: auto minmax(180px, 1fr) auto !important;
-        align-content: stretch !important;
-        align-items: stretch !important;
-        gap: 5px !important;
-        height: 100% !important;
+        grid-template-rows: auto auto auto !important;
+        align-content: start !important;
+        align-items: start !important;
+        height: auto !important;
         min-height: 0 !important;
-        padding: 3px !important;
-        overflow: hidden !important;
+        max-height: none !important;
+        overflow: visible !important;
       }
       #panel-curves > .touchscreen-console > #processor-sidebar {
         grid-row: 1 !important;
         grid-column: 1 !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-center-graph {
+        grid-row: 2 !important;
+        grid-column: 1 !important;
+        flex: 0 0 auto !important;
+        align-self: start !important;
+        width: 100% !important;
+        height: auto !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+        grid-row: 3 !important;
+        grid-column: 1 !important;
+      }
+      #panel-curves .tc-center-graph > .processor-subpage,
+      #panel-curves .tc-center-graph > #proc-page-preamp,
+      #panel-curves .tc-center-graph > #proc-page-hpf,
+      #panel-curves .tc-center-graph > #proc-page-gate,
+      #panel-curves .tc-center-graph > #proc-page-peq,
+      #panel-curves .tc-center-graph > #proc-page-comp {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      #panel-curves .tc-center-graph .sq-graph-box,
+      #panel-curves .tc-center-graph #gate-graph-box,
+      #panel-curves .tc-center-graph #comp-graph-box,
+      #panel-curves .tc-center-graph #geq-container-box {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: min(44dvh, 340px) !important;
+        aspect-ratio: 16 / 9 !important;
+        overflow: hidden !important;
+      }
+      #panel-curves .tc-center-graph .sq-graph-box > svg,
+      #panel-curves .tc-center-graph #gate-graph-box > svg,
+      #panel-curves .tc-center-graph #comp-graph-box > svg {
+        position: absolute !important;
+        inset: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+      }
+      #panel-curves #geq-container-box {
+        display: flex !important;
+        align-items: stretch !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+      #panel-curves #geq-sliders-wrapper {
+        height: 100% !important;
+        min-height: 0 !important;
+        min-width: 700px !important;
+      }
+    }
+
+    @media (max-width: 760px) and (orientation: portrait) {
+      #panel-curves > .touchscreen-console {
+        padding: 3px !important;
+        gap: 4px !important;
+      }
+    }
+
+    @media (max-width: 520px) and (orientation: portrait) {
+      #panel-curves { --processor-sidebar-width: 56px; }
+      #panel-curves > .touchscreen-console {
+        gap: 4px !important;
+      }
+      #panel-curves > .touchscreen-console > #processor-sidebar {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
@@ -2911,19 +2990,7 @@
         white-space: nowrap !important;
         font-size: 10px !important;
       }
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        grid-row: 2 !important;
-        grid-column: 1 !important;
-        width: 100% !important;
-        min-width: 0 !important;
-        min-height: 180px !important;
-        height: auto !important;
-        flex: 1 1 auto !important;
-        overflow: hidden !important;
-      }
       #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
-        grid-row: 3 !important;
-        grid-column: 1 !important;
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
@@ -2934,223 +3001,13 @@
         overflow-x: auto !important;
         overflow-y: hidden !important;
       }
-      #panel-curves #proc-page-geq,
-      #panel-curves #geq-container-box {
-        min-height: 180px !important;
-        height: 100% !important;
-      }
-      #panel-curves #geq-sliders-wrapper {
-        min-width: 700px !important;
-      }
-    }
-
-
-    /* Portrait: keep the curve viewport landscape-shaped and compact.
-       Intentionally leave unused space below on tall devices; landscape rules stay untouched. */
-    @media (orientation: portrait) {
-      #panel-curves {
-        min-height: 0 !important;
-        overflow: hidden !important;
-      }
-      #panel-curves > .touchscreen-console {
-        min-height: 0 !important;
-        align-content: start !important;
-      }
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        flex: 0 0 auto !important;
-        min-height: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        align-self: start !important;
-        overflow: hidden !important;
-      }
-      #panel-curves .tc-center-graph > .processor-subpage {
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-      }
       #panel-curves .tc-center-graph .sq-graph-box,
       #panel-curves .tc-center-graph #gate-graph-box,
       #panel-curves .tc-center-graph #comp-graph-box,
       #panel-curves .tc-center-graph #geq-container-box {
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        aspect-ratio: 16 / 9 !important;
-      }
-      #panel-curves .tc-center-graph .sq-graph-box > svg,
-      #panel-curves .tc-center-graph #gate-graph-box > svg,
-      #panel-curves .tc-center-graph #comp-graph-box > svg {
-        position: absolute !important;
-        inset: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
-      #panel-curves #geq-container-box {
-        display: flex !important;
-        align-items: stretch !important;
-      }
-      #panel-curves #geq-sliders-wrapper {
-        height: 100% !important;
-        min-height: 0 !important;
-      }
-    }
-    @media (max-width: 760px) and (orientation: portrait) {
-      #panel-curves > .touchscreen-console {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) !important;
-        grid-template-rows: auto auto auto !important;
-        align-content: start !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-      }
-      #panel-curves > .touchscreen-console > #processor-sidebar {
-        grid-row: 1 !important;
-        grid-column: 1 !important;
-      }
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        grid-row: 2 !important;
-        grid-column: 1 !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-      }
-      #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
-        grid-row: 3 !important;
-        grid-column: 1 !important;
-      }
-    }
-    @media (max-width: 520px) and (orientation: portrait) {
-      #panel-curves > .touchscreen-console {
-        grid-template-rows: auto auto auto !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-      }
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        min-height: 0 !important;
-      }
-      #panel-curves #proc-page-geq,
-      #panel-curves #geq-container-box {
-        min-height: 0 !important;
-      }
-    }
-
-    /* Final portrait sizing: slightly taller graph viewport without stretching it
-       to the full device height. Landscape sizing is intentionally unchanged. */
-    @media (orientation: portrait) {
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        height: auto !important;
-        max-height: none !important;
-        min-height: 0 !important;
-        flex: 0 0 auto !important;
-      }
-      #panel-curves .tc-center-graph > .processor-subpage {
-        height: auto !important;
-        min-height: 0 !important;
-      }
-      #panel-curves .tc-center-graph .sq-graph-box,
-      #panel-curves .tc-center-graph #gate-graph-box,
-      #panel-curves .tc-center-graph #comp-graph-box,
-      #panel-curves .tc-center-graph #geq-container-box {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: min(48dvh, 360px) !important;
-        aspect-ratio: 3 / 2 !important;
-      }
-      #panel-curves #geq-container-box {
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        align-items: stretch !important;
-      }
-      #panel-curves #geq-sliders-wrapper {
-        height: 100% !important;
-        min-height: 0 !important;
-      }
-    }
-    @media (max-width: 520px) and (orientation: portrait) {
-      #panel-curves .tc-center-graph .sq-graph-box,
-      #panel-curves .tc-center-graph #gate-graph-box,
-      #panel-curves .tc-center-graph #comp-graph-box,
-      #panel-curves .tc-center-graph #geq-container-box {
-        max-height: 44dvh !important;
-      }
-    }
-
-    
-    /* Final fix: portrait curve pages stay landscape-shaped and compact.
-       Keep the 31-band GEQ's existing horizontal-scroll layout unchanged. */
-    @media (orientation: portrait) {
-      #panel-curves > .touchscreen-console {
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        align-items: start !important;
-        align-content: start !important;
-        overflow: visible !important;
-      }
-      #panel-curves > .touchscreen-console > .tc-center-graph {
-        flex: 0 0 auto !important;
-        align-self: start !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        overflow: visible !important;
-      }
-      #panel-curves .tc-center-graph > #proc-page-preamp,
-      #panel-curves .tc-center-graph > #proc-page-hpf,
-      #panel-curves .tc-center-graph > #proc-page-gate,
-      #panel-curves .tc-center-graph > #proc-page-peq,
-      #panel-curves .tc-center-graph > #proc-page-comp {
-        flex: 0 0 auto !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        overflow: visible !important;
-      }
-      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box {
-        display: block !important;
-        position: relative !important;
-        flex: 0 0 auto !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: min(44dvh, 340px) !important;
-        aspect-ratio: 16 / 9 !important;
-        overflow: hidden !important;
-      }
-      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box > svg,
-      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box > svg,
-      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box > svg,
-      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box > svg,
-      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box > svg {
-        position: absolute !important;
-        inset: 0 !important;
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-      }
-    }
-    @media (max-width: 520px) and (orientation: portrait) {
-      #panel-curves .tc-center-graph > #proc-page-preamp > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-hpf > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-gate > #gate-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-peq > .sq-graph-box,
-      #panel-curves .tc-center-graph > #proc-page-comp > #comp-graph-box {
         max-height: min(42dvh, 300px) !important;
       }
     }
-
 
     /* Final responsive hardware-style control knobs */
     .tc-right-knobs-panel {

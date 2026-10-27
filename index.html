@@ -6712,5 +6712,175 @@ if (document.readyState === "loading") {
 }
 </style>
 
+
+<style id="dlms-portrait-responsive-final">
+/* Koreksi akhir mode potret: menu mendatar, grafik melebar ke samping,
+   tinggi dibatasi mengikuti lebar, kontrol tidak menimpa grafik. */
+@media (orientation: portrait) {
+  #panel-curves {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    align-self: flex-start !important;
+  }
+  #panel-curves > .touchscreen-console {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto !important;
+    grid-template-areas: "side" "graph" "knobs" !important;
+    align-content: start !important;
+    align-items: start !important;
+    gap: 6px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 4px !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar {
+    grid-area: side !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 64px !important;
+    gap: 4px !important;
+    padding: 3px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    min-height: 30px !important;
+    padding: 6px 9px !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(9px, 2.5vw, 12px) !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    grid-area: graph !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 16 / 9 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg,
+  #panel-curves .tc-center-graph .sq-graph-box > canvas,
+  #panel-curves .tc-center-graph #gate-graph-box > canvas,
+  #panel-curves .tc-center-graph #comp-graph-box > canvas {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+  #panel-curves #proc-page-geq {
+    grid-area: graph !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+  #panel-curves #geq-container-box {
+    display: flex !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: clamp(210px, 48vw, 300px) !important;
+    min-height: 0 !important;
+    max-height: 300px !important;
+    aspect-ratio: auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-x: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+  #panel-curves #geq-container-box > #geq-sliders-wrapper {
+    flex: 0 0 max(760px, 100%) !important;
+    width: max(760px, 100%) !important;
+    min-width: 760px !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+    grid-area: knobs !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    box-sizing: border-box !important;
+  }
+}
+/* Layar potret kecil: batasi tinggi grafik, bukan tinggi panel/perangkat. */
+@media (max-width: 520px) and (orientation: portrait) {
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    max-height: 56vw !important;
+  }
+  #panel-curves #geq-container-box {
+    height: clamp(190px, 58vw, 250px) !important;
+  }
+}
+/* Tidak mengubah layout lanskap. */
+</style>
+
 </body>
 </html>

@@ -5488,6 +5488,22 @@ if (document.readyState === "loading") {
   outline: 0 !important;
 }
 
+
+/* Final consistency fix: Preamp and HPF use the same silver outer frame and dark plotting surface as PEQ/Gate/Compressor. */
+#panel-curves .tc-center-graph #proc-page-preamp #preamp-graph-box,
+#panel-curves .tc-center-graph #proc-page-hpf #hpf-graph-box {
+  background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%) !important;
+  border: 1px solid #777 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(0,0,0,.35) !important;
+  border-radius: 5px !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+#panel-curves .tc-center-graph #proc-page-preamp #preamp-graph-box > svg,
+#panel-curves .tc-center-graph #proc-page-hpf #hpf-graph-box > svg {
+  background: #101113 !important;
+  border-radius: 2px !important;
+}
 </style>
 
 </body>

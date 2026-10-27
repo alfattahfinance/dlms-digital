@@ -3347,6 +3347,122 @@
     }
 
   </style>
+
+  <style id="responsive-knob-panel-fix">
+    /* Kontrol knob dibuat seimbang: kartu lebih ringkas, knob lebih mudah diputar/disentuh. */
+    .tc-right-knobs-panel {
+      box-sizing: border-box;
+      width: clamp(150px, 22vw, 230px);
+      min-width: 0;
+      padding: clamp(3px, .6vw, 7px);
+      gap: clamp(4px, .7vw, 8px);
+    }
+    .tc-right-knobs-panel > .knobs-grid,
+    .tc-right-knobs-panel .knobs-grid,
+    .knobs-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(4px, .7vw, 7px);
+      padding: clamp(2px, .5vw, 5px);
+      min-width: 0;
+    }
+    .tc-right-knobs-panel .physical-knob-container,
+    .physical-knob-container {
+      box-sizing: border-box;
+      min-width: 0;
+      padding: clamp(3px, .55vw, 6px) 2px;
+      gap: 3px;
+      border-radius: 5px;
+    }
+    .tc-right-knobs-panel .physical-knob,
+    .physical-knob {
+      --knob-size: clamp(38px, 5.3vw, 54px);
+      width: var(--knob-size);
+      height: var(--knob-size);
+      flex-basis: var(--knob-size);
+    }
+    .tc-right-knobs-panel .physical-knob-container label,
+    .physical-knob-container label {
+      font-size: clamp(8px, .85vw, 10px);
+      line-height: 1.15;
+    }
+    .tc-right-knobs-panel .physical-knob-container span,
+    .physical-knob-container span {
+      font-size: clamp(9px, .95vw, 11px);
+      line-height: 1.15;
+    }
+
+    /* PEQ memakai ukuran kartu dan knob yang sama dengan halaman DSP lainnya. */
+    #knobs-group-peq {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: clamp(4px, .7vw, 7px) !important;
+      padding: clamp(2px, .5vw, 5px) !important;
+    }
+    #knobs-group-peq .physical-knob-container {
+      padding: clamp(3px, .55vw, 6px) 2px !important;
+      gap: 3px !important;
+      border-radius: 5px !important;
+    }
+    #knobs-group-peq .physical-knob {
+      --knob-size: clamp(38px, 5.3vw, 54px) !important;
+      width: var(--knob-size) !important;
+      height: var(--knob-size) !important;
+      flex-basis: var(--knob-size) !important;
+    }
+    #knobs-group-peq .physical-knob-container label {
+      font-size: clamp(8px, .85vw, 10px) !important;
+    }
+    #knobs-group-peq .physical-knob-container span {
+      font-size: clamp(9px, .95vw, 11px) !important;
+    }
+
+    /* Tablet portrait: tambah ukuran knob tanpa membesarkan kartu berlebihan. */
+    @media (min-width: 521px) and (orientation: portrait) {
+      .tc-right-knobs-panel {
+        width: clamp(180px, 25vw, 250px);
+        max-width: 30vw;
+      }
+      .tc-right-knobs-panel .physical-knob,
+      .physical-knob {
+        --knob-size: clamp(46px, 6.2vw, 62px);
+      }
+      #knobs-group-peq .physical-knob {
+        --knob-size: clamp(46px, 6.2vw, 62px) !important;
+      }
+      .tc-right-knobs-panel .physical-knob-container,
+      .physical-knob-container {
+        padding: 4px 2px;
+      }
+    }
+    @media (max-width: 520px) {
+      .tc-right-knobs-panel {
+        width: clamp(112px, 27vw, 150px);
+        max-width: 30vw;
+        padding: 2px;
+        gap: 3px;
+      }
+      .tc-right-knobs-panel > .knobs-grid,
+      .tc-right-knobs-panel .knobs-grid,
+      .knobs-grid,
+      #knobs-group-peq {
+        gap: 3px !important;
+        padding: 2px !important;
+      }
+      .tc-right-knobs-panel .physical-knob,
+      .physical-knob {
+        --knob-size: clamp(30px, 8vw, 40px);
+      }
+      #knobs-group-peq .physical-knob {
+        --knob-size: clamp(30px, 8vw, 40px) !important;
+      }
+    }
+    @media (orientation: landscape) and (max-height: 600px) {
+      .tc-right-knobs-panel { width: clamp(130px, 18vw, 190px); max-width: none; }
+      .tc-right-knobs-panel .physical-knob,
+      .physical-knob { --knob-size: clamp(30px, 4vw, 42px); }
+      #knobs-group-peq .physical-knob { --knob-size: clamp(30px, 4vw, 42px) !important; }
+    }
+  </style>
+
 </head>
 <body>
 

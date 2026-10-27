@@ -5401,6 +5401,37 @@ if (document.readyState === "loading") {
   #panel-curves .tc-center-graph #comp-graph-box,
   #panel-curves #geq-container-box { min-height: 0 !important; }
 }
+
+    /* Match every DSP curve frame to the silver-gray processor sidebar cards. */
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box,
+    .tc-center-graph #geq-container-box,
+    .tc-center-graph #proc-page-geq .geq-container,
+    .tc-center-graph #proc-page-hpf .sq-graph-box,
+    .tc-center-graph #proc-page-peq .sq-graph-box,
+    .tc-center-graph #proc-page-preamp .sq-graph-box,
+    .tc-center-graph #proc-page-gate #gate-graph-box,
+    .tc-center-graph #proc-page-comp #comp-graph-box {
+      border: 1px solid #777 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(0,0,0,.35);
+    }
+    .tc-center-graph .sq-graph-box,
+    .tc-center-graph #gate-graph-box,
+    .tc-center-graph #comp-graph-box,
+    .tc-center-graph #geq-container-box {
+      background: linear-gradient(180deg, #656565 0%, #383838 48%, #292929 100%);
+      padding: 3px;
+      box-sizing: border-box;
+    }
+    /* Keep the actual plotting surface dark while the surrounding frame is silver-gray. */
+    .tc-center-graph .sq-graph-box > svg,
+    .tc-center-graph #gate-graph-box > svg,
+    .tc-center-graph #comp-graph-box > svg,
+    .tc-center-graph #geq-container-box .geq-sliders-wrapper {
+      background-color: #101113;
+      border-radius: 2px;
+    }
 </style>
 
 </body>

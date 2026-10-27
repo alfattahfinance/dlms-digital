@@ -6478,5 +6478,151 @@ if (document.readyState === "loading") {
 }
 </style>
 
+
+<style id="dlms-portrait-restore-compact-layout">
+/* Pulihkan tampilan DSP portrait: bidang kurva melebar ke samping, tidak memanjang memenuhi tinggi layar.
+   Aturan ini hanya berlaku pada orientasi portrait; layout landscape tidak diubah. */
+@media (orientation: portrait) {
+  #panel-curves {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-self: flex-start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  #panel-curves > .touchscreen-console {
+    display: grid !important;
+    grid-template-columns: clamp(52px, 14vw, 78px) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    grid-template-areas: "side graph" "side knobs" !important;
+    align-content: start !important;
+    align-items: start !important;
+    justify-items: stretch !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    gap: 5px !important;
+    padding: 4px !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar {
+    grid-area: side !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-self: start !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    gap: 3px !important;
+  }
+  #panel-curves > .touchscreen-console > #processor-sidebar .tc-side-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 30px !important;
+    height: auto !important;
+    padding: 4px 2px !important;
+    font-size: clamp(7px, 2vw, 10px) !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-center-graph {
+    grid-area: graph !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-self: start !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph > .processor-subpage:not(#proc-page-geq) {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box,
+  #panel-curves .tc-center-graph #gate-graph-box,
+  #panel-curves .tc-center-graph #comp-graph-box {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: min(44vw, 340px) !important;
+    aspect-ratio: 16 / 9 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  #panel-curves .tc-center-graph .sq-graph-box > svg,
+  #panel-curves .tc-center-graph #gate-graph-box > svg,
+  #panel-curves .tc-center-graph #comp-graph-box > svg {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+  #panel-curves #proc-page-geq {
+    grid-area: graph !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  #panel-curves #geq-container-box {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: clamp(210px, 38vw, 280px) !important;
+    min-height: 0 !important;
+    max-height: 280px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+  #panel-curves #geq-container-box > #geq-sliders-wrapper {
+    flex: 0 0 1000px !important;
+    width: 1000px !important;
+    min-width: 1000px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+  #panel-curves > .touchscreen-console > .tc-right-knobs-panel {
+    grid-area: knobs !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+}
+</style>
+
 </body>
 </html>
